@@ -1,0 +1,27 @@
+Description: Use system Noto fonts, instead of the embedded Droid fonts.
+Author: David Paleino <dapal@debian.org>
+Author: Bas Couwenberg <sebastic@debian.org>
+Forwarded: not-needed
+
+--- a/src/org/openstreetmap/josm/tools/FontsManager.java
++++ b/src/org/openstreetmap/josm/tools/FontsManager.java
+@@ -22,8 +22,8 @@ public final class FontsManager {
+      * List of fonts embedded into JOSM jar.
+      */
+     private static final Collection<String> INCLUDED_FONTS = Arrays.asList(
+-            "DroidSans.ttf",
+-            "DroidSans-Bold.ttf"
++            "NotoSans-Regular.ttf",
++            "NotoSans-Bold.ttf"
+     );
+ 
+     private FontsManager() {
+@@ -36,7 +36,7 @@ public final class FontsManager {
+     public static void initialize() {
+         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+         for (String fontFile : INCLUDED_FONTS) {
+-            String url = "resource://data/fonts/"+fontFile;
++            String url = "/usr/share/fonts/truetype/noto/"+fontFile;
+             try (CachedFile cf = new CachedFile(url); InputStream i = cf.getInputStream()) {
+                 ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, i));
+             } catch (IOException | FontFormatException ex) {

@@ -1,0 +1,19 @@
+Description: Fix version numbers to reflect upstream changes.
+ Appending SVN to version is not required for the Debian package build.
+ The Debian package build is identified using the Build-Name property in the
+ REVISION file (see 00-build.patch).
+Author: Mario Izquierdo <mariodebian@gmail.com>
+Bug-Debian: https://bugs.debian.org/598920
+Forwarded: not-needed
+
+--- a/build.xml
++++ b/build.xml
+@@ -156,7 +156,7 @@ Debian-Release: ${debian.version}
+             <!-- add attribute excludes="**/*BZip2*,**/*Bzip2*" to create a non-bzip2 supporting jar -->
+             <manifest>
+                 <attribute name="Main-class" value="org.openstreetmap.josm.gui.MainApplication"/>
+-                <attribute name="Main-Version" value="${version.entry.commit.revision} SVN"/>
++                <attribute name="Main-Version" value="${version.entry.commit.revision}"/>
+                 <attribute name="Main-Date" value="${version.entry.commit.date}"/>
+                 <attribute name="Permissions" value="all-permissions"/>
+                 <attribute name="Codebase" value="josm.openstreetmap.de"/>
