@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>dev.rindeal+gentoo-overlay@gmail.com</email>
+    <name>Jan Chren (rindeal)</name>
+  </maintainer>
+  <use>
+    <flag name="mmal">Enables Multi-Media Abstraction Layer (MMAL) decoding support: Available e.g. on the Raspberry Pi.</flag>
+	<flag name="pgsql">PostgreSQL support</flag>
+	<flag name="v4l2">V4L2 support, with this disabled, only network streams will work</flag>
+	<flag name="sqlite3">SQLite3 support</flag>
+  </use>
+</pkgmetadata>
