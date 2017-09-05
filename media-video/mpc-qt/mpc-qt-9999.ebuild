@@ -23,25 +23,29 @@ SLOT="0"
 
 KEYWORDS="~amd64"
 
-CDEPEND="
-	>=media-video/mpv-0.18.0:0=[libmpv]
-	dev-qt/qtx11extras:5
-	dev-qt/qtcore:5
-	dev-qt/qtgui:5
-	dev-qt/qtnetwork:5
-	dev-qt/qtwidgets:5"
-DEPEND="${CDEPEND}
-	virtual/pkgconfig"
-RDEPEND="${CDEPEND}"
+CDEPEND_A=(
+	">=media-video/mpv-0.18.0:0=[libmpv]"
+	"dev-qt/qtx11extras:5"
+	"dev-qt/qtcore:5"
+	"dev-qt/qtgui:5"
+	"dev-qt/qtnetwork:5"
+	"dev-qt/qtwidgets:5"
+)
+DEPEND_A=( "${CDEPEND_A[@]}"
+	"virtual/pkgconfig"
+)
+RDEPEND_A=( "${CDEPEND_A[@]}" )
+
+inherit arrays
 
 src_configure() {
 	eqmake5
 }
 
 src_install() {
-	dobin mpc-qt
+	dobin "${PN}"
 
-	newicon -s scalable "images/icon/mpc-qt.svg" "${PN}.svg"
+	doicon -s scalable "images/icon/${PN}.svg"
 
 	einstalldocs
 
