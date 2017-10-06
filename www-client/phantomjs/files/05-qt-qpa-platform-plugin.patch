@@ -1,0 +1,573 @@
+From c4d528e2dc229476dcca65fc74cf6bb22178a63d Mon Sep 17 00:00:00 2001
+From: Vitaly Slobodin <vitaliy.slobodin@gmail.com>
+Date: Mon, 28 Nov 2016 14:46:20 +0300
+Subject: [PATCH] Import Phantom platform plugin for QPA
+
+---
+ phantomjs.pro                                      |   7 +-
+ src/qt-qpa-platform-plugin/.qmake.conf             |  10 ++
+ src/qt-qpa-platform-plugin/main.cpp                |  67 +++++++++
+ src/qt-qpa-platform-plugin/phantom.json            |   3 +
+ src/qt-qpa-platform-plugin/phantom.pri             |  15 ++
+ src/qt-qpa-platform-plugin/phantom.pro             |  10 ++
+ src/qt-qpa-platform-plugin/phantombackingstore.cpp |  77 +++++++++++
+ src/qt-qpa-platform-plugin/phantombackingstore.h   |  67 +++++++++
+ src/qt-qpa-platform-plugin/phantomintegration.cpp  | 153 +++++++++++++++++++++
+ src/qt-qpa-platform-plugin/phantomintegration.h    |  76 ++++++++++
+ 10 files changed, 484 insertions(+), 1 deletion(-)
+ create mode 100644 src/qt-qpa-platform-plugin/.qmake.conf
+ create mode 100644 src/qt-qpa-platform-plugin/main.cpp
+ create mode 100644 src/qt-qpa-platform-plugin/phantom.json
+ create mode 100644 src/qt-qpa-platform-plugin/phantom.pri
+ create mode 100644 src/qt-qpa-platform-plugin/phantom.pro
+ create mode 100644 src/qt-qpa-platform-plugin/phantombackingstore.cpp
+ create mode 100644 src/qt-qpa-platform-plugin/phantombackingstore.h
+ create mode 100644 src/qt-qpa-platform-plugin/phantomintegration.cpp
+ create mode 100644 src/qt-qpa-platform-plugin/phantomintegration.h
+
+diff --git a/phantomjs.pro b/phantomjs.pro
+index 24663df32..61b3d4cef 100644
+--- a/phantomjs.pro
++++ b/phantomjs.pro
+@@ -1,3 +1,8 @@
+ TEMPLATE = subdirs
+ CONFIG += ordered
+-SUBDIRS += src/phantomjs.pro
++
++!win {
++    SUBDIRS += $$PWD/src/qt-qpa-platform-plugin/phantom.pro
++}
++
++SUBDIRS += $$PWD/src/phantomjs.pro
+diff --git a/src/qt-qpa-platform-plugin/.qmake.conf b/src/qt-qpa-platform-plugin/.qmake.conf
+new file mode 100644
+index 000000000..cfffb680d
+--- /dev/null
++++ b/src/qt-qpa-platform-plugin/.qmake.conf
+@@ -0,0 +1,10 @@
++load(qt_build_config)
++CONFIG += warning_clean
++
++QT_SOURCE_TREE = $$PWD
++QT_BUILD_TREE = $$shadowed($$PWD)
++
++# In qtbase, all modules follow qglobal.h
++MODULE_VERSION = $$QT_VERSION
++
++contains(QT_CONFIG,fontconfig): LIBS_PRIVATE += $$QMAKE_LIBS_FONTCONFIG
+diff --git a/src/qt-qpa-platform-plugin/main.cpp b/src/qt-qpa-platform-plugin/main.cpp
+new file mode 100644
+index 000000000..dc042f619
+--- /dev/null
++++ b/src/qt-qpa-platform-plugin/main.cpp
+@@ -0,0 +1,67 @@
++/****************************************************************************
++**
++** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
++** Contact: http://www.qt-project.org/legal
++**
++** This file is part of the plugins of the Qt Toolkit.
++**
++** $QT_BEGIN_LICENSE:LGPL$
++** Commercial License Usage
++** Licensees holding valid commercial Qt licenses may use this file in
++** accordance with the commercial license agreement provided with the
++** Software or, alternatively, in accordance with the terms contained in
++** a written agreement between you and Digia.  For licensing terms and
++** conditions see http://qt.digia.com/licensing.  For further information
++** use the contact form at http://qt.digia.com/contact-us.
++**
++** GNU Lesser General Public License Usage
++** Alternatively, this file may be used under the terms of the GNU Lesser
++** General Public License version 2.1 as published by the Free Software
++** Foundation and appearing in the file LICENSE.LGPL included in the
++** packaging of this file.  Please review the following information to
++** ensure the GNU Lesser General Public License version 2.1 requirements
++** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
++**
++** In addition, as a special exception, Digia gives you certain additional
++** rights.  These rights are described in the Digia Qt LGPL Exception
++** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
++**
++** GNU General Public License Usage
++** Alternatively, this file may be used under the terms of the GNU
++** General Public License version 3.0 as published by the Free Software
++** Foundation and appearing in the file LICENSE.GPL included in the
++** packaging of this file.  Please review the following information to
++** ensure the GNU General Public License version 3.0 requirements will be
++** met: http://www.gnu.org/copyleft/gpl.html.
++**
++**
++** $QT_END_LICENSE$
++**
++****************************************************************************/
++
++
++#include <qpa/qplatformintegrationplugin.h>
++#include "phantomintegration.h"
++
++QT_BEGIN_NAMESPACE
++
++class PhantomIntegrationPlugin : public QPlatformIntegrationPlugin
++{
++    Q_OBJECT
++    Q_PLUGIN_METADATA(IID QPlatformIntegrationFactoryInterface_iid FILE "phantom.json")
++public:
++    PhantomIntegration *create(const QString&, const QStringList&);
++};
++
++PhantomIntegration *PhantomIntegrationPlugin::create(const QString& system, const QStringList& paramList)
++{
++    Q_UNUSED(paramList)
++    if (!system.compare(QLatin1String("phantom"), Qt::CaseInsensitive))
++        return new PhantomIntegration();
++
++    return 0;
++}
++
++QT_END_NAMESPACE
++
++#include "main.moc"
+diff --git a/src/qt-qpa-platform-plugin/phantom.json b/src/qt-qpa-platform-plugin/phantom.json
+new file mode 100644
+index 000000000..f02099ad6
+--- /dev/null
++++ b/src/qt-qpa-platform-plugin/phantom.json
+@@ -0,0 +1,3 @@
++{
++    "Keys": [ "phantom" ]
++}
+diff --git a/src/qt-qpa-platform-plugin/phantom.pri b/src/qt-qpa-platform-plugin/phantom.pri
+new file mode 100644
+index 000000000..d8b2d115f
+--- /dev/null
++++ b/src/qt-qpa-platform-plugin/phantom.pri
+@@ -0,0 +1,15 @@
++QT += core-private gui-private platformsupport-private
++
++SOURCES += $$PWD/phantomintegration.cpp \
++           $$PWD/phantombackingstore.cpp
++
++HEADERS += $$PWD/phantomintegration.h \
++           $$PWD/phantombackingstore.h
++
++QMAKE_LFLAGS += $$QMAKE_LFLAGS_NOUNDEF
++
++INCLUDEPATH += $$PWD
++
++CONFIG += qpa/genericunixfontdatabase
++
++OTHER_FILES += $$PWD/phantom.json
+diff --git a/src/qt-qpa-platform-plugin/phantom.pro b/src/qt-qpa-platform-plugin/phantom.pro
+new file mode 100644
+index 000000000..6f115339f
+--- /dev/null
++++ b/src/qt-qpa-platform-plugin/phantom.pro
+@@ -0,0 +1,10 @@
++TARGET = qphantom
++
++PLUGIN_TYPE = platforms
++PLUGIN_CLASS_NAME = PhantomIntegrationPlugin
++!equals(TARGET, $$QT_DEFAULT_QPA_PLUGIN): PLUGIN_EXTENDS = -
++load(qt_plugin)
++
++SOURCES += $$PWD/main.cpp
++
++include(phantom.pri)
+diff --git a/src/qt-qpa-platform-plugin/phantombackingstore.cpp b/src/qt-qpa-platform-plugin/phantombackingstore.cpp
+new file mode 100644
+index 000000000..352d1a6eb
+--- /dev/null
++++ b/src/qt-qpa-platform-plugin/phantombackingstore.cpp
+@@ -0,0 +1,77 @@
++/****************************************************************************
++**
++** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
++** Contact: http://www.qt-project.org/legal
++**
++** This file is part of the plugins of the Qt Toolkit.
++**
++** $QT_BEGIN_LICENSE:LGPL$
++** Commercial License Usage
++** Licensees holding valid commercial Qt licenses may use this file in
++** accordance with the commercial license agreement provided with the
++** Software or, alternatively, in accordance with the terms contained in
++** a written agreement between you and Digia.  For licensing terms and
++** conditions see http://qt.digia.com/licensing.  For further information
++** use the contact form at http://qt.digia.com/contact-us.
++**
++** GNU Lesser General Public License Usage
++** Alternatively, this file may be used under the terms of the GNU Lesser
++** General Public License version 2.1 as published by the Free Software
++** Foundation and appearing in the file LICENSE.LGPL included in the
++** packaging of this file.  Please review the following information to
++** ensure the GNU Lesser General Public License version 2.1 requirements
++** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
++**
++** In addition, as a special exception, Digia gives you certain additional
++** rights.  These rights are described in the Digia Qt LGPL Exception
++** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
++**
++** GNU General Public License Usage
++** Alternatively, this file may be used under the terms of the GNU
++** General Public License version 3.0 as published by the Free Software
++** Foundation and appearing in the file LICENSE.GPL included in the
++** packaging of this file.  Please review the following information to
++** ensure the GNU General Public License version 3.0 requirements will be
++** met: http://www.gnu.org/copyleft/gpl.html.
++**
++**
++** $QT_END_LICENSE$
++**
++****************************************************************************/
++
++
++#include "phantombackingstore.h"
++#include <qpa/qplatformscreen.h>
++#include <private/qguiapplication_p.h>
++
++QT_BEGIN_NAMESPACE
++
++PhantomBackingStore::PhantomBackingStore(QWindow *window)
++    : QPlatformBackingStore(window)
++{
++}
++
++PhantomBackingStore::~PhantomBackingStore()
++{
++}
++
++QPaintDevice *PhantomBackingStore::paintDevice()
++{
++    return &mImage;
++}
++
++void PhantomBackingStore::flush(QWindow *window, const QRegion &region, const QPoint &offset)
++{
++    Q_UNUSED(window);
++    Q_UNUSED(region);
++    Q_UNUSED(offset);
++}
++
++void PhantomBackingStore::resize(const QSize &size, const QRegion &)
++{
++    QImage::Format format = QGuiApplication::primaryScreen()->handle()->format();
++    if (mImage.size() != size)
++        mImage = QImage(size, format);
++}
++
++QT_END_NAMESPACE
+diff --git a/src/qt-qpa-platform-plugin/phantombackingstore.h b/src/qt-qpa-platform-plugin/phantombackingstore.h
+new file mode 100644
+index 000000000..a08db02d8
+--- /dev/null
++++ b/src/qt-qpa-platform-plugin/phantombackingstore.h
+@@ -0,0 +1,67 @@
++/****************************************************************************
++**
++** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
++** Contact: http://www.qt-project.org/legal
++**
++** This file is part of the plugins of the Qt Toolkit.
++**
++** $QT_BEGIN_LICENSE:LGPL$
++** Commercial License Usage
++** Licensees holding valid commercial Qt licenses may use this file in
++** accordance with the commercial license agreement provided with the
++** Software or, alternatively, in accordance with the terms contained in
++** a written agreement between you and Digia.  For licensing terms and
++** conditions see http://qt.digia.com/licensing.  For further information
++** use the contact form at http://qt.digia.com/contact-us.
++**
++** GNU Lesser General Public License Usage
++** Alternatively, this file may be used under the terms of the GNU Lesser
++** General Public License version 2.1 as published by the Free Software
++** Foundation and appearing in the file LICENSE.LGPL included in the
++** packaging of this file.  Please review the following information to
++** ensure the GNU Lesser General Public License version 2.1 requirements
++** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
++**
++** In addition, as a special exception, Digia gives you certain additional
++** rights.  These rights are described in the Digia Qt LGPL Exception
++** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
++**
++** GNU General Public License Usage
++** Alternatively, this file may be used under the terms of the GNU
++** General Public License version 3.0 as published by the Free Software
++** Foundation and appearing in the file LICENSE.GPL included in the
++** packaging of this file.  Please review the following information to
++** ensure the GNU General Public License version 3.0 requirements will be
++** met: http://www.gnu.org/copyleft/gpl.html.
++**
++**
++** $QT_END_LICENSE$
++**
++****************************************************************************/
++
++#ifndef PHANTOMBACKINGSTORE_H
++#define PHANTOMBACKINGSTORE_H
++
++#include <qpa/qplatformbackingstore.h>
++#include <qpa/qplatformwindow.h>
++#include <QImage>
++
++QT_BEGIN_NAMESPACE
++
++class PhantomBackingStore : public QPlatformBackingStore
++{
++public:
++    PhantomBackingStore(QWindow *window);
++    ~PhantomBackingStore();
++
++    QPaintDevice *paintDevice();
++    void flush(QWindow *window, const QRegion &region, const QPoint &offset);
++    void resize(const QSize &size, const QRegion &staticContents);
++
++private:
++    QImage mImage;
++};
++
++QT_END_NAMESPACE
++
++#endif // PHANTOMBACKINGSTORE_H
+diff --git a/src/qt-qpa-platform-plugin/phantomintegration.cpp b/src/qt-qpa-platform-plugin/phantomintegration.cpp
+new file mode 100644
+index 000000000..47e4b886e
+--- /dev/null
++++ b/src/qt-qpa-platform-plugin/phantomintegration.cpp
+@@ -0,0 +1,153 @@
++/****************************************************************************
++**
++** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
++** All rights reserved.
++** Contact: Nokia Corporation (qt-info@nokia.com)
++**
++** This file is part of the plugins of the Qt Toolkit.
++**
++** $QT_BEGIN_LICENSE:LGPL$
++** GNU Lesser General Public License Usage
++** This file may be used under the terms of the GNU Lesser General Public
++** License version 2.1 as published by the Free Software Foundation and
++** appearing in the file LICENSE.LGPL included in the packaging of this
++** file. Please review the following information to ensure the GNU Lesser
++** General Public License version 2.1 requirements will be met:
++** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
++**
++** In addition, as a special exception, Nokia gives you certain additional
++** rights. These rights are described in the Nokia Qt LGPL Exception
++** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
++**
++** GNU General Public License Usage
++** Alternatively, this file may be used under the terms of the GNU General
++** Public License version 3.0 as published by the Free Software Foundation
++** and appearing in the file LICENSE.GPL included in the packaging of this
++** file. Please review the following information to ensure the GNU General
++** Public License version 3.0 requirements will be met:
++** http://www.gnu.org/copyleft/gpl.html.
++**
++** Other Usage
++** Alternatively, this file may be used in accordance with the terms and
++** conditions contained in a signed written agreement between you and Nokia.
++**
++**
++**
++**
++**
++** $QT_END_LICENSE$
++**
++****************************************************************************/
++
++#include "phantomintegration.h"
++#include "phantombackingstore.h"
++
++#include <private/qpixmap_raster_p.h>
++
++#if defined(Q_OS_MAC)
++# include <QtPlatformSupport/private/qcoretextfontdatabase_p.h>
++#else
++# include <QtPlatformSupport/private/qgenericunixfontdatabase_p.h>
++#endif
++
++#include <QtPlatformSupport/private/qgenericunixeventdispatcher_p.h>
++
++#include <qpa/qplatformnativeinterface.h>
++#include <qpa/qplatformscreen.h>
++
++QT_BEGIN_NAMESPACE
++
++class PhantomNativeInterface : public QPlatformNativeInterface
++{
++public:
++};
++
++class PhantomScreen : public QPlatformScreen
++{
++public:
++    PhantomScreen()
++        : mDepth(32), mFormat(QImage::Format_ARGB32_Premultiplied) {}
++
++    QRect geometry() const { return mGeometry; }
++    QSizeF physicalSize() const { return mPhysicalSize; }
++    int depth() const { return mDepth; }
++    QImage::Format format() const { return mFormat; }
++
++    void setGeometry(const QRect& rect) { mGeometry = rect; }
++    void setPhysicalSize(const QSizeF& physicalSize) { mPhysicalSize = physicalSize; }
++    void setDepth(int depth) { mDepth = depth; }
++    void setFormat(QImage::Format format) { mFormat = format; }
++
++private:
++    QRect mGeometry;
++    int mDepth;
++    QImage::Format mFormat;
++    QSizeF mPhysicalSize;
++};
++
++PhantomIntegration::PhantomIntegration()
++  : m_nativeInterface(new PhantomNativeInterface)
++{
++    PhantomScreen *screen = new PhantomScreen();
++
++    // Simulate typical desktop screen
++    int width = 1024;
++    int height = 768;
++    int dpi = 72;
++    qreal physicalWidth = width * 25.4 / dpi;
++    qreal physicalHeight = height * 25.4 / dpi;
++    screen->setGeometry(QRect(0, 0, width, height));
++    screen->setPhysicalSize(QSizeF(physicalWidth, physicalHeight));
++
++    screen->setDepth(32);
++    screen->setFormat(QImage::Format_ARGB32_Premultiplied);
++
++    screenAdded(screen);
++}
++
++PhantomIntegration::~PhantomIntegration()
++{
++}
++
++bool PhantomIntegration::hasCapability(QPlatformIntegration::Capability cap) const
++{
++    switch (cap) {
++    case ThreadedPixmaps: return true;
++    default: return QPlatformIntegration::hasCapability(cap);
++    }
++}
++
++QPlatformWindow* PhantomIntegration::createPlatformWindow(QWindow* window) const
++{
++    return new QPlatformWindow(window);
++}
++
++QPlatformBackingStore* PhantomIntegration::createPlatformBackingStore(QWindow* window) const
++{
++    return new PhantomBackingStore(window);
++}
++
++QPlatformFontDatabase *PhantomIntegration::fontDatabase() const
++{
++    static QPlatformFontDatabase *db = 0;
++    if (!db) {
++#if defined(Q_OS_MAC)
++        db = new QCoreTextFontDatabase();
++#else
++        db = new QGenericUnixFontDatabase();
++#endif
++    }
++    return db;
++}
++
++QAbstractEventDispatcher *PhantomIntegration::createEventDispatcher() const
++{
++    return createUnixEventDispatcher();
++}
++
++QPlatformNativeInterface *PhantomIntegration::nativeInterface() const
++{
++    return m_nativeInterface.data();
++}
++
++QT_END_NAMESPACE
+diff --git a/src/qt-qpa-platform-plugin/phantomintegration.h b/src/qt-qpa-platform-plugin/phantomintegration.h
+new file mode 100644
+index 000000000..f2b4751ad
+--- /dev/null
++++ b/src/qt-qpa-platform-plugin/phantomintegration.h
+@@ -0,0 +1,76 @@
++/****************************************************************************
++**
++** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
++** All rights reserved.
++** Contact: Nokia Corporation (qt-info@nokia.com)
++**
++** This file is part of the plugins of the Qt Toolkit.
++**
++** $QT_BEGIN_LICENSE:LGPL$
++** GNU Lesser General Public License Usage
++** This file may be used under the terms of the GNU Lesser General Public
++** License version 2.1 as published by the Free Software Foundation and
++** appearing in the file LICENSE.LGPL included in the packaging of this
++** file. Please review the following information to ensure the GNU Lesser
++** General Public License version 2.1 requirements will be met:
++** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
++**
++** In addition, as a special exception, Nokia gives you certain additional
++** rights. These rights are described in the Nokia Qt LGPL Exception
++** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
++**
++** GNU General Public License Usage
++** Alternatively, this file may be used under the terms of the GNU General
++** Public License version 3.0 as published by the Free Software Foundation
++** and appearing in the file LICENSE.GPL included in the packaging of this
++** file. Please review the following information to ensure the GNU General
++** Public License version 3.0 requirements will be met:
++** http://www.gnu.org/copyleft/gpl.html.
++**
++** Other Usage
++** Alternatively, this file may be used in accordance with the terms and
++** conditions contained in a signed written agreement between you and Nokia.
++**
++**
++**
++**
++**
++** $QT_END_LICENSE$
++**
++****************************************************************************/
++
++#ifndef PHANTOMINTEGRATION_H
++#define PHANTOMINTEGRATION_H
++
++#include <qpa/qplatformintegration.h>
++#include <qpa/qplatformnativeinterface.h>
++
++#include <QScopedPointer>
++
++QT_BEGIN_NAMESPACE
++
++class QWindowSurface;
++class PhantomNativeInterface;
++
++class PhantomIntegration : public QPlatformIntegration
++{
++public:
++    PhantomIntegration();
++    ~PhantomIntegration();
++
++    bool hasCapability(QPlatformIntegration::Capability cap) const;
++
++    QPlatformWindow *createPlatformWindow(QWindow *window) const;
++    QPlatformBackingStore *createPlatformBackingStore(QWindow *window) const;
++    QAbstractEventDispatcher *createEventDispatcher() const;
++
++    QPlatformFontDatabase *fontDatabase() const;
++    QPlatformNativeInterface *nativeInterface() const;
++
++private:
++    QScopedPointer<PhantomNativeInterface> m_nativeInterface;
++};
++
++QT_END_NAMESPACE
++
++#endif // PHANTOMINTEGRATION_H

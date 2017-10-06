@@ -1,13 +1,19 @@
-# Copyright 2016 Jan Chren (rindeal)
+# Copyright 2016-2017 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
+inherit rindeal
 
-PYTHON_COMPAT=( python2_7 )
+PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
 
 GH_RN='github:ariya'
 
-inherit python-any-r1 multiprocessing pax-utils qmake-utils virtualx git-hosting
+inherit git-hosting
+inherit python-any-r1
+inherit qmake-utils
+inherit multiprocessing
+inherit pax-utils
+inherit virtualx
 
 DESCRIPTION='Headless WebKit scriptable with a JavaScript API'
 HOMEPAGE='http://phantomjs.org'
@@ -15,7 +21,7 @@ LICENSE='BSD'
 
 SLOT='0'
 
-KEYWORDS='~amd64 ~arm'
+KEYWORDS='amd64 ~arm ~arm64'
 IUSE='examples test'
 
 ## http://phantomjs.org/build.html - says pretty much nothing
@@ -37,8 +43,6 @@ CDEPEND_A=(
 	'x11-libs/libX11'
 
 	'media-libs/mesa'
-	'media-libs/fontconfig'
-	'media-libs/freetype'
 	'media-libs/libpng:0='
 	'virtual/jpeg:0'
 )
@@ -61,6 +65,7 @@ src_prepare() {
 		"${FILESDIR}/${PN}-qt55-evaluateJavaScript.patch"
 		"${FILESDIR}/${PN}-qt55-no-websecurity.patch"
 		"${FILESDIR}/${PN}-qt55-print.patch"
+		"${FILESDIR}"/05-qt-qpa-platform-plugin.patch
 	)
 	default
 
@@ -90,6 +95,7 @@ src_prepare() {
 
 	local sed_args
 
+	# make sure correct qmake is used
 	sed_args=(
 		-e "s|qmake = qmakePath.*|qmake = \"$(qt5_get_bindir)/qmake\"|"
 		-e "s|command = \[qmake\].*|command = [qmake, $( printf '"%s",' "${qmake_args[@]}" )\"\"]|"
@@ -120,6 +126,7 @@ src_compile() {
 
 src_test() {
 	virtx "${PYTHON}" 'test/run-tests.py' || die
+	# ./bin/phantomjs test/run-tests.js || die
 }
 
 src_install() {

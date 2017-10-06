@@ -1,2 +1,1 @@
-- more up-to-date version
-- manpage
+- custom Qt is not built
