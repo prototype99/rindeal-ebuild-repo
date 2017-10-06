@@ -9,7 +9,7 @@ GH_RN="github"
 ## git-r3.eclass
 EGIT_BRANCH="next"
 ## python-*.eclass
-PYTHON_COMPAT=( python2_7 python3_{4,5} pypy )
+PYTHON_COMPAT=( python2_7 python3_{4,5,6} pypy pypy3 )
 ## distutils-*.eclass
 # event-manager is required and is written in python
 # DISTUTILS_OPTIONAL=true

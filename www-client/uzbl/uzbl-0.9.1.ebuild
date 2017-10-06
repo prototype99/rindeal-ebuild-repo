@@ -8,7 +8,7 @@ inherit rindeal
 GH_RN="github"
 GH_REF="v${PV}"
 ## python-*.eclass
-PYTHON_COMPAT=( python2_7 python3_{4,5} pypy )
+PYTHON_COMPAT=( python2_7 python3_{4,5,6} pypy pypy3 )
 ## distutils-*.eclass
 # event-manager is required and is written in python
 # DISTUTILS_OPTIONAL=true
@@ -22,7 +22,7 @@ LICENSE="GPL-2"
 
 SLOT="0"
 
-KEYWORDS="~amd64 ~arm ~arm64"
+KEYWORDS="amd64 ~arm ~arm64"
 
 CDEPEND_A=(
 	# NOTE: gtk2 is not supported, because it depends on webkitgtk-1.0 which fails to build.
