@@ -1,10 +1,10 @@
 # Copyright 1999-2016 Gentoo Foundation
-# Copyright 2016 Jan Chren (rindeal)
+# Copyright 2016-2017 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
-
 inherit rindeal
+
 # EXPORT_FUNCTIONS: src_unpack
 inherit vcs-snapshot
 # functions: eautoreconf
@@ -42,7 +42,7 @@ inherit arrays
 
 src_prepare() {
 	# these pacthes are non-intrusive so do not make them conditional
-	cp -v -r "${FILESDIR}/validity-driver" "libfprint/drivers/validity" || die
+	ecp -r "${FILESDIR}/validity-driver" "libfprint/drivers/validity"
 	eapply "${FILESDIR}/vcsFPService_driver.patch"
 
 	eapply_user
