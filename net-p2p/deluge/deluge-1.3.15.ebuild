@@ -2,6 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI='6'
+inherit rindeal
 
 PYTHON_COMPAT=( python2_7 )
 DISTUTILS_SINGLE_IMPL=true
@@ -17,7 +18,7 @@ LICENSE='GPL-2'
 SLOT='0'
 SRC_URI="http://git.deluge-torrent.org/deluge/snapshot/${P}.tar.bz2"
 
-KEYWORDS='~amd64 ~arm ~arm64'
+KEYWORDS='amd64 arm arm64'
 IUSE='console +daemon geoip +gtk +libnotify +setproctitle +sound webui'
 
 CDEPEND_A=(
@@ -48,10 +49,11 @@ RDEPEND_A=( "${CDEPEND_A[@]}"
 	"webui? ( dev-python/mako[${PYTHON_USEDEP}] )"
 )
 
-REQUIRED_USE="
-	sound? ( gtk )
-	libnotify? ( gtk )
-	|| ( console daemon gtk webui )"
+REQUIRED_USE_A=(
+	"sound? ( gtk )"
+	"libnotify? ( gtk )"
+	"|| ( console daemon gtk webui )"
+)
 
 inherit arrays
 
@@ -68,7 +70,7 @@ src_prepare-locales() {
 
 	l10n_get_locales locales app off
 	for l in ${locales} ; do
-		rm -v -f "${dir}/${pre}${l}${post}" || die
+		erm -v "${dir}/${pre}${l}${post}"
 	done
 }
 
@@ -101,7 +103,7 @@ python_install_all() {
 	local rm_paths=()
 
 	if use daemon ; then
-		# TODO: drop OpenRC support on deluge-1.4 release
+		# TODO: drop OpenRC support on >deluge-1.3 release
 		newinitd "${FILESDIR}/deluged.init" 'deluged'
 		newconfd "${FILESDIR}/deluged.conf" 'deluged'
 
@@ -113,7 +115,7 @@ python_install_all() {
 	fi
 
 	if use webui ; then
-		# TODO: drop OpenRC support on deluge-1.4 release
+		# TODO: drop OpenRC support on >deluge-1.3 release
 		newinitd "${FILESDIR}/deluge-web.init" 'deluge-web'
 		newconfd "${FILESDIR}/deluge-web.conf" 'deluge-web'
 	else
@@ -145,5 +147,5 @@ python_install_all() {
 			"${ED}/usr"/lib*/py*/*-packages/deluge/data/pixmaps/ )
 	fi
 
-	rm -rvf "${rm_paths[@]}" || die
+	erm -r "${rm_paths[@]}"
 }
