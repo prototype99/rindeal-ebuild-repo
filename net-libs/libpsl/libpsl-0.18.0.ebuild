@@ -4,7 +4,7 @@
 EAPI=6
 inherit rindeal
 
-PYTHON_COMPAT=( python2_7 python3_{3,4,5} )
+PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
 
 GH_RN="github:rockdaboot"
 GH_REF="${PN}-${PV}"
@@ -24,13 +24,12 @@ HOMEPAGE="https://rockdaboot.github.io/libpsl ${GH_HOMEPAGE}"
 LICENSE="MIT"
 
 SLOT="0"
-list_commit="41a519ad34cf86ff4470b967d9e4755d72b63a6c"
-list_uri=""
-list_ext=""
-list_distfile="${PN}-list-${list_commit}"
-git-hosting_gen_snapshot_url "github:publicsuffix:list" "${list_commit}" list_url list_ext
+declare -g --		PSL_LIST_EXT=""
+declare -g -r --	PSL_LIST_COMMIT="e8c69a6"
+declare -g -r --	PSL_LIST_DISTFILE="${PN}-list-${PSL_LIST_COMMIT}"
+git-hosting_gen_snapshot_url "github:publicsuffix:list" "${PSL_LIST_COMMIT}" psl_list_url PSL_LIST_EXT
 SRC_URI+="
-	${list_url} -> ${list_distfile}${list_ext}
+	${psl_list_url} -> ${PSL_LIST_DISTFILE}${PSL_LIST_EXT}
 "
 
 KEYWORDS="~amd64 ~arm ~arm64"
@@ -79,17 +78,14 @@ REQUIRED_USE_A=(
 		")"
 	")"
 )
-RESTRICT+=""
 
 inherit arrays
-
-MAKEOPTS+=" -j1"
 
 src_unpack() {
 	git-hosting_src_unpack
 
 	rmdir -v "${S}/list" || die
-	git-hosting_unpack "${DISTDIR}/${list_distfile}${list_ext}" "${S}/list"
+	git-hosting_unpack "${DISTDIR}/${PSL_LIST_DISTFILE}${PSL_LIST_EXT}" "${S}/list"
 }
 
 src_prepare() {
@@ -100,12 +96,17 @@ src_prepare() {
 
 src_configure() {
 	local myeconfargs=(
+		--disable-cfi
+		--disable-ubsan
+		--disable-asan
+
 		$(use_enable doc gtk-doc)
 		$(use_enable doc gtk-doc-html)
 		$(use_enable doc gtk-doc-pdf)
 		$(use_enable man)
 		$(use_enable static-libs static)
 		$(use_enable nls)
+		$(use_enable rpath)
 	)
 	econf "${myeconfargs[@]}"
 }
