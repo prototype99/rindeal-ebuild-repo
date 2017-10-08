@@ -12,7 +12,7 @@ LICENSE='GPL-2'
 
 SLOT='0'
 
-KEYWORDS='~amd64 ~arm'
+KEYWORDS='~amd64 ~arm ~arm64'
 IUSE='doc examples'
 
 CDEPEND="amd64? ( dev-libs/libx86emu )"
