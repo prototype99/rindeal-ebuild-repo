@@ -13,6 +13,8 @@ inherit flag-o-matic
 inherit eutils
 inherit toolchain-funcs
 inherit fcaps
+# functions: rindeal:dsf:eval
+inherit rindeal-utils
 
 DESCRIPTION="Network monitoring tools including ping and ping6"
 HOMEPAGE="https://wiki.linuxfoundation.org/networking/iputils ${GH_HOMEPAGE}"
