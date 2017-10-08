@@ -19,25 +19,30 @@ SLOT="0/5"
 MY_PV="v$(get_version_component_range 1-2)"
 SRC_URI="https://www.open-mpi.org/software/${PN}/${MY_PV}/downloads/${P}.tar.bz2"
 
-KEYWORDS="amd64 arm arm64"
+KEYWORDS="~amd64 ~arm ~arm64"
 IUSE="cairo debug gl +numa opencl +pci plugins svg static-libs xml X"
 
 # TODO opencl only works with AMD so no virtual
 # dev-util/nvidia-cuda-toolkit is always multilib
 
-CDEPEND=">=sys-libs/ncurses-5.9-r3:0
-	cairo? ( >=x11-libs/cairo-1.12.14-r4[X?,svg?] )
-	gl? ( || ( x11-drivers/nvidia-drivers[static-libs,tools] media-video/nvidia-settings ) )
-	pci? (
-		>=sys-apps/pciutils-3.3.0-r2
-		>=x11-libs/libpciaccess-0.13.1-r1
-	)
-	plugins? ( dev-libs/libltdl:0 )
-	numa? ( >=sys-process/numactl-2.0.10-r1 )
-	xml? ( >=dev-libs/libxml2-2.9.1-r4 )"
-DEPEND="${RDEPEND}
-	>=virtual/pkgconfig-0-r1"
-RDEPEND="${CDEPEND}"
+CDEPEND_A=(
+	">=sys-libs/ncurses-5.9-r3:0"
+	"cairo? ( >=x11-libs/cairo-1.12.14-r4[X?,svg?] )"
+	"gl? ( || ( x11-drivers/nvidia-drivers[static-libs,tools] media-video/nvidia-settings ) )"
+	"pci? ("
+		">=sys-apps/pciutils-3.3.0-r2"
+		">=x11-libs/libpciaccess-0.13.1-r1"
+	")"
+	"plugins? ( dev-libs/libltdl:0 )"
+	"numa? ( >=sys-process/numactl-2.0.10-r1 )"
+	"xml? ( >=dev-libs/libxml2-2.9.1-r4 )"
+)
+DEPEND_A=( "${CDEPEND_A[@]}"
+	">=virtual/pkgconfig-0-r1"
+)
+RDEPEND_A=( "${CDEPEND_A[@]}" )
+
+inherit arrays
 
 src_prepare() {
 	eapply "${FILESDIR}/${PN}-1.8.1-gl.patch"
