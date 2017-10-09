@@ -1,10 +1,5 @@
-commit 2c932d900b773987fea9d302b7028d95ac225629
-Author: Jan Chren <dev.rindeal+github.com@gmail.com>
-
-    Makefile: fix CFLAGS/LDFLAGS/... variables
-
 diff --git a/Makefile b/Makefile
-index d0f475f..9c2e624 100644
+index d0f475f..3a31ee8 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -5,12 +5,11 @@ VERSION	:= 1.4.0
@@ -22,7 +17,7 @@ index d0f475f..9c2e624 100644
  
  ifdef mingw
   BIN     := $(NAME).exe
-@@ -24,26 +23,26 @@ else
+@@ -24,26 +23,27 @@ else
   ifeq ($(OS), Darwin)
    BIN     := $(NAME)
    PKG_CONFIG_PATH := "./mac/lib/pkgconfig" 
@@ -44,6 +39,7 @@ index d0f475f..9c2e624 100644
 -LD 	= $(CROSS)gcc
 +CC 	?= $(CROSS)gcc
 +LD 	?= $(CROSS)gcc
++CCLD 	?= $(CC)
  STRIP 	= $(CROSS)strip
  
  %.o: %.c
@@ -52,7 +48,7 @@ index d0f475f..9c2e624 100644
  
  $(BIN):	$(OBJS)
 -	$(LD) -o $@ $(OBJS) $(LIBS) $(LDFLAGS) 
-+	$(LD) $(LDFLAGS) -o $@ $(OBJS) $(LIBS)
++	$(CCLD) $(LDFLAGS) -o $@ $(OBJS) $(LIBS)
  
  dist:
  	mkdir -p $(NAME)-$(VERSION)
