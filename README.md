@@ -80,6 +80,23 @@ emerge --sync
 layman -o 'https://ebuilds.janchren.eu/repos/rindeal/repositories.xml' -a rindeal
 ```
 
+Not so FAQ
+-----------
+
+#### How up-to-date are the packages here?
+
+- No automated upstream release checker a la Fedora exists yet, but neither does at Gentoo, so the freshness is provided on a best effort basis.
+- Very few packages in my repo have a "stable" version that is artificially kept back behind the upstream release schedule.
+- My goal is to have no package more than 6 months late with updates.
+
+#### I have a problem building/running a package from official Gentoo repos, can I use yours instead?
+
+Yes, in fact, one of the most common reasons for including a package in my repo is the presence of a buggy version in Gentoo repos.
+
+#### May I trust your packages?
+
+If you trust official Gentoo repos, you can trust this, too. Getting commit access to Gentoo repos is possible for any person with an internet connection and enough social engineering skills, physical identity is never verified, so the only difference is then the amount of exposure each repository gets. But then again, issues reported to bugs.gentoo.org are often not resolved for weeks, months, years if ever, while issues reported to me are fixed within hours or days.
+
 ---
 
 ### Colophon
