@@ -25,6 +25,8 @@ CDEPEND="
 DEPEND="${CDEPEND}"
 RDEPEND="${CDEPEND}"
 
+inherit arrays
+
 src_prepare() {
 	eapply_user
 	xdg_src_prepare
@@ -45,5 +47,5 @@ src_install() {
 	emake INSTALL_ROOT="${ED}" install
 
 	einstalldocs
-	dodoc DevHistory.md doc/cache-file-format.txt
+	dodoc doc/cache-file-format.txt
 }
