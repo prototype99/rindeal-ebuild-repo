@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>dev.rindeal+gentoo-overlay@gmail.com</email>
+    <name>Jan Chren (rindeal)</name>
+  </maintainer>
+  <use>
+    <flag name="plugins">Enable plugin support to inspect and modify
+			queries and responses</flag>
+    <flag name="systemd">Use systemd's socket activation instead of
+			creating the sockets itself</flag>
+  </use>
+</pkgmetadata>

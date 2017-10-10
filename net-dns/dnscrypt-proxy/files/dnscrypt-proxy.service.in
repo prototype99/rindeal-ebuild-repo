@@ -1,0 +1,26 @@
+[Unit]
+Description=DNSCrypt client proxy
+Documentation=man:dnscrypt-proxy(8)
+
+Requires=dnscrypt-proxy.socket
+After=network.target
+Before=nss-lookup.target
+
+
+[Install]
+Also=dnscrypt-proxy.socket
+WantedBy=multi-user.target
+
+
+[Service]
+Type=simple
+NonBlocking=true
+
+User=dnscrypt
+Group=dnscrypt
+
+# Edit the configuration file appropriately, or the service will not start.
+# See https://dnscrypt.org for more information.
+ExecStart=@EPREFIX@/usr/bin/dnscrypt-proxy @EPREFIX@/etc/dnscrypt-proxy.conf
+
+Restart=on-abort
