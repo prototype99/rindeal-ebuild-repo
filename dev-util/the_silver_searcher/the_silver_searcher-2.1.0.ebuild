@@ -32,7 +32,9 @@ DEPEND_A=( "${CDEPEND_A[@]}"
 	"virtual/pkgconfig"
 	"test? ( dev-util/cram )"
 )
-RDEPEND_A=( "${CDEPEND_A[@]}" )
+RDEPEND_A=( "${CDEPEND_A[@]}"
+	"!sys-apps/${PN}"
+)
 
 inherit arrays
 
