@@ -4,12 +4,12 @@
 EAPI=6
 inherit rindeal
 
-PYTHON_COMPAT=( python2_7 python3_{3,4,5} )
+PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
 
 GH_RN='github:gpocentek:python-gitlab'
 
-inherit distutils-r1
 inherit git-hosting
+inherit distutils-r1
 
 DESCRIPTION="Python wrapper for the GitLab API"
 HOMEPAGE="https://python-gitlab.readthedocs.io ${GH_HOMEPAGE}"

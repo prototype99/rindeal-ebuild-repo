@@ -6,6 +6,6 @@
     <name>Jan Chren (rindeal)</name>
   </maintainer>
   <use>
-    <flag name="docs">Build and install docs+man pages</flag>
+    <flag name="man">Build and install manpages (requires sphinx)</flag>
   </use>
 </pkgmetadata>
