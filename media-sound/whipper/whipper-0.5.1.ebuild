@@ -19,7 +19,8 @@ LICENSE="GPL-3"
 
 SLOT="0"
 
-KEYWORDS="~amd64 ~arm ~arm64"
+# arm has missing deps
+KEYWORDS="~amd64"
 IUSE_A=( )
 
 CDEPEND_A=()
