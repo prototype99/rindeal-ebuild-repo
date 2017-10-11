@@ -25,33 +25,28 @@ LICENSE="GPL-3"
 
 SLOT="0"
 
-KEYWORDS="~amd64 ~arm"
-IUSE="libav nls"
+[[ "${PV}" == *9999* ]] || KEYWORDS="~amd64"
+IUSE_A=( nls )
 
-CDEPEND="
-	libav? ( media-video/libav:= )
-	!libav? ( media-video/ffmpeg:0= )
+CDEPEND_A=(
+	"media-video/ffmpeg:0="
 
-	x11-libs/wxGTK:${WX_GTK_VER}[X]
-"
-DEPEND="${CDEPEND}
-	dev-util/intltool
-	virtual/pkgconfig
-	sys-devel/gettext
-"
-RDEPEND="${CDEPEND}"
+	"x11-libs/wxGTK:${WX_GTK_VER}[X]"
+)
+DEPEND_A=( "${CDEPEND_A[@]}"
+	"dev-util/intltool"
+	"virtual/pkgconfig"
+	"sys-devel/gettext"
+)
+RDEPEND_A=( "${CDEPEND_A[@]}" )
+
+inherit arrays
 
 pkg_setup() {
 	setup-wxwidgets unicode
 }
 
 src_prepare() {
-	if (( $(gcc-major-version) < 4 )) || \
-		[[ (( $(gcc-major-version) == 4 )) && (( $(gcc-minor-version) < 7 )) ]]
-	then
-		die "You need to activate at least gcc:4.7"
-	fi
-
 	eapply "${FILESDIR}"/${PN}-0.8.3-replace-gnu+11-with-c++11.patch
 	eapply_user
 
