@@ -7,7 +7,7 @@ inherit rindeal
 GH_RN="github:terencehonles"
 GH_REF="v${PV}"
 
-PYTHON_COMPAT=( python2_7 python3_{3,4,5} )
+PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
 
 inherit git-hosting
 inherit distutils-r1
@@ -20,7 +20,7 @@ SLOT="0"
 KEYWORDS="~amd64 ~arm ~arm64"
 
 CDEPEND_A=(
-	">=sys-fs/fuse-2.6"
+	">=sys-fs/fuse-2.6:0"
 )
 DEPEND_A=( "${CDEPEND_A[@]}"
 	"dev-python/setuptools[${PYTHON_USEDEP}]"
