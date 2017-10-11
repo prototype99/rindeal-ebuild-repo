@@ -17,28 +17,29 @@ LICENSE="ISC"
 SLOT="0"
 
 KEYWORDS="~amd64 ~arm ~arm64"
-IUSE="debug selinux utempter utf8proc static"
+IUSE_A=( debug selinux utempter utf8proc static )
 
-CDEPEND="
-	dev-libs/libevent:0=
-	|| (
-		=dev-libs/libevent-2.0*
-		>=dev-libs/libevent-2.1.5-r4
-	)
-	utempter? ( sys-libs/libutempter )
-	utf8proc? ( dev-libs/utf8proc )
-	sys-libs/ncurses:0="
-DEPEND="${CDEPEND}
-	virtual/pkgconfig"
-RDEPEND="${CDEPEND}
-	dev-libs/libevent:=
-	selinux? ( sec-policy/selinux-screen )
-"
+CDEPEND_A=(
+	"dev-libs/libevent:0="
+	">=dev-libs/libevent-2.1.5-r4"
+	"utempter? ( sys-libs/libutempter )"
+	"utf8proc? ( dev-libs/utf8proc )"
+	"sys-libs/ncurses:0="
+)
+DEPEND_A=( "${CDEPEND_A[@]}"
+	"virtual/pkgconfig"
+)
+RDEPEND_A=( "${CDEPEND_A[@]}"
+	"dev-libs/libevent:="
+	"selinux? ( sec-policy/selinux-screen )"
+)
+
+inherit arrays
 
 src_prepare() {
 	eapply_user
 
-	sed -r -e '/^(AM_)?CFLAGS/ s, -(O2|g),,g' -i Makefile.am || die
+	sed -r -e '/^(AM_)?CFLAGS/ s, -(O2|g),,g' -i -- Makefile.am || die
 
 	eautoreconf
 }

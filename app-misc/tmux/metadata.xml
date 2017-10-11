@@ -9,13 +9,4 @@
     <flag name="utempter">libutempter support - tmux will use utmp(5)</flag>
     <flag name="utf8proc">Use utf8proc for unicode character processing</flag>
   </use>
-  <longdescription>
-		tmux is a "terminal multiplexer", it enables a number of terminals
-		(or windows) to be accessed and controlled from a single terminal.
-		tmux is intended to be a simple, modern, BSD-licensed alternative to
-		programs such as <pkg>app-misc/screen</pkg>.
-	</longdescription>
-  <upstream>
-    <remote-id type="github">tmux/tmux</remote-id>
-  </upstream>
 </pkgmetadata>
