@@ -19,7 +19,7 @@ LICENSE="LGPL-2.1"
 SLOT="0"
 
 KEYWORDS="~amd64 ~arm ~arm64"
-IUSE_A=( +shared-libs static-libs )
+IUSE_A=( static-libs )
 
 CDEPEND_A=()
 DEPEND_A=( "${CDEPEND_A[@]}" )
@@ -38,7 +38,6 @@ src_prepare() {
 src_configure() {
 	local my_econf_args=(
 		$(use_enable static-libs static)
-		$(use_enable shared-libs shared)
 	)
 	econf "${my_econf_args[@]}"
 }
