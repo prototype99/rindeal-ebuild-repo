@@ -36,11 +36,11 @@
     <flag name="dvdnav">DVD with navigation input module</flag>
     <flag name="bluray">libbluray for Blu-ray disc support</flag>
     <flag name="opencv">OpenCV (computer vision) filter</flag>
-    <flag name="smbclient">SMB/CIFS support</flag>
+    <flag name="samba">SMB/CIFS support</flag>
     <flag name="dsm">libdsm SMB/CIFS access/sd module</flag>
     <flag name="sftp">SFTP file transfer via libssh2</flag>
     <flag name="nfs">support NFS protocol via libnfs</flag>
-    <flag name="v4l2">Video4Linux version 2</flag>
+    <flag name="libv4l">Video4Linux version 2</flag>
     <flag name="decklink">Blackmagic DeckLink SDI input</flag>
     <flag name="vcd">built-in VCD and CD-DA support</flag>
     <flag name="libcddb">CDDB for Audio CD</flag>
@@ -57,8 +57,8 @@
     <flag name="ogg">Ogg demux support</flag>
     <flag name="shout">libshout output plugin</flag>
     <flag name="matroska">MKV format support</flag>
-    <flag name="mod">use libmodplug</flag>
-    <flag name="mpc">use libmpcdec</flag>
+    <flag name="modplug">use libmodplug</flag>
+    <flag name="musepack">use libmpcdec</flag>
 
     <!-- ### Codec plugins: -->
     <flag name="wma-fixed">libwma-fixed module</flag>
@@ -69,10 +69,10 @@
     <flag name="crystalhd">crystalhd codec plugin</flag>
     <flag name="mad">libmad module</flag>
     <flag name="mpg123">libmpg123 decoder support</flag>
-    <flag name="gst-decode">GStreamer based decoding support (currently supports only video decoding)</flag>
+    <flag name="gstreamer">GStreamer based decoding support (currently supports only video decoding)</flag>
     <flag name="merge-ffmpeg">merge FFmpeg-based plugins</flag>
     <flag name="avcodec">libavcodec codec</flag>
-    <flag name="libva">VAAPI GPU decoding support</flag>
+    <flag name="vaapi">VAAPI GPU decoding support</flag>
     <flag name="avformat">libavformat containers</flag>
     <flag name="swscale">libswscale image scaling and conversion</flag>
     <flag name="postproc">ibpostproc image post-processing</flag>
@@ -110,7 +110,7 @@
     <flag name="aribsub">ARIB Subtitles support</flag>
     <flag name="aribb25">ARIB STD-B25</flag>
     <flag name="kate">kate codec</flag>
-    <flag name="tiger">Tiger rendering library for Kate streams</flag>
+    <flag name="libtiger">Tiger rendering library for Kate streams</flag>
 
     <!-- ### Video plugins: -->
     <flag name="gles2">OpenGL ES v2 support</flag>
@@ -127,24 +127,24 @@
     <flag name="svg">SVG rendering library</flag>
     <flag name="svgdec">SVG image decoder library</flag>
     <flag name="aa">aalib output</flag>
-    <flag name="caca">libcaca output</flag>
+    <flag name="libcaca">libcaca output</flag>
     <flag name="mmal">Multi-Media Abstraction Layer (MMAL) hardware plugin</flag>
     <flag name="evas">use evas output module</flag>
 
     <!-- ### Audio plugins: -->
-    <flag name="pulse">use the PulseAudio client library</flag>
+    <flag name="pulseaudio">use the PulseAudio client library</flag>
     <flag name="alsa">support the Advanced Linux Sound Architecture</flag>
     <flag name="jack">do not use jack</flag>
     <flag name="opensles">Android OpenSL ES audio module</flag>
     <flag name="tizen-audio">Tizen audio module</flag>
-    <flag name="samplerate">Resampler with libsamplerate</flag>
+    <flag name="libsamplerate">Resampler with libsamplerate</flag>
     <flag name="soxr">SoX Resampler library</flag>
     <flag name="chromaprint">Chromaprint based audio fingerprinter</flag>
     <flag name="chromecast">Chromecast streaming support</flag>
 
     <!-- ### Interface plugins: -->
     <flag name="qt5">Qt UI support</flag>
-    <flag name="skins2">skins interface module</flag>
+    <flag name="skins">skins interface module</flag>
     <flag name="libtar">libtar support for skins2</flag>
     <flag name="ncurses">ncurses text-based interface</flag>
     <flag name="lirc">lirc support</flag>
@@ -163,16 +163,19 @@
     <flag name="microdns">mDNS services discovery</flag>
 
     <!-- ### Misc plugins: -->
-    <flag name="libxml2">libxml2 support</flag>
+    <flag name="xml">libxml2 support</flag>
     <flag name="libgcrypt">gcrypt support</flag>
     <flag name="gnutls">GNU TLS TLS/SSL support</flag>
     <flag name="taglib">TagLib</flag>
     <flag name="secret">libsecret for keystore</flag>
     <flag name="kwallet">kwallet (via D-Bus) for keystore</flag>
-    <flag name="notify">libnotify notification</flag>
+    <flag name="libnotify">libnotify notification</flag>
 
     <!-- ### Components: -->
     <flag name="vlc">build the VLC media player</flag>
+
+
+    <flag name="httpd">Enables a web based interface for vlc.</flag>
 
 
 <!--    <flag name="atmo">Enables support for AtmoLight (homebrew Ambient Lighting Technology)</flag>

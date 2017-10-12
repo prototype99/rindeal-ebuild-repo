@@ -37,7 +37,6 @@ IUSE_A=(
 	cpu_flags_x86_mmx
 	cpu_flags_x86_sse
 	cpu_flags_arm_neon
-	cpu_flags_arm_arm64
 	debug
 	gprof
 	cprof
@@ -206,7 +205,6 @@ IUSE_A=(
 KEYWORDS="~amd64 ~arm ~arm64"
 
 CDEPEND_A=(
-	"!<media-video/ffmpeg-1.2:0"
 	"dev-libs/libgpg-error:0"
 	"net-dns/libidn:0"
 	">=sys-libs/zlib-1.2.5.1-r2:0[minizip]"
@@ -335,11 +333,7 @@ DEPEND_A=( "${CDEPEND_A[@]}"
 # Temporarily block non-live FFMPEG versions as they break vdpau, 9999 works;
 # thus we'll have to wait for a new release there.
 RDEPEND_A=( "${CDEPEND_A[@]}"
-	"vdpau? ("
-		">=x11-libs/libvdpau-0.6:0"
-		">=media-video/ffmpeg-2.2:0="
-		"<media-video/ffmpeg-2.9:0="
-	")"
+	"vdpau? ( >=x11-libs/libvdpau-0.6:0 )"
 	"vnc? ( >=net-libs/libvncserver-0.9.9:0 )"
 	"vorbis? ( >=media-libs/libvorbis-1.1:0 )"
 	"vpx? ( media-libs/libvpx:0= )"
@@ -434,10 +428,10 @@ src_configure() {
 		$(use_enable static-libs static)
 		$(use_with pic)
 		--enable-fast-install
- 		# --with-aix-soname
- 		$(use_with gnu-ld)
- 		# --with-sysroot
- 		--enable-libtool-lock
+		# --with-aix-soname
+		$(use_with gnu-ld)
+		# --with-sysroot
+		--enable-libtool-lock
 		$(use_enable nls)
 		$(use_enable rpath)
 		$(use_enable dbus)
@@ -453,7 +447,7 @@ src_configure() {
 		$(use_enable cpu_flags_x86_mmx mmx)
 		$(use_enable cpu_flags_x86_sse sse) # SSE (1-4)
 		$(use_enable cpu_flags_arm_neon neon)
-		$(use_enable cpu_flags_arm_arm64 arm64) # arm 64-bit optimizations
+		$(use_enable arm64) # arm 64-bit optimizations
 		--disable-altivec # powerpc optimizations
 		$(use_enable optimize-memory) # optimize memory usage over performance
 
@@ -681,4 +675,3 @@ pkg_postinst() {
 		ewarn "If you do not do it, vlc will take a long time to load."
 	fi
 }
-
