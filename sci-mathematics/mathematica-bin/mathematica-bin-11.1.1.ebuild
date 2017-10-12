@@ -70,18 +70,18 @@ my_run_selfextractor() {
 	#   try running something like `head -c $((1024*9)) <SCRIPT> > Makeself.sh`
 
 	# -h | --help)
-    # --info)
-    # --dumpconf)
-    # --lsm)
-    # --list)
-    # --check)
-    # --confirm)
-    # --keep)
-    # --target)
-    # --nox11)
-    # --nochown)
-    # --xwin)
-    # --phase2)
+	# --info)
+	# --dumpconf)
+	# --lsm)
+	# --list)
+	# --check)
+	# --confirm)
+	# --keep)
+	# --target)
+	# --nox11)
+	# --nochown)
+	# --xwin)
+	# --phase2)
 
 	set -- sh "${DISTDIR}/${WM_SELFEXTRACTOR_FILENAME}" "${@}"
 	echo "Running: $@"
