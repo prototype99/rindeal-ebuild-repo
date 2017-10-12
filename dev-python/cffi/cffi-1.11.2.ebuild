@@ -5,37 +5,33 @@
 EAPI=6
 inherit rindeal
 
+GH_RN="bitbucket"
+GH_REF="v${PV}"
+
 # DO NOT ADD pypy to PYTHON_COMPAT
 # pypy bundles a modified version of cffi. Use python_gen_cond_dep instead.
 PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
 
+inherit git-hosting
 inherit distutils-r1
-inherit vcs-snapshot
 
 DESCRIPTION="Foreign Function Interface for Python calling C code"
-HOMEPAGE="http://cffi.readthedocs.org/ https://pypi.python.org/pypi/cffi"
+HOMEPAGE="https://cffi.readthedocs.org/ ${GH_HOMEPAGE} https://pypi.python.org/pypi/cffi"
 LICENSE="MIT"
 
 SLOT="0/${PV}"
-if [[ ${PV} == *9999* ]] ; then
-	commit=2f3c1c5
-	# https://bitbucket.org/cffi/cffi/downloads/?tab=tags
-	SRC_URI="https://bitbucket.org/cffi/cffi/get/${commit}.tar.bz2"
-	S="${WORKDIR}/${commit}"
-else
-	SRC_URI="mirror://pypi/${PN:0:1}/${PN}/${P}.tar.gz"
-	KEYWORDS="~amd64 ~arm ~arm64"
-fi
 
+KEYWORDS="~amd64 ~arm ~arm64"
 IUSE="doc test"
 
-RDEPEND="
+CDEPEND="
 	virtual/libffi
 	dev-python/pycparser[${PYTHON_USEDEP}]"
-DEPEND="${RDEPEND}
+DEPEND="${CDEPEND}
 	virtual/pkgconfig
 	doc? ( dev-python/sphinx[${PYTHON_USEDEP}] )
 	test? (	dev-python/pytest[${PYTHON_USEDEP}] )"
+RDEPEND="${CDEPEND}"
 
 # Avoid race on _configtest.c (distutils/command/config.py:_gen_temp_sourcefile)
 DISTUTILS_IN_SOURCE_BUILD=1
