@@ -24,14 +24,18 @@ SLOT="0/${PV}"
 KEYWORDS="~amd64 ~arm ~arm64"
 IUSE="doc test"
 
-CDEPEND="
-	virtual/libffi
-	dev-python/pycparser[${PYTHON_USEDEP}]"
-DEPEND="${CDEPEND}
-	virtual/pkgconfig
-	doc? ( dev-python/sphinx[${PYTHON_USEDEP}] )
-	test? (	dev-python/pytest[${PYTHON_USEDEP}] )"
-RDEPEND="${CDEPEND}"
+CDEPEND_A=(
+	"virtual/libffi"
+	"dev-python/pycparser[${PYTHON_USEDEP}]"
+)
+DEPEND_A=( "${CDEPEND_A[@]}"
+	"virtual/pkgconfig"
+	"doc? ( dev-python/sphinx[${PYTHON_USEDEP}] )"
+	"test? (	dev-python/pytest[${PYTHON_USEDEP}] )"
+)
+RDEPEND_A=( "${CDEPEND_A[@]}" )
+
+inherit arrays
 
 # Avoid race on _configtest.c (distutils/command/config.py:_gen_temp_sourcefile)
 DISTUTILS_IN_SOURCE_BUILD=1
