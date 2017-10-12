@@ -41,7 +41,7 @@ CDEPEND_A=(
 		">=dev-libs/libgcrypt-1.2.2:0"
 		">=net-libs/gnutls-1.4.4"
 	")"
-	"external-fuse? ( >=sys-fs/fuse-2.8.0 )"
+	"external-fuse? ( >=sys-fs/fuse-2.8.0:0 )"
 )
 DEPEND_A=( "${CDEPEND_A[@]}"
 	"sys-apps/attr"
