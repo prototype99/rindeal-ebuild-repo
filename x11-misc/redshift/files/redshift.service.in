@@ -1,0 +1,16 @@
+[Unit]
+Description=Redshift display colour temperature adjustment
+Documentation=http://jonls.dk/redshift/
+
+After=display-manager.service
+
+StartLimitIntervalSec=60
+
+
+[Install]
+WantedBy=default.target
+
+
+[Service]
+ExecStart=@EPREFIX@/usr/bin/redshift
+Restart=on-failure

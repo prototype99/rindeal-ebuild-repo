@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>dev.rindeal+gentoo-overlay@gmail.com</email>
+    <name>Jan Chren (rindeal)</name>
+  </maintainer>
+  <use>
+    <flag name="gui">Install systray GUI</flag>
+    <flag name="methods_drm">DRM method</flag>
+    <flag name="methods_randr">RANDR method</flag>
+    <flag name="methods_vidmode">VidMode method</flag>
+    <flag name="location_providers_geoclue2">Geoclue2 location provider</flag>
+  </use>
+</pkgmetadata>
