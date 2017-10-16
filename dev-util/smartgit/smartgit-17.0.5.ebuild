@@ -19,7 +19,7 @@ LICENSE="smartgit"
 # in `~/.smartgit/` for each new major release. The subdir name corresponds with SLOT.
 SLOT="$(get_major_version)"
 PN_SLOTTED="${PN}${SLOT}"
-ARCHIVED=0
+ARCHIVED=1
 if (( ARCHIVED )) ; then
 	SRC_URI="https://www.syntevo.com/static/smart/download/${PN}hg/archive/${PN}-linux-${PV//./_}.tar.gz"
 else
