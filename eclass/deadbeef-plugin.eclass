@@ -27,7 +27,9 @@ ddb_plugin_newins() {
 }
 
 ddb_plugin_doins() {
-	ddb_plugin_newins "${1}" "${1##*/}"
+	for p in "${@}" ; do
+		ddb_plugin_newins "${p}" "${p##*/}"
+	done
 }
 
 
