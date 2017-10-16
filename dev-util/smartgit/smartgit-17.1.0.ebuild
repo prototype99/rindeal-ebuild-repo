@@ -34,11 +34,14 @@ fi
 
 KEYWORDS="~amd64"
 
-RDEPEND="
-	>=virtual/jre-1.7
-"
+RDEPEND_A=(
+	# SmartGit can be started with Java 9 if smartgit.startup.allowJava9=true is set
+	"virtual/jre:1.8"
+)
 
 RESTRICT+=" mirror strip"
+
+inherit arrays
 
 S="${WORKDIR}/${PN}"
 
