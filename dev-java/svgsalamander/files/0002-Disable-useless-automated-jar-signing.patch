@@ -1,0 +1,30 @@
+Description: Disable jar signing in ant script
+Author: Felix Natter <fnatter@gmx.net>
+Forwarded: not-needed
+Last-Update: 2016-07-23
+--- a/svg-core/build.xml
++++ b/svg-core/build.xml
+@@ -110,23 +110,7 @@
+             </fileset>
+         </jar>
+         
+-        <delete file="${key.location}"/>
+-        <genkey alias="${key.user}" storepass="${key.password}" keystore="${key.location}" validity="1000" verbose="true">
+-            <dname>
+-                <param name="CN" value="Mark McKay, mark@kitfox.com"/>
+-                <param name="OU" value="kitfox.com"/>
+-                <param name="O"  value="kitfox"/>
+-                <param name="L"  value="Toronto"/>
+-                <param name="S"  value="Ontario"/>
+-                <param name="C"  value="CA"/>
+-            </dname>
+-        </genkey>
+-        
+         <copy file="${dist.jar}" toFile="${project.www.jar}"/>
+-        <signjar jar="${project.www.jar}" 
+-                 alias="${key.user}" 
+-                 storepass="${key.password}" 
+-                 keystore="${key.location}"/>
+ 
+         <delete file="${project.tiny.jar}"/>
+         <jar destfile="${project.tiny.jar}" update="true">

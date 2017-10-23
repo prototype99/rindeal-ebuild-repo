@@ -1,0 +1,14 @@
+Description: Skip some netbeans ant tasks by setting mkdist.disabled:=true
+Author: Felix Natter <fnatter@gmx.net>
+Forwarded: not-needed
+Last-Update: 2016-07-23
+--- a/svg-core/build.xml
++++ b/svg-core/build.xml
+@@ -79,6 +79,7 @@
+     <property name="www.dir" location="../www"/>
+     <property name="project.www.jar" value="${www.dir}/binaries/svgSalamander.jar"/>
+     <property name="project.tiny.jar" value="${www.dir}/binaries/svgSalamander-tiny.jar"/>
++    <property name="mkdist.disabled" value="true"/>
+         
+     <target name="-pre-compile">
+         <mkdir dir="${animtime.outdir}"/>
