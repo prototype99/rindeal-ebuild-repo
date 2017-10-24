@@ -84,7 +84,6 @@ src_prepare-locales() {
 	done
 }
 
-
 src_prepare() {
 	eapply "${FILESDIR}"/00-build.patch
 	eapply "${FILESDIR}"/04-use_system_jmapviewer.patch
@@ -99,7 +98,7 @@ src_prepare() {
 
 	## fix debian paths
 	xmlstarlet ed --inplace -d "project/target[@name='init-properties']/path[@id='classpath']/fileset" build.xml || die
- 	local p f
+	local p f
 	for p in ${EANT_GENTOO_CLASSPATH} ; do
 		for f in $(java-pkg_getjars "${p}" | tr ':' ' ') ; do
 			local base_xpath="project/target[@name='init-properties']/path[@id='classpath']"
@@ -161,7 +160,7 @@ src_install() {
 
 	### Data
 	insinto /usr/share/${PN}
-    doins -r images styles data
+	doins -r images styles data
 
 	### Icons
 	newicon images/logo.png ${PN}.png
@@ -177,7 +176,7 @@ src_install() {
 
 	### Misc
 	insinto /usr/share/appdata
-    doins "linux/tested/usr/share/metainfo/${PN}.appdata.xml"
+	doins "linux/tested/usr/share/metainfo/${PN}.appdata.xml"
 
 	local make_desktop_entry_args=(
 		"${EPREFIX}/usr/bin/${PN} %F"	# exec
