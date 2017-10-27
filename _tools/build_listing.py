@@ -1,16 +1,18 @@
 #!/usr/bin/env python3
-# Copyright 2016 Jan Chren (rindeal) <dev.rindeal@gmail.com>
+# Copyright 2016-2017 Jan Chren (rindeal) <dev.rindeal@gmail.com>
 # Distributed under the terms of the GNU General Public License v2
 
 import os
+import glob
+import jinja2
+import portage
 
 SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
 PORTDIR_OVERLAY = os.path.realpath(SCRIPT_DIR + '/../')
+PORTAGE_DB = portage.db[portage.root]["porttree"].dbapi
+
 os.chdir(PORTDIR_OVERLAY)
 os.environ["PORTDIR_OVERLAY"] = PORTDIR_OVERLAY
-
-import portage
-portage_db = portage.db[portage.root]["porttree"].dbapi
 
 # structure will look like this:
 # cats = {
@@ -27,8 +29,6 @@ portage_db = portage.db[portage.root]["porttree"].dbapi
 # cats = defaultdict(set)
 cats = {}
 
-import glob
-
 for f in glob.iglob('*/*/*.ebuild'):
     cat, pn, pf = f.split('/')
     if not cat in cats:
@@ -36,16 +36,14 @@ for f in glob.iglob('*/*/*.ebuild'):
     if pn in cats[cat]:
         continue
 
-    db_pkg = portage_db.xmatch("match-all", '{0}/{1}::rindeal'.format(cat, pn))[0]
-    desc, home = portage_db.aux_get(db_pkg, ['DESCRIPTION', 'HOMEPAGE'])
+    db_pkg = PORTAGE_DB.xmatch("match-all", '{0}/{1}::rindeal'.format(cat, pn))[0]
+    desc, home = PORTAGE_DB.aux_get(db_pkg, ['DESCRIPTION', 'HOMEPAGE'])
     home = home.split()[0] # get only the first_pkg homepage
 
     cats[cat][pn] = {
         'desc': desc,
         'home': home
     }
-
-import jinja2
 
 fs_loader = jinja2.FileSystemLoader(SCRIPT_DIR)
 jinja_env = jinja2.Environment(
@@ -55,4 +53,4 @@ jinja_env = jinja2.Environment(
     )
 
 template = jinja_env.get_template('listing.tmpl.md')
-print(template.render(categories = cats))
+print(template.render(categories=cats))
