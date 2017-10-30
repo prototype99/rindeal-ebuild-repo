@@ -1,0 +1,3 @@
+- brand new ebuild
+- all bundled dependencies removed ala Debian
+- the ebuild uses Debian sources and patches
