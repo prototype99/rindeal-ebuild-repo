@@ -124,6 +124,15 @@ src_prepare() {
 	sed -e 's|"javax.swing.plaf.metal.MetalLookAndFeel"|"com.sun.java.swing.plaf.gtk.GTKLookAndFeel"|' \
 		-i -- src/org/openstreetmap/josm/tools/PlatformHookUnixoid.java || die
 
+	## normalize user-agent
+	sed -r -e 's|(String *result *= *"JOSM/1.5 \(").*|\1 + v + ")";|' \
+		-i -- src/org/openstreetmap/josm/data/Version.java || die
+	sed -e '/Main.platform.getOSDescription/d' -i -- src/org/openstreetmap/josm/data/Version.java || die
+	sed -r -e 's|(getAgentString\(\)) *\+.*|\1;|' -i -- src/org/openstreetmap/josm/data/Version.java || die
+
+	# do not display MOTD by default
+	sed -e 's|getBoolean("help.displaymotd", true)|getBoolean("help.displaymotd", false)|' -i -- src/org/openstreetmap/josm/gui/GettingStarted.java || die
+
 	# update `REVISION` entry
 	xmlstarlet ed --inplace -u "project/target[@name='create-revision']/echo[@file='\${revision.dir}/REVISION']" \
 		-v "$(cat <<-_EOF_
