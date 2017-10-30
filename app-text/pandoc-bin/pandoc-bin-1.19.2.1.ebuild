@@ -15,7 +15,7 @@ LICENSE="GPL-2"
 SLOT="0"
 SRC_URI="amd64? ( https://github.com/jgm/pandoc/releases/download/${PV}/${MY_PN}-${PV}-1-amd64.deb )"
 
-KEYWORDS="-* ~amd64"
+KEYWORDS="-* amd64"
 IUSE="citeproc"
 RESTRICT+=" mirror"
 
