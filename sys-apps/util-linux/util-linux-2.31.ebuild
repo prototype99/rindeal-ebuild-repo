@@ -122,13 +122,13 @@ IUSE_A=(
 
 	# extras:
 	+fdisk +sfdisk +cfdisk
-	+uuidgen +blkid +findfs +wipefs +findmnt blkzone uuidparse
+	+uuidgen +uuidparse +blkid +findfs +wipefs +findmnt blkzone
 	+mkfs isosize +fstrim +swapon +lsblk +lscpu
 	chcpu
 	swaplabel +mkswap
 	look mcookie +namei +whereis +getopt +blockdev +prlimit +lslocks
 	+flock ipcmk
-	lsipc +lsns +renice +setsid readprofile +dmesg ctrlaltdel +fsfreeze +blkdiscard ldattach rtcwake setarch +script +scriptreplay col colcrt colrm +column +hexdump rev fincore
+	lsipc +lsns +renice rfkill +setsid readprofile +dmesg ctrlaltdel +fsfreeze +blkdiscard ldattach rtcwake setarch +script +scriptreplay col colcrt colrm +column +hexdump rev fincore
 	+ionice +taskset +chrt
 )
 
@@ -146,7 +146,8 @@ CDEPEND_A=(
 	# `AC_CHECK_HEADERS([slang.h slang/slang.h])`
 	# `AC_CHECK_HEADERS([slcurses.h slang/slcurses.h],`
 	"slang? ( sys-libs/slang )"
-	# `PKG_CHECK_MODULES(TINFO, [tinfo],`
+	# `UL_TINFO_CHECK([tinfow])`
+	# `UL_TINFO_CHECK([tinfo])`
 	"tinfo? ( sys-libs/ncurses:*[tinfo] )"
 	# `UL_CHECK_LIB([readline], [readline])`
 	"readline? ( sys-libs/readline:0= )"
@@ -269,6 +270,8 @@ REQUIRED_USE_A=(
 	"lsipc? ( libsmartcols )"
 	# `UL_REQUIRES_BUILD([lsns], [libsmartcols])`
 	"lsns? ( libsmartcols )"
+	# `UL_REQUIRES_BUILD([rfkill], [libsmartcols])`
+	"rfkill? ( libsmartcols )"
 	# `UL_REQUIRES_BUILD([fincore], [libsmartcols])`
 	"fincore? ( libsmartcols )"
 	# `UL_REQUIRES_BUILD([column], [libsmartcols])`
@@ -341,12 +344,12 @@ src_prepare() {
 	my_use_build_init cfdisk
 
 	my_use_build_init uuidgen
+	my_use_build_init uuidparse
 	my_use_build_init blkid
 	my_use_build_init findfs
 	my_use_build_init wipefs
 	my_use_build_init findmnt
 	my_use_build_init blkzone
-# 	my_use_build_init uuidparse # TODO: enable in v2.31
 
 	my_use_build_init mkfs
 	my_use_build_init isosize
@@ -376,6 +379,7 @@ src_prepare() {
 	my_use_build_init lsns
 	my_use_build_init fincore
 	my_use_build_init renice
+	my_use_build_init rfkill
 	my_use_build_init setsid
 	my_use_build_init readprofile
 	my_use_build_init dmesg
@@ -492,6 +496,7 @@ src_configure() {
 		$(use_enable pivot_root)
 		$(use_enable ipcrm)
 		$(use_enable ipcs)
+		$(use_enable rfkill)
 		$(use_enable tunelp)
 		$(use_enable kill)
 		$(use_enable last)
