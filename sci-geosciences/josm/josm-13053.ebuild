@@ -33,9 +33,13 @@ HOMEPAGE="https://josm.openstreetmap.de/"
 LICENSE="GPL-2"
 
 SLOT="0"
-MY_P="${PN}-0.0.svn${PV}"
+MY_P="${PN}_0.0.svn${PV}"
+DEBIAN_REVISION="1"
 # Upstream doesn't provide versioned tarballs
-SRC_URI="mirror://debian/pool/main/${PN:0:1}/${PN}/${MY_P//-/_}+dfsg.orig.tar.gz"
+SRC_URI_A=(
+	"mirror://debian/pool/main/${PN:0:1}/${PN}/${MY_P}+dfsg.orig.tar.gz"
+	"mirror://debian/pool/main/${PN:0:1}/${PN}/${MY_P}+dfsg-${DEBIAN_REVISION}.debian.tar.xz"
+)
 
 KEYWORDS="~amd64"
 
@@ -63,7 +67,8 @@ RESTRICT+=" mirror"
 
 inherit arrays
 
-S="${WORKDIR}/${MY_P}"
+S="${WORKDIR}/${MY_P//_/-}"
+DEBIAN_DIR="${WORKDIR}/debian"
 
 L10N_LOCALES=(
 	af am ar ast az be bg bn br bs ca ca@valencia cs cy da de de_DE el en_AU en_CA en_GB eo es et
@@ -85,12 +90,12 @@ src_prepare-locales() {
 }
 
 src_prepare() {
-	eapply "${FILESDIR}"/00-build.patch
-	eapply "${FILESDIR}"/04-use_system_jmapviewer.patch
-	eapply "${FILESDIR}"/05-fix_version.patch
-	eapply "${FILESDIR}"/06-move_data_out_of_jar.patch
-	eapply "${FILESDIR}"/07-use_system_fonts.patch
-	eapply "${FILESDIR}"/08-use_noto_font.patch
+	eapply "${DEBIAN_DIR}/patches"/00-build.patch
+	eapply "${DEBIAN_DIR}/patches"/04-use_system_jmapviewer.patch
+	eapply "${DEBIAN_DIR}/patches"/05-fix_version.patch
+	eapply "${DEBIAN_DIR}/patches"/06-move_data_out_of_jar.patch
+	eapply "${DEBIAN_DIR}/patches"/07-use_system_fonts.patch
+	eapply "${DEBIAN_DIR}/patches"/08-use_noto_font.patch
 
 	default
 
