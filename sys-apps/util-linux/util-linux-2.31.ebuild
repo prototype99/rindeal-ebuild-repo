@@ -185,6 +185,7 @@ RDEPEND_A=( "${CDEPEND_A[@]}"
 		'chfn-chsh|login|su|vipw|nologin|newgrp' \
 			'!sys-apps/shadow' )"
 	"reset? ( !sys-libs/ncurses )"
+	"rfkill? ( !net-wireless/rfkill )"
 )
 
 REQUIRED_USE_A=(
