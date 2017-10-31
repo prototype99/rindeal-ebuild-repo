@@ -8,7 +8,7 @@ inherit rindeal
 GH_RN="github:karelzak"
 GH_REF="v${PV}"
 
-PYTHON_COMPAT=( python{2_7,3_{3,4,5}} )
+PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
 
 # functions: rindeal:dsf:eval
 inherit rindeal-utils
