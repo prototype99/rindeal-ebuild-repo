@@ -16,8 +16,8 @@ inherit eutils
 DESCRIPTION="Python-powered, cross-platform, Unix-gazing shell"
 HOMEPAGE="
 	${GH_HOMEPAGE}
-	http://xonsh.readthedocs.org/
-	http://pypi.python.org/pypi/xonsh"
+	https://xonsh.readthedocs.org/
+	https://pypi.python.org/pypi/xonsh"
 LICENSE="BSD"
 
 SLOT="0"
@@ -35,6 +35,7 @@ DEPEND=( "${CDEPEND_A[@]}"
 		"dev-python/nose[${PYTHON_USEDEP}]"
 	")"
 )
+RDEPEND_A=( "${CDEPEND_A[@]}" )
 
 inherit arrays
 
