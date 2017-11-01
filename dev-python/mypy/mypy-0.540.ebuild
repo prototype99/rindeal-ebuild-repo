@@ -22,14 +22,15 @@ SLOT="0"
 KEYWORDS="~amd64 ~arm ~arm64"
 IUSE="doc test"
 
-DEPEND="
-	test? ( dev-python/flake8[${PYTHON_USEDEP}] )
-	doc? (
-		dev-python/sphinx[${PYTHON_USEDEP}]
-		dev-python/sphinx_rtd_theme[${PYTHON_USEDEP}]
-	)
-"
-RDEPEND_A=(
+CDEPEND_A=( )
+DEPEND_A=( "${CDEPEND_A[@]}"
+	"test? ( dev-python/flake8[${PYTHON_USEDEP}] )"
+	"doc? ("
+		"dev-python/sphinx[${PYTHON_USEDEP}]"
+		"dev-python/sphinx_rtd_theme[${PYTHON_USEDEP}]"
+	")"
+)
+RDEPEND_A=( "${CDEPEND_A[@]}"
 	"dev-python/typeshed"
 	">=dev-python/typed-ast-1.0.4[${PYTHON_USEDEP}]"
 	"<dev-python/typed-ast-1.1.0[${PYTHON_USEDEP}]"
@@ -57,7 +58,7 @@ python_test() {
 python_install_all() {
 	use doc && local HTML_DOCS=( docs/build/html/. )
 
-	dosym /usr/share/typeshed /usr/lib/${PN}/typeshed
+	dosym ../../share/typeshed /usr/lib/${PN}/typeshed
 
 	distutils-r1_python_install_all
 }
