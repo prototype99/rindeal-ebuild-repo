@@ -137,7 +137,7 @@ src_install() {
 
 	# move passwd to / to help recover broke systems #64441
 	emv "${ED}"/usr/bin/passwd "${ED}"/bin/
-	dosym /bin/passwd /usr/bin/passwd
+	dosym ../../bin/passwd /usr/bin/passwd
 
 	insinto /etc
 	insopts -m0644
