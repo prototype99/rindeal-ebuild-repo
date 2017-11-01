@@ -7,8 +7,8 @@
   </maintainer>
   <use>
     <flag name="mmal">Enables Multi-Media Abstraction Layer (MMAL) decoding support: Available e.g. on the Raspberry Pi.</flag>
-	<flag name="pgsql">PostgreSQL support</flag>
-	<flag name="v4l2">V4L2 support, with this disabled, only network streams will work</flag>
-	<flag name="sqlite3">SQLite3 support</flag>
+    <flag name="pgsql">PostgreSQL support</flag>
+    <flag name="v4l2">V4L2 support, with this disabled, only network streams will work</flag>
+    <flag name="sqlite3">SQLite3 support</flag>
   </use>
 </pkgmetadata>
