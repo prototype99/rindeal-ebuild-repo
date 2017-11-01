@@ -166,7 +166,7 @@
     <flag name="lsipc">lsipc(1) - show information on IPC facilities currently employed in the system</flag>
     <flag name="lsns">lsns(8) - list namespaces</flag>
     <flag name="renice">renice(1) - alter priority of running processes</flag>
-	<flag name="rfkill">rfkill(8) - tool for enabling and disabling wireless devices</flag>
+    <flag name="rfkill">rfkill(8) - tool for enabling and disabling wireless devices</flag>
     <flag name="setsid">setsid(1) - run a program in a new session</flag>
     <flag name="readprofile">readprofile(8) - read kernel profiling information</flag>
     <flag name="dmesg">dmesg(1) - print or control the kernel ring buffer</flag>
