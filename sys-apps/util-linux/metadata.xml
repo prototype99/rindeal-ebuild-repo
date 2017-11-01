@@ -132,13 +132,12 @@
     <flag name="cfdisk">cfdisk(8) - display or manipulate a disk partition table; curses-based</flag>
 
     <flag name="uuidgen">uuidgen(1) - create a new UUID value</flag>
-	<flag name="uuidparse">uuidparse(1) - utility to parse unique identifiers</flag>
+    <flag name="uuidparse">uuidparse(1) - utility to parse unique identifiers</flag>
     <flag name="blkid">blkid(8) - locate/print block device attributes</flag>
     <flag name="findfs">findfs(8) - find a filesystem by label or UUID</flag>
     <flag name="wipefs">wipefs(8) - wipe a signature from a device</flag>
     <flag name="findmnt">findmnt(8) - find a filesystem</flag>
     <flag name="blkzone">blkzone(8) - run zone command on a device</flag>
-    <flag name="uuidparse">uuidparse(1) - utility to parse unique identifiers</flag>
 
     <flag name="mkfs">mkfs(8) - build a Linux filesystem</flag>
     <flag name="isosize">isosize(8) - output the length of an iso9660 filesystem</flag>
