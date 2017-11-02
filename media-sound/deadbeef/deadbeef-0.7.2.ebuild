@@ -184,6 +184,10 @@ REQUIRED_USE_A=(
 			"plugin_decoder_mp3-libmad"
 		")"
 	")"
+	"$(rindeal:dsf:eval \
+		"plugin_decoder_mp3-libmpg123|plugin_decoder_mp3-libmad" \
+			"plugin_decoder_mp3"
+	)"
 	"plugin_misc_shellexecui? ("
 		# `AS_IF([test "${enable_shellexecui}" != "no" -a "${enable_shellexec}" != "no"]`
 		"plugin_misc_shellexec"
