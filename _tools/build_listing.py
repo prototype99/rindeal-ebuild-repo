@@ -5,14 +5,15 @@
 import os
 import glob
 import jinja2
-import portage
 
 SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
-PORTDIR_OVERLAY = os.path.realpath(SCRIPT_DIR + '/../')
-PORTAGE_DB = portage.db[portage.root]["porttree"].dbapi
 
-os.chdir(PORTDIR_OVERLAY)
-os.environ["PORTDIR_OVERLAY"] = PORTDIR_OVERLAY
+from ebuild_repo_toolbox import EbuildRepoToolbox
+
+EbuildRepoToolbox.setup_working_environment()
+PORTAGE_DB = EbuildRepoToolbox.get_portage_dbapi()
+
+#settings = portage.config()
 
 # structure will look like this:
 # cats = {
@@ -44,6 +45,7 @@ for f in glob.iglob('*/*/*.ebuild'):
         'desc': desc,
         'home': home
     }
+
 
 fs_loader = jinja2.FileSystemLoader(SCRIPT_DIR)
 jinja_env = jinja2.Environment(
