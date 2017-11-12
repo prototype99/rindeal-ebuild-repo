@@ -4,13 +4,14 @@
 EAPI=6
 inherit rindeal
 
+# to unpack .deb archive
 inherit unpacker
 
-MY_PN="${PN//-bin/}"
-
 DESCRIPTION="Universal markup converter"
-HOMEPAGE="http://pandoc.org https://github.com/jgm/pandoc"
+HOMEPAGE="https://pandoc.org https://github.com/jgm/pandoc"
 LICENSE="GPL-2"
+
+MY_PN="${PN//-bin/}"
 
 SLOT="0"
 SRC_URI="amd64? ( https://github.com/jgm/pandoc/releases/download/${PV}/${MY_PN}-${PV}-1-amd64.deb )"
@@ -19,12 +20,15 @@ KEYWORDS="-* amd64"
 IUSE="citeproc"
 RESTRICT+=" mirror"
 
-DEPEND="
+CDEPEND="
 	dev-libs/gmp:*
-	sys-libs/zlib:*"
-RDEPEND="${DEPEND}
+	sys-libs/zlib:*
+"
+DEPEND="${CDEPEND}"
+RDEPEND="${CDEPEND}
 	!app-text/pandoc
-	citeproc? ( !dev-haskell/pandoc-citeproc )"
+	citeproc? ( !dev-haskell/pandoc-citeproc )
+"
 
 S="${WORKDIR}"
 
