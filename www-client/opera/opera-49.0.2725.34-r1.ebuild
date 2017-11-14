@@ -21,49 +21,54 @@ LICENSE="OPERA-2014"
 
 SLOT="$(get_version_component_range 1)"
 PN_SLOTTED="${PN}${SLOT}"
-SRC_URI_BASE="https://get.geo.opera.com/pub/${PN}/desktop/${PV}/linux/${PN}-stable_${PV}"
-SRC_URI="
-	amd64? ( ${SRC_URI_BASE}_amd64.deb )
-"
+SRC_URI_OPERA_BASE="https://get.geo.opera.com/pub/${PN}/desktop/${PV}/linux/${PN}-stable_${PV}"
+SRC_URI_CODECS_V="62.0.3202.89-0ubuntu0.17.10.1386"
+SRC_URI_A=(
+	"amd64? ("
+		"${SRC_URI_OPERA_BASE}_amd64.deb"
+		"mirror://ubuntu/pool/universe/c/chromium-browser/chromium-codecs-ffmpeg-extra_${SRC_URI_CODECS_V}_amd64.deb"
+	")"
+)
 
 KEYWORDS="-* ~amd64"
 IUSE="autoupdate"
 
-RDEPEND="
-	dev-libs/expat
-	dev-libs/glib:2
-	dev-libs/nspr
-	dev-libs/nss
-	dev-libs/openssl:0
-	gnome-base/gconf:2
-	media-libs/alsa-lib
-	media-libs/fontconfig
-	media-libs/freetype
-	net-misc/curl
-	net-print/cups
-	sys-apps/dbus
-	sys-libs/libcap
-	x11-libs/cairo
-	x11-libs/gdk-pixbuf
-	x11-libs/gtk+:2
-	x11-libs/libX11
-	x11-libs/libXScrnSaver
-	x11-libs/libXcomposite
-	x11-libs/libXcursor
-	x11-libs/libXdamage
-	x11-libs/libXext
-	x11-libs/libXfixes
-	x11-libs/libXi
-	x11-libs/libXrandr
-	x11-libs/libXrender
-	x11-libs/libXtst
-	x11-libs/libnotify
-	x11-libs/pango[X]
-"
+RDEPEND_A=(
+	"dev-libs/expat"
+	"dev-libs/glib:2"
+	"dev-libs/nspr"
+	"dev-libs/nss"
+	"dev-libs/openssl:0"
+	"gnome-base/gconf:2"
+	"media-libs/alsa-lib"
+	"media-libs/fontconfig"
+	"media-libs/freetype"
+	"net-misc/curl"
+	"net-print/cups"
+	"sys-apps/dbus"
+	"sys-libs/libcap"
+	"x11-libs/cairo"
+	"x11-libs/gdk-pixbuf"
+	"x11-libs/gtk+:2"
+	"x11-libs/libX11"
+	"x11-libs/libXScrnSaver"
+	"x11-libs/libXcomposite"
+	"x11-libs/libXcursor"
+	"x11-libs/libXdamage"
+	"x11-libs/libXext"
+	"x11-libs/libXfixes"
+	"x11-libs/libXi"
+	"x11-libs/libXrandr"
+	"x11-libs/libXrender"
+	"x11-libs/libXtst"
+	"x11-libs/libnotify"
+	"x11-libs/pango[X]"
+)
+
+inherit arrays
 
 S="${WORKDIR}"
 
-QA_PREBUILT="*"
 OPERA_HOME="/opt/${PN}/${PN_SLOTTED}"
 
 src_prepare() {
@@ -74,11 +79,15 @@ src_prepare() {
 	# delete broken symlink, proper one will be created in src_install()
 	erm "usr/bin/${PN}"
 
-	# fix libdir
+	## fix libdir
 	emv -T "usr/lib/x86_64-linux-gnu/${PN}" "${OPERA_HOME#/}"
+	# install ffmpeg with H264 support
+	emkdir "${OPERA_HOME#/}/lib_extra"
+	emv -T "usr/lib/chromium-browser" "${OPERA_HOME#/}/lib_extra"
+	# delete the rest
 	erm -r "usr/lib"
 
-	## /usr/share mods {
+	### BEGIN - /usr/share mods
 	epushd "usr/share"
 
 	# delete debian-specific files
@@ -89,7 +98,7 @@ src_prepare() {
 	# fix doc path
 	emv "doc"/{opera-stable,${PF}}
 
-	# fix icon paths
+	## fix icon paths
 	local s
 	for s in 16 32 48 128 256 ; do
 		emv "icons/hicolor/${s}x${s}/apps"/{${PN},${PN_SLOTTED}}.png
@@ -114,7 +123,7 @@ src_prepare() {
 	emv "applications"/{${PN},${PN_SLOTTED}}.desktop
 
 	epopd
-	## }
+	### END - /usr/share mods
 
 	# optionally delete autoupdater
 	use autoupdate || erm "${OPERA_HOME#/}/opera_autoupdate"
@@ -130,6 +139,8 @@ src_install() {
 	doins -r *
 
 	dosym "${OPERA_HOME}/${PN}" "/usr/bin/${PN_SLOTTED}"
+# 	emkdir "${ED}/${OPERA_HOME}/lib_extra"
+# 	dosym "../libffmpeg.so" "${OPERA_HOME}/lib_extra/libffmpeg.so"
 
 	# fix permissions and pax-mark binaries
 	fperms a+x "${OPERA_HOME}/${PN}"
@@ -137,3 +148,5 @@ src_install() {
 	use autoupdate && fperms a+x "${OPERA_HOME}/opera_autoupdate"
 	pax-mark -m "${ED}/${OPERA_HOME}"/{opera,opera_sandbox}
 }
+
+QA_PREBUILT="*"
