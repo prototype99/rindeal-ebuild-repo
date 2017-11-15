@@ -1,22 +1,24 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 2016-2017 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 # upstream guide https://github.com/econsysqtcam/qtcam/blob/master/INSTALL
 
 EAPI=6
+inherit rindeal
 
-GH_REPO='econsysqtcam/qtcam'
+GH_RN="github:econsysqtcam"
 
-inherit github qmake-utils eutils
+inherit git-hosting
+inherit qmake-utils
+inherit eutils
 
 DESCRIPTION='Webcamera software based on Qt, with many features'
-HOMEPAGE='http://www.e-consystems.com/opensource-linux-webcam-software-application.asp'
+HOMEPAGE="${GH_HOMEPAGE} http://www.e-consystems.com/opensource-linux-webcam-software-application.asp"
 LICENSE='GPL-3'
 
 SLOT='0'
 
-KEYWORDS='~amd64 ~arm ~x86'
+KEYWORDS='~amd64'
 
 # libv4l-dev qt5-default libudev-dev libavcodec-extra-54 qtdeclarative5-dev libusb-1.0-0-dev libjpeg-turbo8-dev qtdeclarative5-window-plugin qtdeclarative5-dialogs-plugin qtdeclarative5-controls-plugin qtdeclarative5-qtquick2-plugin
 CDEPEND_A=(
@@ -25,24 +27,25 @@ CDEPEND_A=(
 DEPEND_A=( "${CDEPEND_A[@]}" )
 RDEPEND_A=( "${CDEPEND_A[@]}" )
 
-DEPEND_A="${DEPEND_A[*]}"
-RDEPEND_A="${RDEPEND_A[*]}"
+inherit arrays
 
 S_ORIG="${S}"
 S="${S}/src"
 
 src_prepare() {
+	### patches should be relative to the top level dir
 	cd "${S_ORIG}" || die
-	default
 
+	eapply_user
+
+	###
 	cd "${S}" || die
 
-	local sed_args=
-	sed_args=(
+	local sed_args=(
 		-e '\|/usr/include|d'
 		-e '/^LIBS/,/^ *$/d'
 	)
-	sed -i -r "${sed_args[@]}" -- 'qtcam.pro' || die
+	sed -r "${sed_args[@]}" -i -- 'qtcam.pro' || die
 
 	# make sure there is at least one empty line at the end before adding anything
 	echo >> 'qtcam.pro'
