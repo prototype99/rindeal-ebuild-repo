@@ -29,8 +29,7 @@ IUSE_A=(
 	acl libcrack pam skey xattr account-tools-setuid subordinate-ids utmpx shadowgrp +sha-crypt +nscd
 )
 
-# Taken from the man/Makefile.am file.
-L10N_LOCALES=( cs da de es fi fr hu id it ja ko pl pt_BR ru sv tr zh_CN zh_TW )
+L10N_LOCALES=( bs ca cs da de dz el es eu fi fr gl he hu id it ja kk km ko nb ne nl nn pl pt pt_BR ro ru sk sq sv tl tr uk vi zh_CN zh_TW )
 inherit l10n-r1
 
 # TODO: review deps in configure.ac
@@ -53,6 +52,9 @@ DEPEND_A=( "${CDEPEND_A[@]}"
 		"app-text/gnome-doc-utils" # `xml2po` utility
 		"sys-devel/gettext"
 	")"
+	"man? ("
+		"dev-libs/libxslt" # `xsltproc` utility
+	")"
 )
 RDEPEND_A=( "${CDEPEND_A[@]}"
 	"pam? ( >=sys-auth/pambase-20150213 )"
@@ -64,14 +66,33 @@ REQUIRED_USE_A=(
 
 inherit arrays
 
+src_prepare-locales() {
+	local l locales dir="po" pre="" post=".po"
+
+	l10n_set_LINGUAS
+	l10n_find_changes_in_dir "${dir}" "${pre}" "${post}"
+
+	if use nls ; then
+		l10n_get_locales locales app off
+		for l in ${locales} ; do
+			if use man ; then
+				# not all langs in `po/` dir are present also in `man/` dir
+				sed -r -e "/^SUBDIRS/ s, ${l}( |$), ," -i -- man/Makefile.am || die
+				local f="man/${dir}/${pre}${l}${post}"
+				[[ -e "${f}" ]] && erm "${f}"
+			fi
+		done
+	fi
+}
+
 src_prepare() {
 	eapply "${FILESDIR}"/4.1.3-dots-in-usernames.patch
 	eapply_user
 
-	# TODO: L10N
+	src_prepare-locales
 
 	if ! use man ; then
-		sed -e '/^SUBDIRS/ s| man | |' -i -- Makefile.am || die
+		sed -r -e '/^SUBDIRS/ s, man( |$), ,' -i -- Makefile.am || die
 	fi
 
 	eautoreconf
@@ -121,16 +142,19 @@ set_login_opt() {
 			-i -- "${ED}"/etc/login.defs || die
 	fi
 	local res="$(grep "^${comment}${opt}\>" "${ED}"/etc/login.defs)"
-	einfo "${res:-"Unable to find ${opt} in /etc/login.defs"}"
+	elog "${res:-"Unable to find ${opt} in /etc/login.defs"}"
 }
 
 src_install() {
 	emake DESTDIR="${D}" suidperms=4711 install
 
-	if ! use pam ; then
-		insinto /etc
-		insopts -m0600
-		doins etc/login.access etc/limits
+	dodoc ChangeLog NEWS TODO doc/{HOWTO,README*,WISHLIST,*.txt}
+	newdoc README README.download
+
+	if use man ; then
+		# Remove manpages that are handled by other packages (sys-apps/coreutils sys-apps/man-pages)
+		erm "${ED}"/usr/share/man/man5/passwd.5
+		erm "${ED}"/usr/share/man/man3/getspnam.3
 	fi
 
 	# needed for 'useradd -D'
@@ -146,22 +170,21 @@ src_install() {
 	insopts -m0644
 	newins etc/login.defs login.defs
 
-	set_login_opt CREATE_HOME yes
 	if ! use pam ; then
-		set_login_opt MAIL_CHECK_ENAB no
-		set_login_opt SU_WHEEL_ONLY yes
-		set_login_opt CRACKLIB_DICTPATH /usr/$(get_libdir)/cracklib_dict
-		set_login_opt LOGIN_RETRIES 3
-		set_login_opt ENCRYPT_METHOD SHA512
-		set_login_opt CONSOLE
-	else
+		insinto /etc
+		insopts -m0600
+		doins etc/login.access etc/limits
+	fi
+
+	set_login_opt CREATE_HOME yes
+	if use pam ; then
 		dopamd "${FILESDIR}"/pam.d-include/shadow
 
 		local x
-		for x in chpasswd chgpasswd newusers ; do
+		for x in ch{,g}passwd newusers ; do
 			newpamd "${FILESDIR}"/pam.d-include/passwd ${x}
 		done
-		for x in chage chsh chfn user{add,del,mod} group{add,del,mod} ; do
+		for x in ch{age,sh,fn} user{add,del,mod} group{add,del,mod} ; do
 			newpamd "${FILESDIR}"/pam.d-include/shadow ${x}
 		done
 
@@ -205,21 +228,18 @@ src_install() {
 
 		# Remove pam.d files provided by sys-auth/pambase
 		erm "${ED}"/etc/pam.d/{login,passwd,su}
+	else
+		set_login_opt MAIL_CHECK_ENAB no
+		set_login_opt SU_WHEEL_ONLY yes
+		set_login_opt CRACKLIB_DICTPATH /usr/$(get_libdir)/cracklib_dict
+		set_login_opt LOGIN_RETRIES 3
+		set_login_opt ENCRYPT_METHOD SHA512
+		set_login_opt CONSOLE
 	fi
-
-	if use man ; then
-		# Remove manpages that are handled by other packages (sys-apps/coreutils sys-apps/man-pages)
-		erm -f "${ED}"/usr/share/man/man1/id.1
-		erm "${ED}"/usr/share/man/man5/passwd.5
-		erm "${ED}"/usr/share/man/man3/getspnam.3
-	fi
-
-	dodoc ChangeLog NEWS TODO doc/{HOWTO,README*,WISHLIST,*.txt}
-	newdoc README README.download
 }
 
 pkg_preinst() {
-	erm -f "${EROOT}"etc/pam.d/system-auth.new \
+	erm "${EROOT}"etc/pam.d/system-auth.new \
 		"${EROOT}"etc/login.defs.new
 }
 
