@@ -13,39 +13,34 @@ inherit toolchain-funcs
 inherit xdg
 
 DESCRIPTION="Tool for ripping and streaming Blu-ray, HD-DVD and DVD discs"
-HOMEPAGE="http://www.makemkv.com/" # https version is not working correctly
+HOMEPAGE="http://www.makemkv.com/" # https version is broken
 LICENSE="LGPL-2.1 MPL-1.1 MakeMKV-EULA openssl"
 
-SLOT="0"
 MY_P_OSS="${PN}-oss-${PV}"
 MY_P_BIN="${PN}-bin-${PV}"
+
+SLOT="0"
 SRC_URI_A=(
 	https://www.makemkv.com/download{,/old}/${MY_P_OSS}.tar.gz
 	https://www.makemkv.com/download{,/old}/${MY_P_BIN}.tar.gz
 )
 
 KEYWORDS="-* ~amd64"
-IUSE="libav qt4 qt5"
+IUSE_A=( +gui )
 
 CDEPEND_A=(
 	"dev-libs/expat"
 	"sys-libs/glibc"
 	"dev-libs/openssl:0[-bindist(-)]"
 	"sys-libs/zlib"
+	"media-video/ffmpeg:0="
 
-	## prefer qt5 when both qt4 and qt5 are enabled
-	"!qt5? ( qt4? ("
-		"dev-qt/qtcore:4"
-		"dev-qt/qtdbus:4"
-		"dev-qt/qtgui:4" ") )"
-	"qt5? ("
+	"gui? ("
 		"dev-qt/qtcore:5"
 		"dev-qt/qtdbus:5"
 		"dev-qt/qtgui:5"
-		"dev-qt/qtwidgets:5" ")"
-
-	"!libav? ( media-video/ffmpeg:0= )"
-	"libav? ( media-video/libav:0= )"
+		"dev-qt/qtwidgets:5"
+	")"
 )
 DEPEND_A=( "${CDEPEND_A[@]}"
 	"virtual/pkgconfig" )
@@ -78,13 +73,17 @@ inherit l10n-r1
 
 S="${WORKDIR}/${MY_P_OSS}"
 
+pkg_setup() {
+	[[ -n "${EPREFIX}" ]] && die "This package doesn't support EPREFIX, because of hardcoded paths in bundled binaries"
+}
+
 src_prepare() {
 	eapply "${FILESDIR}"/path.patch
 	eapply "${FILESDIR}"/1.10.5-wget.patch
 
 	xdg_src_prepare
 
-	# make these vars global as they're used in src_install()
+	# make these vars global as they're used in src_install() as well
 	declare -g -r -- \
         LOC_DIR="${WORKDIR}/${MY_P_BIN}"/src/share \
         LOC_PRE='makemkv_' \
@@ -96,15 +95,10 @@ src_configure() {
 	local econf_args=(
 		--enable-debug # do not strip symbols -- this will be done by portage itself
 		--disable-noec # use openssl instead of custom crypto
-		$(use_enable qt4)
-		$(use_enable qt5)
+		--disable-qt4 # Qt4 is no longer supported in Gentoo repos
+		$(use_enable gui qt5)
+		$(use_enable gui)
 	)
-
-	if use qt4 || use qt5 ; then
-		econf_args+=( --enable-gui )
-	else
-		econf_args+=( --disable-gui )
-	fi
 
 	econf "${econf_args[@]}"
 }
@@ -160,9 +154,10 @@ src_install-oss() {
 	### Install OSS components
 	cd "${WORKDIR}/${MY_P_OSS}" || die
 
+	local lib
 	for lib in libdriveio libmakemkv libmmbd ; do
-		path="$(echo "out/${lib}.so."?)"
-		name="${path##"out/"}"
+		local path="$(echo "out/${lib}.so."?)"
+		local name="${path##"out/"}"
 		dolib.so "${path}"
 		## these symlinks are not installed by upstream
 		## TODO: are they still necessary?
@@ -172,19 +167,19 @@ src_install-oss() {
 
 	find -type d -name "inc" | \
 	while read -r dir ; do
-		insdir="/usr/include/makemkv"
-		libdirname="$( basename "$( dirname "${dir}" )" )"
+		local insdir="/usr/include/makemkv"
+		local libdirname="$( basename "$( dirname "${dir}" )" )"
 
 		insinto "${insdir}/${libdirname}"
 		doins -r "${dir}"
 
 		instincdir="${ED}/${insdir}/${libdirname}/inc"
-		mv "${instincdir}"/* "${instincdir%%"/inc"}" || die
+		emv "${instincdir}"/* "${instincdir%%"/inc"}"
 		rmdir "${instincdir}" || die
 	done
 	assert
 
-	if use qt4 || use qt5 ; then
+	if use gui ; then
 		dobin "out/${PN}"
 
 		local s
@@ -192,7 +187,7 @@ src_install-oss() {
 			newicon -s "${s}" "makemkvgui/share/icons/${s}x${s}/makemkv.png" "${PN}.png"
 		done
 
-		# Upstream supplies .desktop file in '${MY_P_OSS}/makemkvgui/share/makemkv.desktop', but
+		# Although upstream supplies .desktop file in '${MY_P_OSS}/makemkvgui/share/makemkv.desktop',
 		# the generated one is better.
 		make_desktop_entry "${PN}" "MakeMKV" "${PN}" 'Qt;AudioVideo;Video'
 	fi
@@ -214,7 +209,7 @@ src_install-bin() {
 		dobin bin/amd64/makemkvcon
 
 	## BEGIN: install misc files
-	# this path is hardcoded in the binaries
+	# this directory is hardcoded in the binaries
 	insinto /usr/share/MakeMKV
 
 	# install profiles
