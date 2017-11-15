@@ -20,13 +20,18 @@ LICENSE="public-domain"
 SLOT="0"
 
 KEYWORDS="~amd64 ~arm ~arm64"
-IUSE="test"
+IUSE_A=( +man test )
 
 CDEPEND_A=(
 	"dev-python/setuptools[${PYTHON_USEDEP}]"
 )
 DEPEND_A=( "${CDEPEND_A[@]}"
-	"|| ( app-text/pandoc app-text/pandoc-bin )"
+	"man? ("
+		"|| ("
+			"app-text/pandoc-bin"
+			"app-text/pandoc"
+		")"
+	")"
 	"test? ( dev-python/nose[coverage(+)] )"
 )
 RDEPEND_A=( "${CDEPEND_A[@]}" )
@@ -34,7 +39,14 @@ RDEPEND_A=( "${CDEPEND_A[@]}" )
 inherit arrays
 
 python_compile_all() {
-	emake V=1 bash-completion zsh-completion fish-completion README.txt ${PN}.1
+	local emake_args=(
+		V=1
+		bash-completion
+		zsh-completion
+		fish-completion
+		$(use man && echo ${PN}.1)
+	)
+	emake "${emake_args[@]}"
 }
 
 python_test() {
@@ -42,7 +54,7 @@ python_test() {
 }
 
 python_install_all() {
-	doman ${PN}.1
+	use man && doman ${PN}.1
 
 	newbashcomp ${PN}.bash-completion ${PN}
 
