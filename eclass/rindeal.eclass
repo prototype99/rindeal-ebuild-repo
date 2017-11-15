@@ -76,31 +76,31 @@ _verbose() {
 }
 
 epushd() {
-	pushd "$@" >/dev/null || die
+	pushd "$@" >/dev/null || die -n
 }
 
 epopd() {
-	popd "$@" >/dev/null || die
+	popd "$@" >/dev/null || die -n
 }
 
 emkdir() {
-	mkdir $(_verbose) -p "${@}" || die
+	mkdir $(_verbose) -p "${@}" || die -n
 }
 
 ecp() {
-	cp $(_verbose) "${@}" || die
+	cp $(_verbose) "${@}" || die -n
 }
 
 emv() {
-	mv $(_verbose) "${@}" || die
+	mv $(_verbose) "${@}" || die -n
 }
 
 echmod() {
-	chmod $(_verbose) "${@}" || die
+	chmod $(_verbose) "${@}" || die -n
 }
 
 erm() {
-	rm $(_verbose) --interactive=never --preserve-root --one-file-system "$@" || die
+	rm $(_verbose) --interactive=never --preserve-root --one-file-system "$@" || die -n
 }
 
 
