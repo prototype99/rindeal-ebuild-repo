@@ -5,7 +5,7 @@ EAPI=6
 inherit rindeal
 
 GH_RN="github:python"
-GH_REF="0e26c1f9361bd2d57b9f361c4fbd8185243afb21" # mypy-0.520
+GH_REF="735abe6" # mypy-0.550
 
 inherit git-hosting
 
