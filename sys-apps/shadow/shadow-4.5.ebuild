@@ -49,7 +49,10 @@ CDEPEND_A=(
 )
 DEPEND_A=( "${CDEPEND_A[@]}"
 	"app-arch/xz-utils"
-	"nls? ( sys-devel/gettext )"
+	"nls? ("
+		"app-text/gnome-doc-utils" # `xml2po` utility
+		"sys-devel/gettext"
+	")"
 )
 RDEPEND_A=( "${CDEPEND_A[@]}"
 	"pam? ( >=sys-auth/pambase-20150213 )"
