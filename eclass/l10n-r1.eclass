@@ -254,16 +254,18 @@ IUSE+=" ${L10N_LOCALES[@]/#/l10n_}"
 
 _l10n_generate_locale_caches() {
 	debug-print-function ${FUNCNAME}
-	local v
 
-	# skip generation if vars are already set
-	for v in _{app,global}_locales_{all,on,off} ; do
+	local _var_names=( _{app,global}_locales_{all,on,off} )
+
+	## skip generation if vars are already set
+	local v
+	for v in "${_var_names[@]}" ; do
 		_l10n_var_is_defined ${v} && return 0
 	done
 
-	# - "on" locales are enabled via USE flag
-	# - _global_locales_* are those from Gentoo lang codes
-	# - _app_locales_* are those specified via a mapping in L10N_LOCALES_MAP
+	## - "on" locales are enabled via USE flag
+	## - _global_locales_* are those from Gentoo lang codes
+	## - _app_locales_* are those specified via a mapping in L10N_LOCALES_MAP
 	declare -g -- _global_locales_all= _global_locales_on= _global_locales_off=
 	declare -g -- _app_locales_all= _app_locales_on= _app_locales_off=
 
@@ -283,28 +285,29 @@ _l10n_generate_locale_caches() {
 		fi
 	done
 
-	## implementation of L10N_LOCALES_BACKUP
+	### implementation of L10N_LOCALES_BACKUP
 	if [[ -n "${L10N_LOCALES_BACKUP}" && -z "${_global_locales_on}" ]] ; then
 		# check that L10N_LOCALES_BACKUP exists in L10N_LOCALES
 		[[ -v L10N_LOCALES_MAP["${L10N_LOCALES_BACKUP}"] ]] || \
 			die "L10N_LOCALES_BACKUP='${L10N_LOCALES_BACKUP}' doesn't exist in L10N_LOCALES"
 
-		# make L10N_LOCALES_BACKUP the only lang that is _on_
+		## make L10N_LOCALES_BACKUP the only lang that is _on_
 		_global_locales_on="${L10N_LOCALES_BACKUP}"
 		_app_locales_on="${L10N_LOCALES_MAP["${L10N_LOCALES_BACKUP}"]}"
 
-		# exclude L10N_LOCALES_BACKUP from _off_ lists
-		# https://bugs.gentoo.org/show_bug.cgi?id=547790
-		_global_locales_off="${_global_locales_off/" ${_global_locales_on} "}"
-		_app_locales_off="${_app_locales_off/" ${_app_locales_on} "}"
+		## exclude L10N_LOCALES_BACKUP from _off_ lists
+		## https://bugs.gentoo.org/show_bug.cgi?id=547790
+		_global_locales_off="${_global_locales_off/" ${_global_locales_on} "/ }"
+		_app_locales_off="${_app_locales_off/" ${_app_locales_on} "/ }"
 	fi
 
-	# disable masked locales
+	## disable masked locales
 	_global_locales_off+=" ${L10N_LOCALES_MASK[*]} "
 	_app_locales_off+=" ${L10N_LOCALES_MASK[*]} "
 
-	# trim/squeeze spaces and sort
-	for v in _{app,global}_locales_{all,on,off} ; do
+	## trim/squeeze spaces and sort
+	local v
+	for v in "${_var_names[@]}" ; do
 		declare -g -- ${v}="$(echo $(printf "%s\n" ${!v} | LC_ALL=C sort))"
 	done
 }
@@ -324,7 +327,7 @@ l10n_get_locales() {
 	local type="${1:-"global"}" ; shift
 	local flag="${1:-"on"}" ; shift
 
-	## generate variable name
+	### generate variable name
 	# src_var will contain one of _{global,l10n}_locales_{all,on,off}
 	local src_var=
 	case "${type}" in
@@ -340,10 +343,10 @@ l10n_get_locales() {
 		*) die "Unknown flag: '${flag}'" ;;
 	esac
 
-	## make sure caches are generated
+	### make sure caches are generated
 	_l10n_generate_locale_caches
 
-	## copy the requested data from the generated variable
+	### copy the requested data from the generated variable
 	dst_var="${!src_var}"
 }
 
@@ -362,9 +365,10 @@ l10n_find_changes_in_dir() {
 	(( ${#} == 3 )) || die "Exactly 3 arguments are needed!"
 	local l dir="${1}" pre="${2}" post="${3}"
 
-	# found = codes found in the directory
-	# known = codes specified in the ebuild
-	# Note: using assoc array to allow instant lookup
+	## found = codes found in the directory
+	## known = codes specified in the ebuild
+	##
+	## Note: it uses assoc array to allow instant lookups
 	declare -A found known
 
 	## do the search
@@ -406,6 +410,16 @@ l10n_find_changes_in_dir() {
 		(( ${#removed[@]} > 0 )) && \
 			elog "Locales removed: '$(__my_sort "${removed[@]}")'"
 	fi
+}
+
+l10n_set_LINGUAS() {
+	debug-print-function "${FUNCNAME}"
+
+	[[ -v LINGUAS ]] && debug-print "${ECLASS}/${FUNCNAME}: warning - LINGUAS is already set to '${LINGUAS}'"
+
+	local locales
+	l10n_get_locales locales app on
+	export LINGUAS="${locales}"
 }
 
 
