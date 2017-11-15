@@ -1,3 +1,0 @@
-- more USE-flags
-- proper deps
-- generally enhanced ebuild as usual
