@@ -7,7 +7,7 @@ inherit rindeal
 
 GH_RN="github:pyca"
 
-PYTHON_COMPAT=( python2_7 python3_{4,5} pypy{,3} )
+PYTHON_COMPAT=( python2_7 python3_{4,5,6} pypy{,3} )
 PYTHON_REQ_USE="threads(+)"
 
 inherit distutils-r1
@@ -19,24 +19,29 @@ HOMEPAGE="
 	${GH_HOMEPAGE}
 	https://pypi.python.org/pypi/pyOpenSSL
 	https://pyopenssl.readthedocs.io/en/${PV}/
-	http://pyopenssl.org/
+	https://pyopenssl.org/
 "
 LICENSE="Apache-2.0"
 
 SLOT="0"
 KEYWORDS="amd64 arm arm64"
-IUSE="doc examples test"
+IUSE_A=( doc examples test )
 
-CDEPEND="
-	>=dev-python/six-1.5.2[${PYTHON_USEDEP}]
-	>=dev-python/cryptography-1.3[${PYTHON_USEDEP}]"
-DEPEND="${CDEPEND}
-	dev-python/setuptools[${PYTHON_USEDEP}]
-	doc? ( dev-python/sphinx[${PYTHON_USEDEP}] )
-	test? (
-		virtual/python-cffi[${PYTHON_USEDEP}]
-		>=dev-python/pytest-3.0.1[${PYTHON_USEDEP}] )"
-RDEPEND="${CDEPEND}"
+CDEPEND_A=(
+	">=dev-python/six-1.5.2[${PYTHON_USEDEP}]"
+	">=dev-python/cryptography-1.3[${PYTHON_USEDEP}]"
+)
+DEPEND_A=( "${CDEPEND_A[@]}"
+	"dev-python/setuptools[${PYTHON_USEDEP}]"
+	"doc? ( dev-python/sphinx[${PYTHON_USEDEP}] )"
+	"test? ("
+		"virtual/python-cffi[${PYTHON_USEDEP}]"
+		">=dev-python/pytest-3.0.1[${PYTHON_USEDEP}]"
+	")"
+)
+RDEPEND_A=( "${CDEPEND_A[@]}" )
+
+inherit arrays
 
 python_compile_all() {
 	use doc && emake -C doc html
