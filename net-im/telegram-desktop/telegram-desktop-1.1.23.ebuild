@@ -1,4 +1,4 @@
-# Copyright 2016 Jan Chren (rindeal)
+# Copyright 2016-2017 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -11,12 +11,19 @@ if [ -n "${TELEGRAM_DEBUG}" ] ; then
 	EGIT_CLONE_TYPE=shallow
 fi
 
-# xdg: src_prepare, pkg_preinst, pkg_post{inst,rm}
-# git-hosting: src_unpack
-inherit xdg git-hosting eutils flag-o-matic qmake-utils systemd versionator
+## EXPORT_FUNCTIONS: src_unpack
+inherit git-hosting
+## EXPORT_FUNCTIONS: src_prepare pkg_preinst pkg_postinst pkg_postrm
+inherit xdg
+inherit eutils
+inherit flag-o-matic
+inherit qmake-utils
+inherit systemd
+inherit versionator
 
 TG_PRETTY_NAME="Telegram Desktop"
-DESCRIPTION='Official desktop client for the Telegram messenger'
+
+DESCRIPTION='Official desktop client for the Telegram messenger, built from source'
 HOMEPAGE="https://desktop.telegram.org/ ${HOMEPAGE}"
 LICENSE='GPL-3' # with OpenSSL exception
 
