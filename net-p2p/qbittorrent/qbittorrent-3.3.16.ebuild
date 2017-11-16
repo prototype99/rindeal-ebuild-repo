@@ -9,7 +9,7 @@ GH_REF="release-${PV}"
 
 # functions: append-cppflags
 inherit flag-o-matic
-# functions: eqmake4 eqmake5
+# functions: eqmake5
 inherit qmake-utils
 # EXPORT_FUNCTIONS: src_unpack
 # variables: GH_HOMEPAGE
@@ -32,7 +32,7 @@ LICENSE="GPL-2"
 SLOT="0"
 
 KEYWORDS="~amd64 ~arm ~arm64"
-IUSE="+dbus debug nls +qt5 +gui webui"
+IUSE="+dbus debug nls +gui webui"
 
 CDEPEND_A=(
 	"dev-libs/boost:="
@@ -41,31 +41,20 @@ CDEPEND_A=(
 	"<net-libs/libtorrent-rasterbar-1.1:0"
 	"sys-libs/zlib"
 
-	"!qt5? ("
-		"dev-libs/qjson[qt4(+)]"
-		"dev-qt/qtcore:4[ssl]"
-		"dev-qt/qtsingleapplication[qt4]"
-		"gui? ("
-			"dev-qt/qtgui:4"
-			"dbus? ( dev-qt/qtdbus:4 )"
-		")"
+	"dev-qt/qtconcurrent:5"
+	"dev-qt/qtcore:5"
+	"dev-qt/qtnetwork:5[ssl]"
+	"dev-qt/qtsingleapplication[qt5]"
+	"dev-qt/qtxml:5"
+	"gui? ("
+		"dev-qt/qtgui:5"
+		"dev-qt/qtwidgets:5"
+		"dbus? ( dev-qt/qtdbus:5 )"
+		"dev-qt/qtsingleapplication[X]"
 	")"
-	"qt5? ("
-		"dev-qt/qtconcurrent:5"
-		"dev-qt/qtcore:5"
-		"dev-qt/qtnetwork:5[ssl]"
-		"dev-qt/qtsingleapplication[qt5]"
-		"dev-qt/qtxml:5"
-		"gui? ("
-			"dev-qt/qtgui:5"
-			"dev-qt/qtwidgets:5"
-			"dbus? ( dev-qt/qtdbus:5 )"
-		")"
-	")"
-	"gui? ( dev-qt/qtsingleapplication[X] )"
 )
 DEPEND_A=( "${CDEPEND_A[@]}"
-	"qt5? ( nls? ( dev-qt/linguist-tools:5 ) )"
+	"nls? ( dev-qt/linguist-tools:5 )"
 	"virtual/pkgconfig"
 )
 RDEPEND_A=( "${CDEPEND_A[@]}" )
@@ -125,7 +114,7 @@ my_multi_src_configure() {
 	local econf_args=(
 		--with-qjson=system
 		--with-qtsingleapplication=system
-		--disable-systemd # we have a services of our own
+		--disable-systemd # we have services of our own
 
 		$(use_enable dbus qt-dbus) # introduced for macOS
 		$(use_enable debug)
@@ -142,7 +131,7 @@ my_multi_src_configure() {
 
 	econf "${econf_args[@]}"
 
-	eqmake$(usex qt5 5 4) -r ./qbittorrent.pro
+	eqmake5 -r ./qbittorrent.pro
 }
 
 src_configure() {
