@@ -239,7 +239,7 @@ src_install() {
 }
 
 pkg_preinst() {
-	erm "${EROOT}"etc/pam.d/system-auth.new \
+	nonfatal erm "${EROOT}"etc/pam.d/system-auth.new \
 		"${EROOT}"etc/login.defs.new
 }
 
