@@ -115,10 +115,10 @@ my_multi_src_configure() {
 		--with-qjson=system
 		--with-qtsingleapplication=system
 		--disable-systemd # we have services of our own
+		--without-qt4 # qt5 will be automatically selected
 
 		$(use_enable dbus qt-dbus) # introduced for macOS
 		$(use_enable debug)
-		$(use_with !qt5 qt4)
 	)
 
 	if [[ "${MULTIBUILD_VARIANT}" == 'gui' ]] ; then
