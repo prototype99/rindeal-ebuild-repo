@@ -1,4 +1,4 @@
-# Copyright 2016 Jan Chren (rindeal)
+# Copyright 2016-2017 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 # @ECLASS: flag-o-matic-patched.eclass
@@ -31,10 +31,11 @@ inherit flag-o-matic
 # ORIGIN: flag-o-matic
 # PR: https://github.com/gentoo/gentoo/pull/1425
 get-flag() {
-	local var pattern="${1}"
+	local pattern="${1}"
 	# ensure ${needle} starts with a single dash
 	local needle="-${pattern#-}"
 
+	local var
 	for var in $(all-flag-vars) ; do
 		local i flags=( ${!var} )
 
