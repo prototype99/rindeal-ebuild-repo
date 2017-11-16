@@ -1,7 +1,7 @@
-# Copyright 2016 Jan Chren (rindeal)
+# Copyright 2016-2017 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
-# @ECLASS: cmake-utils-patched.eclass
+# @ECLASS: ninja-utils-patched.eclass
 # @MAINTAINER:
 # Jan Chren (rindeal) <dev.rindeal+gentoo-overlay@gmail.com>
 # @BLURB: <SHORT_DESCRIPTION>
@@ -13,10 +13,9 @@ case "${EAPI:-0}" in
 esac
 
 
-inherit cmake-utils
+inherit ninja-utils
 
 
-## Origin: cmake-utils.eclass
 ## PR: https://github.com/gentoo/gentoo/pull/1481
 _ninjaopts_from_makeopts() {
 	local makeopts="${1:-"${MAKEOPTS}"}" ninjaopts=()
@@ -86,25 +85,21 @@ _ninjaopts_from_makeopts() {
 	NINJAOPTS="${ninjaopts[*]}"
 }
 
-## Origin: cmake-utils.eclass
-## PR: https://github.com/gentoo/gentoo/pull/1481
-# @FUNCTION: _cmake_ninja_src_make
-# @INTERNAL
+
+# @FUNCTION: eninja
+# @USAGE: [<args>...]
 # @DESCRIPTION:
-# Build the package using ninja generator
-_cmake_ninja_src_make() {
-	debug-print-function ${FUNCNAME} "$@"
+# Call Ninja, passing the NINJAOPTS (or converted MAKEOPTS), followed
+# by the supplied arguments. This function dies if ninja fails. Starting
+# with EAPI 6, it also supports being called via 'nonfatal'.
+#
+# NOTE: Patched to make use of _ninjaopts_from_makeopts()
+eninja() {
+	debug-print-function "${FUNCNAME}" "$@"
 
-	[[ -e build.ninja ]] || die "build.ninja not found. Error during configure stage."
+	[[ -z ${NINJAOPTS+set} ]] && _ninjaopts_from_makeopts
 
-	if [[ -z ${NINJAOPTS+x} ]] ; then
-		declare -g NINJAOPTS
-		_ninjaopts_from_makeopts
-	fi
-
-	[[ "${CMAKE_VERBOSE}" != "OFF" ]] && NINJAOPTS+=" -v"
-
-	set -- ninja ${NINJAOPTS} "$@"
-	echo "$@"
-	"$@" || die
+	set -- ninja -v ${NINJAOPTS} "$@"
+	echo "$@" >&2
+	"$@" || die -n "${*} failed"
 }

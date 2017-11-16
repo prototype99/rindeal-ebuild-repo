@@ -40,7 +40,7 @@ fi
 if [[ -z "$(declare -p _RINDEAL_ECLASS_SWAPS 2>/dev/null)" ]] ; then
 declare -gA _RINDEAL_ECLASS_SWAPS=(
 	['flag-o-matic']='flag-o-matic-patched'
-	['cmake-utils']='cmake-utils-patched'
+	['ninja-utils']='ninja-utils-patched'
 )
 fi
 
