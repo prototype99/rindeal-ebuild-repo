@@ -4,22 +4,34 @@
 EAPI=6
 inherit rindeal
 
+## git-hosting.eclass
 GH_RN='github:telegramdesktop:tdesktop'
 GH_REF="v${PV}"
-if [ -n "${TELEGRAM_DEBUG}" ] ; then
+if [[ -n "${TELEGRAM_DEBUG}" ]] ; then
 	GH_FETCH_TYPE=live
 	EGIT_CLONE_TYPE=shallow
+	EGIT_SUBMODULES=()
 fi
 
+## python-any-r1.eclass
+PYTHON_COMPAT=( python2_7 )
+
+## functions: best_version
+inherit versionator
+## functions: tgd-utils_get_QT_PREFIX, tgd-utils_get_qt_P
+inherit telegram-desktop-utils
 ## EXPORT_FUNCTIONS: src_unpack
 inherit git-hosting
 ## EXPORT_FUNCTIONS: src_prepare pkg_preinst pkg_postinst pkg_postrm
 inherit xdg
+## functions: make_desktop_entry, newicon
 inherit eutils
 inherit flag-o-matic
 inherit qmake-utils
+## functions: systemd_newuserunit
 inherit systemd
-inherit versionator
+## EXPORT_FUNCTIONS: pkg_setup
+inherit python-any-r1
 
 TG_PRETTY_NAME="Telegram Desktop"
 
@@ -29,8 +41,34 @@ LICENSE='GPL-3' # with OpenSSL exception
 
 SLOT='0'
 
+declare -g -A SNAPSHOT_DISTFILES=()
+my_set_snapshot_uris() {
+	local rn ref snapshot_url snapshot_ext
+	local -A downloads=(
+		## tgd v1.1.23 was released on 2017.09.06
+
+		["gyp"]="gitlab:rindeal-mirrors:gyp													c6f471687407bf28ddfc63f1a8f47aeb7bf54edc"
+		["linux-syscall-support"]="gitlab:rindeal-mirrors:chromium-linux-syscall-support	a91633d172407f6c83dd69af11510b37afebb7f9"
+	)
+	local code
+	for code in "${!downloads[@]}" ; do
+		local payload_a=( ${downloads["${code}"]} )
+		local rn="${payload_a[0]}"
+		local ref="${payload_a[1]}"
+
+		git-hosting_gen_snapshot_url "${rn}" "${ref}" snapshot_url snapshot_ext
+
+		local distfile="${rn//:/--}--${ref}${snapshot_ext}" ; distfile="${distfile//'/'/_}"
+
+		SNAPSHOT_DISTFILES+=( ["${code}"]="${distfile}" )
+
+		SRC_URI+=$'\n'"${snapshot_url} -> ${distfile}"
+	done
+}
+my_set_snapshot_uris
+
 KEYWORDS="~amd64"
-IUSE='autostart_generic autostart_plasma_systemd +pch proxy'
+IUSE_A=( autostart_generic autostart_plasma_systemd +pch proxy )
 
 CDEPEND_A=(
 	# Telegram requires shiny new versions since v0.10.1 and commit
@@ -52,21 +90,21 @@ CDEPEND_A=(
 	# https://github.com/rindeal/gentoo-overlay/issues/123
 	'>=media-libs/libwebp-0.4.2'
 )
-RDEPEND_A=( "${CDEPEND_A[@]}"
-	# block some alternative names and binary packages
-	'!net-im/telegram'{,-bin}
-	'!net-im/telegram-desktop-bin'
-)
 DEPEND_A=( "${CDEPEND_A[@]}"
-	'=dev-qt/qt-telegram-static-5.6.0*'	# 5.6.0 is required since 0.9.49
+	'=dev-qt/qt-telegram-static-5.6.2*'
+	"${PYTHON_DEPS}"
 
 	## CXXFLAGS pkg-config from 'Telegram/Telegram.pro'
 	'dev-libs/libappindicator:2'
 	'dev-libs/glib:2'
 	'x11-libs/gtk+:2'
 
-	'>=sys-apps/gawk-4.1'	# required for inplace support for .pro files formatter
 	'virtual/pkgconfig'
+)
+RDEPEND_A=( "${CDEPEND_A[@]}"
+	# block some alternative names and binary packages
+	'!net-im/telegram'{,-bin}
+	'!net-im/telegram-desktop-bin'
 )
 
 REQUIRED_USE_A=(
@@ -88,7 +126,7 @@ TG_PRO="${TG_DIR}/Telegram.pro"
 TG_INST_BIN="/usr/bin/${PN}"
 TG_SHARED_DIR="/usr/share/${PN}"
 TG_AUTOSTART_ARGS=( -startintray )
-TG_SYSTEMD_SERVICE_NAME="${PN}"
+TG_GYP_DIR="${TG_DIR}/gyp"
 
 # override qt5 path for use with eqmake5
 qt5_get_bindir() { echo "${QT5_PREFIX}/bin" ; }
@@ -101,6 +139,17 @@ pkg_setup() {
 			id -u "${u}" >/dev/null || die "Invalid username '${u}' in TELEGRAM_AUTOSTART_USERS"
 		done
 	fi
+
+	python-any-r1_pkg_setup
+}
+
+src_unpack() {
+	git-hosting_src_unpack
+
+	local code
+	for code in "${!SNAPSHOT_DISTFILES[@]}" ; do
+		git-hosting_unpack "${DISTDIR}/${SNAPSHOT_DISTFILES["${code}"]}" "${WORKDIR}/${code}"
+	done
 }
 
 src_prepare-locales() {
@@ -110,11 +159,13 @@ src_prepare-locales() {
 
 	l10n_get_locales locales app off
 	for l in ${locales} ; do
-		rm -v -f "${dir}/${pre}${l}${post}" || die
+		erm "${dir}/${pre}${l}${post}"
 		sed -r -e "s|^(.*${pre}${l}${post}.*)|<!-- locales \1 -->|" \
-			-i -- 'Resources/telegram.qrc' || die
-		sed -r -e "s|^(.*${dir}/${pre}${l}${post}.*)|# locales # \1|" \
-			-i -- "${TG_PRO}" || die
+			-i -- 'Resources/qrc/telegram.qrc' || die
+		sed -r -e "s|('${l//_/-}',)|# locales # \1|" \
+			-i -- "gyp/Telegram.gyp" || die
+		sed -r -e "s#${l}(,|$)##" \
+			-i -- "Resources/langs/list" || die
 	done
 }
 
@@ -141,20 +192,27 @@ src_prepare-delete_and_modify() {
 		# dee is not used
 		-e 's|^(.*dee-1.0.*)|# dee not used # \1|'
 	)
-	sed -r "${args[@]}" \
-		-i -- "${TG_PRO}" || die
+# 	sed -r "${args[@]}" \
+# 		-i -- "${TG_PRO}" || die
+
+	# Remove unwanted compiler flags
+	sed -r -e "s/('-(Werror|Ofast|flto)',.*)/# \1/" \
+		-i -- "${TG_DIR}"/gyp/{settings_linux.gypi,telegram_linux.gypi} || die
+
+	# set chosen python implementation
+	sed -e "s|\bpython |${PYTHON} |" -i -- "${TG_GYP_DIR}"/*.{gyp,gypi} || die
 
 	## lzma is not used when TDESKTOP_DISABLE_AUTOUPDATE is defined
 	sed -r -e 's|^(.*<lzma\.h>.*)|// lzma not used // \1|' -i -- SourceFiles/autoupdater.cpp || die
-	sed -r -e 's|^(.*liblzma.*)|# lzma not used # \1|' -i -- "${TG_PRO}" || die
+# 	sed -r -e 's|^(.*liblzma.*)|# lzma not used # \1|' -i -- "${TG_PRO}" || die
 
 	## opus is used from inside of ffmpeg and not as a dedicated library
-	sed -r -e 's|^(.*opus.*)|# opus lib is not used # \1|' -i -- "${TG_PRO}" || die
+# 	sed -r -e 's|^(.*opus.*)|# opus lib is not used # \1|' -i -- "${TG_PRO}" || die
 
-	if ! use pch ; then
-		# https://ccache.samba.org/manual.html#_precompiled_headers
-		sed -r -e 's|^(.*PRECOMPILED_HEADER.*)|# USE=-pch # \1|' -i -- "${TG_PRO}" || die
-	fi
+# 	if ! use pch ; then
+# 		# https://ccache.samba.org/manual.html#_precompiled_headers
+# 		sed -r -e 's|^(.*PRECOMPILED_HEADER.*)|# USE=-pch # \1|' -i -- "${TG_PRO}" || die
+# 	fi
 }
 
 src_prepare-appends() {
@@ -187,45 +245,43 @@ src_prepare-appends() {
 }
 
 src_prepare() {
-	eapply "${FILESDIR}"/0.10.1-revert_Round_radius_increased_for_message_bubbles.patch
+# 	eapply "${FILESDIR}"/0.10.1-revert_Round_radius_increased_for_message_bubbles.patch
+
+	epushd "${WORKDIR}/gyp"
+	eapply "${TG_DIR}/Patches/gyp.diff"
+	epopd
 
 	xdg_src_prepare
 
 	cd "${TG_DIR}" || die
 
-	rm -rf *.*proj*		|| die # delete Xcode/MSVS files
-	rm -rf ThirdParty	|| die # prevent accidentically using something from there
+	NO_V=1 erm -r ThirdParty # prevent accidentically using something from there
 
 	## determine which qt-telegram-static version should be used
-	if [ -z "${QT_TELEGRAM_STATIC_SLOT}" ] ; then
-		local qtstatic='dev-qt/qt-telegram-static'
-		local qtstatic_PVR="$(best_version "${qtstatic}" | sed "s|.*${qtstatic}-||")"
+	if [[ -z "${QT_TELEGRAM_STATIC_SLOT}" ]] ; then
+		local qtstatic_PVR="$(best_version "$(tgd-utils_get_qt_P)" | sed "s|.*${qtstatic}-||")"
 		local qtstatic_PV="${qtstatic_PVR%%-*}" # strip revision
-		declare -g QT_VER="${qtstatic_PV%%_p*}" QT_PATCH_NUM="${qtstatic_PV##*_p}"
-		declare -g QT_TELEGRAM_STATIC_SLOT="${QT_VER}-${QT_PATCH_NUM}"
+		declare -g -- QT_VER="${qtstatic_PV%%_p*}"
+		declare -g -- QT_PATCH_NUM="${qtstatic_PV##*_p}"
+		declare -g -- QT_TELEGRAM_STATIC_SLOT="${QT_VER}-${QT_PATCH_NUM}"
 	else
 		einfo "Using QT_TELEGRAM_STATIC_SLOT from environment - '${QT_TELEGRAM_STATIC_SLOT}'"
-		declare -g QT_VER="${QT_TELEGRAM_STATIC_SLOT%%-*}" QT_PATCH_NUM="${QT_TELEGRAM_STATIC_SLOT##*-}"
+		declare -g -- QT_VER="${QT_TELEGRAM_STATIC_SLOT%%-*}"
+		declare -g -- QT_PATCH_NUM="${QT_TELEGRAM_STATIC_SLOT##*-}"
 	fi
+
+	tgd-utils_get_QT_PREFIX QT5_PREFIX "${QT_VER}" "${QT_PATCH_NUM}"
+	[[ -e "${QT5_PREFIX}" ]] || die "QT5_PREFIX dir doesn't exist: '${QT5_PREFIX}'"
+
+	readonly QT_TELEGRAM_STATIC_SLOT QT_VER  QT_PATCH_NUM QT5_PREFIX
 
 	echo
 	einfo "${P} is going to be linked with 'Qt ${QT_VER} (p${QT_PATCH_NUM})'"
 	echo
 
-	# WARNING: QT5_PREFIX path depends on what qt-telegram-static ebuild uses
-	declare -g QT5_PREFIX="${EPREFIX}/opt/qt-telegram-static/${QT_VER}/${QT_PATCH_NUM}"
-	[ -d "${QT5_PREFIX}" ] || die "QT5_PREFIX dir doesn't exist: '${QT5_PREFIX}'"
-
-	readonly QT_TELEGRAM_STATIC_SLOT QT_VER  QT_PATCH_NUM QT5_PREFIX
-
-	# This formatter converts multiline var defines to multiple lines.
-	# Such .pro files are then easier to debug and modify in src_prepare-delete_and_modify().
-	einfo "Formatting .pro files"
-	gawk -f "${FILESDIR}/format_pro.awk" -i inplace -- *.pro || die
-
 	src_prepare-locales
 	src_prepare-delete_and_modify
-	src_prepare-appends
+# 	src_prepare-appends
 }
 
 src_configure() {
@@ -245,24 +301,25 @@ src_configure() {
 	export QT_TDESKTOP_VERSION="${QT_VER}"
 	export QT_TDESKTOP_PATH="${QT5_PREFIX}"
 
-	(	# disable updater
-		echo 'DEFINES += TDESKTOP_DISABLE_AUTOUPDATE'
+	GYP_DEFINES=(
+		# disable updater
+		'TDESKTOP_DISABLE_AUTOUPDATE'
 
 		# disable google-breakpad support
-		echo 'DEFINES += TDESKTOP_DISABLE_CRASH_REPORTS'
+		'TDESKTOP_DISABLE_CRASH_REPORTS'
 
 		# disable .desktop file generation
-		echo 'DEFINES += TDESKTOP_DISABLE_DESKTOP_FILE_GENERATION'
+		'TDESKTOP_DISABLE_DESKTOP_FILE_GENERATION'
 
 		# https://github.com/telegramdesktop/tdesktop/commit/0b2bcbc3e93a7fe62889abc66cc5726313170be7
-		$(usex proxy 'DEFINES += TDESKTOP_DISABLE_NETWORK_PROXY' '')
+		$(usex proxy 'TDESKTOP_DISABLE_NETWORK_PROXY' '')
 
 		# disable registering `tg://` scheme from within the app
-		echo 'DEFINES += TDESKTOP_DISABLE_REGISTER_CUSTOM_SCHEME'
+		'TDESKTOP_DISABLE_REGISTER_CUSTOM_SCHEME'
 
 		# remove Unity support
-		echo 'DEFINES += TDESKTOP_DISABLE_UNITY_INTEGRATION'
-	) >>"${TG_PRO}" || die
+		'TDESKTOP_DISABLE_UNITY_INTEGRATION'
+	)
 }
 
 my_eqmake5() {
@@ -313,15 +370,56 @@ src_compile() {
 	emake
 }
 
-HEADER_FOR_GEN_FILES=(
-	"# DO NOT MODIFY: This file is a part of the ${CATEGORY}/${PN} package"
-	"# generated on $(date --utc --iso-8601=minutes)"
-)
+my_egyp() {
+	local run=(
+		"${PYTHON}" "${WORKDIR}/gyp/gyp_main.py"
+		--debug=all # a little too verbose, but better than nothing
+		"${@}"
+	)
+
+	printf "'%s' " "${run[@]}" ; printf '\n'
+
+	"${run[@]}" || die
+}
+
+src_compile() {
+	cd "${TG_DIR}/gyp"
+
+	local my_gyp_args=(
+		-D build_defines="${GYP_DEFINES[*]}"
+		-D linux_path_xkbcommon=$XKB_PATH
+		-D linux_path_va=$VA_PATH
+		-D linux_path_vdpau=$VDPAU_PATH
+		-D linux_path_ffmpeg=$FFMPEG_PATH
+		-D linux_path_openal=$OPENAL_PATH
+		-D linux_path_qt=$QT_PATH
+		-D linux_path_breakpad=$BREAKPAD_PATH
+		-D linux_path_libexif_lib=/usr/local/lib
+		-D linux_path_opus_include=/usr/include/opus
+		-D linux_lib_ssl=-lssl
+		-D linux_lib_crypto=-lcrypto
+		-D linux_lib_icu="-licuuc -licutu -licui18n"
+		--depth=.
+		--generator-output=..
+		--format=cmake
+		-G output_dir=../out
+  )
+
+  my_egyp "${my_gyp_args[@]}" Telegram.gyp
+
+  cd "$UPSTREAM/out/Debug"
+
+  export ASM="gcc"
+  cmake .
+  make $MAKE_ARGS
+}
+
+TG_SYSTEMD_SERVICE_NAME="${PN}"
 
 my_install_systemd_service() {
 	local tmpfile="$(mktemp)"
 	cat <<-_EOF_ > "${tmpfile}" || die
-		$(printf "%s\n" "${HEADER_FOR_GEN_FILES[@]}")
+		# $(print_generated_file_header)
 		[Unit]
 		Description=${TG_PRETTY_NAME} messaging app
 		# standard targets are not available in user mode, so no deps can be specified
@@ -343,7 +441,7 @@ my_install_autostart_sh() {
 	local tmpfile="$(mktemp)"
 	cat <<-_EOF_ > "${tmpfile}" || die
 		#!/bin/sh
-		$(printf "%s\n" "${HEADER_FOR_GEN_FILES[@]}")
+		# $(print_generated_file_header)
 		"${EPREFIX}/usr/bin/systemctl" --user start ${TG_SYSTEMD_SERVICE_NAME}.service
 	_EOF_
 	insinto "${TG_SHARED_DIR}"/autostart-scripts
@@ -354,7 +452,7 @@ my_install_shutdown_sh() {
 	local tmpfile="$(mktemp)"
 	cat <<-_EOF_ > "${tmpfile}" || die
 		#!/bin/sh
-		$(printf "%s\n" "${HEADER_FOR_GEN_FILES[@]}")
+		# $(print_generated_file_header)
 		"${EPREFIX}/usr/bin/systemctl" --user stop ${TG_SYSTEMD_SERVICE_NAME}.service
 	_EOF_
 	insinto "${TG_SHARED_DIR}"/shutdown
@@ -364,7 +462,7 @@ my_install_shutdown_sh() {
 my_install_autostart_desktop() {
 	local tmpfile="$(mktemp)"
 	cat <<-_EOF_ > "${tmpfile}" || die
-		$(printf "%s\n" "${HEADER_FOR_GEN_FILES[@]}")
+		# $(print_generated_file_header)
 		[Desktop Entry]
 		Version=1.0
 
@@ -412,20 +510,20 @@ my_install_autostart_howto() {
 src_install() {
 	newbin "${S}/Linux/Release/Telegram" "${TG_INST_BIN##*/}"
 
-	## docs
+	### docs
 	einstalldocs
 
-	## icons
+	### icons
 	local s
 	for s in 16 32 48 64 128 256 512 ; do
 		newicon -s ${s} "${TG_DIR}/Resources/art/icon${s}.png" "${PN}.png"
 	done
 
-	## .desktop entry -- upstream version at 'lib/xdg/telegramdesktop.desktop'
+	### .desktop entry -- upstream version at 'lib/xdg/telegramdesktop.desktop'
 	local make_desktop_entry_args
 	make_desktop_entry_args=(
 		"${EPREFIX}${TG_INST_BIN} -- %u"	# exec
-		"${TG_PRETTY_NAME}"	# name
+		"${TG_PRETTY_NAME}"		# name
 		"${TG_INST_BIN##*/}"	# icon
 		'Network;InstantMessaging;Chat;'	# categories
 	)
@@ -436,10 +534,10 @@ src_install() {
 	make_desktop_entry "${make_desktop_entry_args[@]}" \
 		"$( printf '%s\n' "${make_desktop_entry_extras[@]}" )"
 
-	## systemd
+	### systemd
 	my_install_systemd_service
 
-	## autostart -- plasma + systemd
+	### autostart -- plasma + systemd
 	my_install_autostart_sh
 	my_install_shutdown_sh
 	if use autostart_plasma_systemd ; then
@@ -456,7 +554,7 @@ src_install() {
 		done
 	fi
 
-	## autostart -- other DEs
+	### autostart -- other DEs
 	my_install_autostart_desktop
 	if use autostart_generic ; then
 		local u
@@ -469,6 +567,6 @@ src_install() {
 		done
 	fi
 
-	## autostart -- tutorial
+	### autostart -- tutorial
 	my_install_autostart_howto
 }
