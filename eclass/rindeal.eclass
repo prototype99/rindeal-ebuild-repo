@@ -7,6 +7,11 @@
 # @BLURB: Base eclass that should be inheritted by all ebuilds right after the EAPI specification.
 # @DESCRIPTION:
 
+
+# fight with portage and override it again and again
+inherit portage-patches
+
+
 if [ -z "${_RINDEAL_ECLASS}" ] ; then
 
 case "${EAPI:-0}" in
