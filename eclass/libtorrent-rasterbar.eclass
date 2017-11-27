@@ -25,17 +25,17 @@ GH_RN='github:arvidn:libtorrent'
 GH_FETCH_TYPE='manual'
 
 
-# functions: prune_libtool_files()
+## functions: prune_libtool_files()
 inherit eutils
-# EXPORT_FUNCTIONS: src_unpack
+## EXPORT_FUNCTIONS: src_unpack
 inherit vcs-snapshot
-# EXPORT_FUNCTIONS: src_unpack
+## EXPORT_FUNCTIONS: src_unpack
 inherit git-hosting
-# EXPORT_FUNCTIONS: src_prepare, src_configure, src_compile, src_test, src_install
+## EXPORT_FUNCTIONS: src_prepare src_configure src_compile src_test src_install
 inherit distutils-r1
-# functions: version_compare()
+## functions: version_compare
 inherit versionator
-# functions: make_setup.py_extension_compilation_parallel()
+## functions: make_setup.py_extension_compilation_parallel
 inherit rindeal-python-utils
 
 
