@@ -8,3 +8,7 @@ inherit rindeal
 LT_SONAME='8'
 
 inherit libtorrent-rasterbar
+
+PATCHES=(
+	"${FILESDIR}"/1.0.11-boost_1_65.patch
+)
