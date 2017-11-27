@@ -41,7 +41,6 @@ CDEPEND_A=(
 	"<net-libs/libtorrent-rasterbar-1.1:0"
 	"sys-libs/zlib"
 
-	"dev-qt/qtconcurrent:5"
 	"dev-qt/qtcore:5"
 	"dev-qt/qtnetwork:5[ssl]"
 	"dev-qt/qtsingleapplication[qt5]"
