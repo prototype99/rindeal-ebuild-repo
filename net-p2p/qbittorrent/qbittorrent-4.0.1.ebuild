@@ -7,22 +7,22 @@ inherit rindeal
 GH_RN="github:qbittorrent:qBittorrent"
 GH_REF="release-${PV}"
 
-# functions: append-cppflags
+## functions: append-cppflags
 inherit flag-o-matic
-# functions: eqmake5
+## functions: eqmake5
 inherit qmake-utils
-# EXPORT_FUNCTIONS: src_unpack
-# variables: GH_HOMEPAGE
+## EXPORT_FUNCTIONS: src_unpack
+## variables: GH_HOMEPAGE
 inherit git-hosting
-# EXPORT_FUNCTIONS: src_prepare pkg_preinst pkg_postinst pkg_postrm
+## EXPORT_FUNCTIONS: src_prepare pkg_preinst pkg_postinst pkg_postrm
 inherit xdg
-# functions: eautoreconf
+## functions: eautoreconf
 inherit autotools
-# functions: rindeal:expand_vars
+## functions: rindeal:expand_vars
 inherit rindeal-utils
-# functions: systemd_dounit systemd_douserunit
+## functions: systemd_dounit systemd_douserunit
 inherit systemd
-# functions: multibuild_foreach_variant multibuild_copy_sources run_in_build_dir
+## functions: multibuild_foreach_variant multibuild_copy_sources run_in_build_dir
 inherit multibuild
 
 DESCRIPTION="BitTorrent client in C++/Qt based on libtorrent-rasterbar"
@@ -36,9 +36,7 @@ IUSE="+dbus debug nls +gui webui"
 
 CDEPEND_A=(
 	"dev-libs/boost:="
-	# libtorrent >= 1.1 is not yet officially supported, segfaults may occur
-	# TODO: allow >= 1.1.2 after it's released
-	"<net-libs/libtorrent-rasterbar-1.1:0"
+	"<net-libs/libtorrent-rasterbar-1.2:0="
 	"sys-libs/zlib"
 
 	"dev-qt/qtcore:5"
@@ -85,6 +83,9 @@ src_prepare-locales() {
 }
 
 src_prepare() {
+	eapply "${FILESDIR}"/4.0.1-nowebui.patch
+	eapply_user
+
 	xdg_src_prepare
 
 	src_prepare-locales
@@ -111,10 +112,8 @@ my_multi_src_configure() {
 	fi
 
 	local econf_args=(
-		--with-qjson=system
 		--with-qtsingleapplication=system
 		--disable-systemd # we have services of our own
-		--without-qt4 # qt5 will be automatically selected
 
 		$(use_enable dbus qt-dbus) # introduced for macOS
 		$(use_enable debug)
