@@ -9,9 +9,9 @@ GH_REF="v${PV}"
 
 PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
 
-# EXPORT_FUNCTIONS: src_unpack
+## EXPORT_FUNCTIONS: src_unpack
 inherit git-hosting
-# functions: eautoreconf
+## EXPORT_FUNCTIONS: src_prepare src_configure src_compile src_test src_install
 inherit distutils-r1
 
 DESCRIPTION="Flexible Python Kconfig parser and library"
