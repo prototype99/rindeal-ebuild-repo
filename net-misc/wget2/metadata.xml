@@ -8,7 +8,7 @@
   <use>
     <flag name="assert">Build with assert()s</flag>
 
-    <flag name="compression_brotlidec">Brotli compression support</flag>
+    <flag name="compression_brotli">Brotli compression support</flag>
     <flag name="compression_bzip2">bzip2 compression support</flag>
     <flag name="compression_lzma">LZMA compression support</flag>
     <flag name="compression_zlib">gzip compression support</flag>
