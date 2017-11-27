@@ -22,19 +22,19 @@ inherit rindeal
 	DISTUTILS_IN_SOURCE_BUILD=true
 
 GH_RN='github:arvidn:libtorrent'
-GH_FETCH_TYPE='manual'
+GH_REF="libtorrent-${PV//./_}"
 
 
 ## functions: prune_libtool_files()
 inherit eutils
-## EXPORT_FUNCTIONS: src_unpack
-inherit vcs-snapshot
-## EXPORT_FUNCTIONS: src_unpack
-inherit git-hosting
-## EXPORT_FUNCTIONS: src_prepare src_configure src_compile src_test src_install
-inherit distutils-r1
 ## functions: version_compare
 inherit versionator
+## EXPORT_FUNCTIONS: src_unpack
+inherit git-hosting
+## functions: eautoreconf
+inherit autotools
+## functions: distutils-r1_src_prepare distutils-r1_src_configure distutils-r1_src_compile distutils-r1_src_install
+inherit distutils-r1
 ## functions: make_setup.py_extension_compilation_parallel
 inherit rindeal-python-utils
 
@@ -46,8 +46,6 @@ LICENSE='BSD'
 
 [[ -z "${LT_SONAME}" ]] && die "LT_SONAME not defined or empty"
 SLOT="0/${LT_SONAME}"
-# prepared tarball saves eautoreconf() call. Repo snapshot is not needed for now.
-SRC_URI="${GH_REPO_URL}/releases/download/libtorrent-${PV//./_}/${P}.tar.gz"
 
 
 [[ "${PV}" != *9999* ]] && [[ -z "${KEYWORDS}" ]] && \
@@ -80,7 +78,7 @@ EXPORT_FUNCTIONS src_unpack src_prepare src_configure src_compile src_install
 
 
 libtorrent-rasterbar_src_unpack() {
-	vcs-snapshot_src_unpack
+	git-hosting_src_unpack
 }
 
 libtorrent-rasterbar_src_prepare() {
@@ -96,6 +94,12 @@ libtorrent-rasterbar_src_prepare() {
 		-i -- configure.ac || die
 
 	make_setup.py_extension_compilation_parallel bindings/python/setup.py
+
+	# automake fails miserably if this file doesn't exist
+	emkdir build-aux
+	touch build-aux/config.rpath || die
+
+	eautoreconf
 
 	use python && distutils-r1_src_prepare
 }
