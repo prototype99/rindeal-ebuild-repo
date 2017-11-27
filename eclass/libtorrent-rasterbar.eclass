@@ -29,6 +29,8 @@ GH_REF="libtorrent-${PV//./_}"
 inherit eutils
 ## functions: version_compare
 inherit versionator
+## functions: append-cxxflags
+inherit flag-o-matic
 ## EXPORT_FUNCTIONS: src_unpack
 inherit git-hosting
 ## functions: eautoreconf
@@ -105,8 +107,10 @@ libtorrent-rasterbar_src_prepare() {
 }
 
 libtorrent-rasterbar_src_configure() {
+	append-cxxflags -std=c++11 # Gentoo-Bug: 634506
+
 	local my_econf_args=(
-		--disable-silent-rules # gentoo#441842
+		--disable-silent-rules # Gentoo-Bug: 441842
 		# hardcode boost system to skip "lookup heuristic"
 		--with-boost-system='mt'
 		--with-libiconv
