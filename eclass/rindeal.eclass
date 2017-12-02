@@ -12,7 +12,7 @@
 inherit portage-patches
 
 
-if [ -z "${_RINDEAL_ECLASS}" ] ; then
+if [[ -z "${_RINDEAL_ECLASS}" ]] ; then
 
 case "${EAPI:-0}" in
     6) ;;
@@ -20,8 +20,19 @@ case "${EAPI:-0}" in
 esac
 
 
+rindeal:func_exists() {
+	declare -F "${1}" >/dev/null
+}
+
+
 ### BEGIN: "Command not found" handler
-if [[ -z "$(type -t command_not_found_handle 2>/dev/null)" ]] ; then
+if rindeal:func_exists command_not_found_handle ; then
+	# portage registers a cnf handler for the `depend` phase
+	# https://github.com/gentoo/portage/commit/40da7ee19c4c195da35083bf2d2fcbd852ad3846
+	if [[ "${EBUILD_PHASE}" != depend ]] ; then
+		eqawarn "${ECLASS}.eclass: command_not_found_handle() already registered"
+	fi
+else
 
 	command_not_found_handle() {
 		debug-print-function "${FUNCNAME}" "$@"
@@ -37,43 +48,69 @@ if [[ -z "$(type -t command_not_found_handle 2>/dev/null)" ]] ; then
 		die "'${cmd}': command not found"
 	}
 
-else
-	eqawarn "${ECLASS}: command_not_found_handle() already registered"
 fi
 ### END: "Command not found" handler
 
 
+### BEGIN: hooking infrastructure
+
+_rindeal:hooks:get_orig_prefix() {
+	echo "__original_"
+}
+
+_rindeal:hooks:call_orig() {
+	debug-print-function "${FUNCNAME}" "${@}"
+
+	"$(_rindeal:hooks:get_orig_prefix)${1}" "${@:2}"
+}
+
+_rindeal:hooks:save() {
+	debug-print-function "${FUNCNAME}" "${@}"
+
+	(( $# != 1 )) && die
+
+	local -r -- name="${1}"
+	local -r -- orig_prefix="$(_rindeal:hooks:get_orig_prefix)"
+
+	# make sure we don't create an infinite loop
+	if ! rindeal:func_exists "${orig_prefix}${name}" ; then
+
+		# save original implementation under a different name
+		eval "${orig_prefix}$(declare -f "${name}")"
+	fi
+}
+
+### END: hooking infrastructure
+
+
 ### BEGIN: inherit hook
 
+_rindeal:hooks:save inherit
+
+## "static assoc array"
 if [[ -z "$(declare -p _RINDEAL_ECLASS_SWAPS 2>/dev/null)" ]] ; then
-declare -gA _RINDEAL_ECLASS_SWAPS=(
+declare -g -A _RINDEAL_ECLASS_SWAPS=(
 	['flag-o-matic']='flag-o-matic-patched'
 	['ninja-utils']='ninja-utils-patched'
 	['versionator']='versionator-patched'
 )
 fi
 
-# make sure we apply the hook only once
-if [[ -z "$(type -t __original_inherit 2>/dev/null)" ]] ; then
-
-# save original inherit() implementation under different name
-eval "__original_$(declare -f inherit)"
-
 inherit() {
 	local a args=()
-	for a in "$@" ; do
+	for a in "${@}" ; do
 		if [[ ${_RINDEAL_ECLASS_SWAPS["${a}"]+exists} ]] ; then
-			args+=( "${_RINDEAL_ECLASS_SWAPS["${a}"]}" )
+			# unquoted variable allows us to ignore certain eclasses
+			args+=( ${_RINDEAL_ECLASS_SWAPS["${a}"]} )
+			# prevent infinite loops
 			unset "_RINDEAL_ECLASS_SWAPS[${a}]"
 		else
 			args+=( "${a}" )
 		fi
 	done
 
-	__original_inherit "${args[@]}"
+	_rindeal:hooks:call_orig inherit "${args[@]}"
 }
-
-fi
 
 ### END: inherit hook
 
