@@ -83,7 +83,6 @@ src_prepare-locales() {
 }
 
 src_prepare() {
-	eapply "${FILESDIR}"/4.0.1-nowebui.patch
 	eapply_user
 
 	xdg_src_prepare
