@@ -109,7 +109,7 @@ libtorrent-rasterbar_src_prepare() {
 
 libtorrent-rasterbar_src_configure() {
 	append-cxxflags -std=c++11 # Gentoo-Bug: 634506
-	if (( $(version_compare "${PV}" 1.1.0 ) == 1 )) ; then
+	if version_compare "${PV}" '<' 1.1.0 ; then
 		# v1.0.x is old and uses code which is deprecated in C++11
 		append-cxxflags -Wno-deprecated-declarations
 	fi
@@ -130,7 +130,7 @@ libtorrent-rasterbar_src_configure() {
 		$(use_enable test tests)
 	)
 
-	if (( $(version_compare "${PV}" 1.1.0 ) == 1 )) ; then
+	if version_compare "${PV}" '<' 1.1.0 ; then
 		my_econf_args+=( $(use_enable debug statistics) )
 	fi
 
