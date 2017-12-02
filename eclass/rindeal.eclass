@@ -61,7 +61,13 @@ _rindeal:hooks:get_orig_prefix() {
 _rindeal:hooks:call_orig() {
 	debug-print-function "${FUNCNAME}" "${@}"
 
-	"$(_rindeal:hooks:get_orig_prefix)${1}" "${@:2}"
+	local -r -- ________f="$(_rindeal:hooks:get_orig_prefix)${1}"
+
+	if ! _rindeal:func_exists "${________f}" ; then
+		die "${ECLASS}.eclass: ${FUNCNAME}: function '${________f}' doesn't exist"
+	fi
+
+	"${________f}" "${@:2}"
 }
 
 _rindeal:hooks:save() {
