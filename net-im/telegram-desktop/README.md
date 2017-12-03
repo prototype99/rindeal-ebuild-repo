@@ -1,5 +1,0 @@
-- so far, this is the only source based package for Telegram
-- dynamically linked libraries (except patched Qt) instead of statically linked like upstream does
-- disabled crash-reporting
-- optional autostart
-- systemd user service
