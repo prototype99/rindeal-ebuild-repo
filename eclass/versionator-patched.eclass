@@ -38,5 +38,3 @@ version_compare() {
 		die
 	fi
 }
-
-fi
