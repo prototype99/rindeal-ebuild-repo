@@ -20,7 +20,7 @@ LICENSE="public-domain"
 SLOT="0"
 
 KEYWORDS="~amd64 ~arm ~arm64"
-IUSE_A=( +man test )
+IUSE_A=( +man test rtmp )
 
 CDEPEND_A=(
 	"dev-python/setuptools[${PYTHON_USEDEP}]"
@@ -34,7 +34,9 @@ DEPEND_A=( "${CDEPEND_A[@]}"
 	")"
 	"test? ( dev-python/nose[coverage(+)] )"
 )
-RDEPEND_A=( "${CDEPEND_A[@]}" )
+RDEPEND_A=( "${CDEPEND_A[@]}"
+	"rtmp? ( media-video/rtmpdump )"
+)
 
 inherit arrays
 
