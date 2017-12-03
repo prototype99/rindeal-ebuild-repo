@@ -63,7 +63,7 @@ _rindeal:hooks:call_orig() {
 
 	local -r -- ________f="$(_rindeal:hooks:get_orig_prefix)${1}"
 
-	if ! _rindeal:func_exists "${________f}" ; then
+	if ! rindeal:func_exists "${________f}" ; then
 		die "${ECLASS}.eclass: ${FUNCNAME}: function '${________f}' doesn't exist"
 	fi
 
