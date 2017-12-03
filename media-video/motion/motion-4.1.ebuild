@@ -7,19 +7,29 @@ inherit rindeal
 
 ## git-hosting.eclass
 # GH_RN="github:Motion-Project"
-GH_RN="github:rindeal"  # required for Meson to work, upstream autotools-based system is crap, but YMMV
-[[ "${PV}" == *9999* ]] || GH_REF="release-${PV}"
+# fork is required for Meson to work, upstream autotools-based system is crap, but YMMV
+GH_RN="github:rindeal"
+[[ "${PV}" == *9999* ]] || \
+	GH_REF="release-${PV}"
 
+## functions: eshopts_push, eshopts_pop
+inherit estack
+## EXPORT_FUNCTIONS: src_unpack
+## variables: GH_HOMEPAGE
 inherit git-hosting
+## functions: readme.gentoo_create_doc, readme.gentoo_print_elog
 inherit readme.gentoo-r1
+## functions: enewuser
 inherit user
+## functions: systemd_dounit, systemd_dotmpfilesd
 inherit systemd
+## functions: eautoreconf
 inherit autotools
-# EXPORT_FUNCTIONS: src_configure src_compile src_test src_install
+## EXPORT_FUNCTIONS: src_configure src_compile src_test src_install
 inherit meson
 
 DESCRIPTION="A software motion detector"
-HOMEPAGE="https://motion-project.github.io ${GH_HOMEPAGE}"
+HOMEPAGE="https://motion-project.github.io https://github.com/Motion-Project/motion ${GH_HOMEPAGE}"
 LICENSE="GPL-2"
 
 SLOT="0"
@@ -96,7 +106,7 @@ src_install() {
 	rmdir "${ED%/}"/usr/share/doc/${PN} || die
 
 	epushd "${ED}/usr/share/doc/${PF}"
-	erm *MacOSX* *FreeBSD* examples/*FreeBSD*
+	erm examples/*FreeBSD*
 	epopd
 
 	# TODO: remove
