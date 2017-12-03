@@ -5,21 +5,25 @@
 EAPI=6
 inherit rindeal
 
+## git-hosting.eclass:
 GH_RN="github:pyca"
 
+## python-*.eclass (distutils-r1.eclass):
 PYTHON_COMPAT=( python2_7 python3_{4,5,6} pypy{,3} )
 PYTHON_REQ_USE="threads(+)"
 
-inherit distutils-r1
-inherit flag-o-matic
+## EXPORT_FUNCTIONS: src_unpack
+## variables: GH_HOMEPAGE
 inherit git-hosting
+## EXPORT_FUNCTIONS:
+inherit distutils-r1
 
 DESCRIPTION="Python interface to the OpenSSL library"
 HOMEPAGE="
+	https://pyopenssl.org/
+	https://pyopenssl.readthedocs.io/en/${PV}/
 	${GH_HOMEPAGE}
 	https://pypi.python.org/pypi/pyOpenSSL
-	https://pyopenssl.readthedocs.io/en/${PV}/
-	https://pyopenssl.org/
 "
 LICENSE="Apache-2.0"
 
@@ -48,17 +52,17 @@ python_compile_all() {
 }
 
 python_test() {
-	# FIXME: for some reason, no-ops on PyPy
 	esetup.py test
 }
 
 python_install_all() {
 	use doc && local HTML_DOCS=( doc/_build/html/. )
+
+	distutils-r1_python_install_all
+
 	if use examples ; then
 		docinto examples
 		dodoc -r examples/*
 		docompress -x /usr/share/doc/${PF}/examples
 	fi
-
-	distutils-r1_python_install_all
 }
