@@ -5,15 +5,17 @@
 EAPI=6
 inherit rindeal
 
+## git-hosting.eclass:
 GH_RN="github:shadow-maint"
 
+## EXPORT_FUNCTIONS: src_unpack
 inherit git-hosting
 inherit eutils
-# functions: elibtoolize
+## functions: elibtoolize
 inherit libtool
-# functions: dopamd, newpamd
+## functions: dopamd, newpamd
 inherit pam
-# functions: eautoreconf
+## functions: eautoreconf
 inherit autotools
 
 DESCRIPTION="Utilities to deal with user accounts"
@@ -151,10 +153,16 @@ src_install() {
 	dodoc ChangeLog NEWS TODO doc/{HOWTO,README*,WISHLIST,*.txt}
 	newdoc README README.download
 
+	## Remove manpages that are handled by other packages (sys-apps/coreutils sys-apps/man-pages)
 	if use man ; then
-		# Remove manpages that are handled by other packages (sys-apps/coreutils sys-apps/man-pages)
-		erm "${ED}"/usr/share/man/man5/passwd.5
-		erm "${ED}"/usr/share/man/man3/getspnam.3
+		find \
+			"${ED}/usr/share/man" \
+			'-(' \
+				-name "passwd.5" -o \
+				-name "getspnam.3" \
+			'-)' | \
+		xargs rm -v
+		assert
 	fi
 
 	# needed for 'useradd -D'
@@ -222,8 +230,14 @@ src_install() {
 		if use man ; then
 			# remove manpages that pam will install for us
 			# and/or don't apply when using pam
-			erm "${ED}"/usr/share/man/man5/suauth.5
-			use pam || erm "${ED}"/usr/share/man/man5/limits.5
+			find \
+				"${ED}/usr/share/man" \
+				'-(' \
+					-name suauth.5 -o \
+					-name limits.5 \
+				'-)' | \
+			xargs rm -v
+			assert
 		fi
 
 		# Remove pam.d files provided by sys-auth/pambase
