@@ -3,7 +3,7 @@ Rindeal's Ebuild Repository <img src="./assets/logo_96.png" title="Sir Benjamin 
 
 _Packages done right™_
 
-[![Build Status][ci-master-badge]][ci-master] [![Dev Branch Build Status][ci-dev-badge]][ci-dev] ![Much Safe](https://img.shields.io/badge/much-safe-38ddbc.svg?style=flat-square&maxAge=604800) ![Very Certifyd](https://img.shields.io/badge/very-certifyd-ce47ce.svg?style=flat-square&maxAge=604800)
+[![Build Status][ci-master-badge]][ci-master] ![Much Safe](https://img.shields.io/badge/much-safe-38ddbc.svg?style=flat-square&maxAge=604800) ![Very Certifyd](https://img.shields.io/badge/very-certifyd-ce47ce.svg?style=flat-square&maxAge=604800)
 
 Every package has been carefully crafted to the highest level of perfection, if not then it's in the process to.
 
@@ -115,6 +115,4 @@ If you trust official [Gentoo™] repos, you can trust this, too. Getting commit
 [New issue]: https://github.com/rindeal/rindeal-ebuild-repo/issues/new
 [ci-master]: https://travis-ci.org/rindeal/rindeal-ebuild-repo
 [ci-master-badge]: https://img.shields.io/travis/rindeal/rindeal-ebuild-repo/master.svg?style=flat-square&label=master%20build&maxAge=300
-[ci-dev]: https://travis-ci.org/rindeal/rindeal-ebuild-repo
-[ci-dev-badge]: https://img.shields.io/travis/rindeal/rindeal-ebuild-repo/dev.svg?style=flat-square&label=dev%20build&maxAge=300
 [Gentoo™]: https://www.gentoo.org/ "main Gentoo project website"
