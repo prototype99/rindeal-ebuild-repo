@@ -27,6 +27,8 @@ inherit java-pkg-2
 inherit java-ant-2
 ## functions: make_desktop_entry, doicon, newicon
 inherit eutils
+## EXPORT_FUNCTIONS: src_prepare pkg_preinst pkg_postinst pkg_postrm
+inherit xdg
 
 DESCRIPTION="Java-based editor for the OpenStreetMap project"
 HOMEPAGE="https://josm.openstreetmap.de/"
@@ -34,11 +36,11 @@ LICENSE="GPL-2"
 
 SLOT="0"
 MY_P="${PN}_0.0.svn${PV}"
-DEBIAN_REVISION="1"
 # Upstream doesn't provide versioned tarballs
 SRC_URI_A=(
-	"mirror://debian/pool/main/${PN:0:1}/${PN}/${MY_P}+dfsg.orig.tar.gz"
-	"mirror://debian/pool/main/${PN:0:1}/${PN}/${MY_P}+dfsg-${DEBIAN_REVISION}.debian.tar.xz"
+	## josm 0.0.svn13170+dfsg-2~bpo9+1
+	"http://snapshot.debian.org/archive/debian/20171127T035025Z/pool/main/j/josm/josm_0.0.svn13170+dfsg.orig.tar.gz"
+	"http://snapshot.debian.org/archive/debian/20171202T213943Z/pool/main/j/josm/josm_0.0.svn13170+dfsg-2~bpo9+1.debian.tar.xz"
 )
 
 KEYWORDS="~amd64"
@@ -97,7 +99,7 @@ src_prepare() {
 	eapply "${DEBIAN_DIR}/patches"/07-use_system_fonts.patch
 	eapply "${DEBIAN_DIR}/patches"/08-use_noto_font.patch
 
-	default
+	xdg_src_prepare
 
 	src_prepare-locales
 
@@ -137,6 +139,26 @@ src_prepare() {
 
 	# do not display MOTD by default
 	sed -e 's|getBoolean("help.displaymotd", true)|getBoolean("help.displaymotd", false)|' -i -- src/org/openstreetmap/josm/gui/GettingStarted.java || die
+
+	# fix `TMSCachedTileLoader.java:129: error: method does not override or implement a method from a supertype`
+	# https://stackoverflow.com/a/7378912/2566213
+	gawk -i inplace '
+			!/hasOutstandingTasks/ {
+				if (m)
+					print buf
+				buf=$0
+				m=1
+			}
+			/hasOutstandingTasks/ {
+				m=0
+				print "//",buf
+				print
+			}
+			ENDFILE {
+				print buf
+			}
+		' \
+		src/org/openstreetmap/josm/data/imagery/TMSCachedTileLoader.java || die
 
 	# update `REVISION` entry
 	xmlstarlet ed --inplace -u "project/target[@name='create-revision']/echo[@file='\${revision.dir}/REVISION']" \
