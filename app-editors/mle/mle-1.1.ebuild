@@ -17,7 +17,7 @@ LICENSE="Apache-2.0 BSD-1"
 
 SLOT="0"
 
-KEYWORDS="~amd64 ~arm"
+KEYWORDS="~amd64 ~arm ~arm64"
 IUSE=""
 
 CDEPEND=""
