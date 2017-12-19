@@ -15,14 +15,21 @@ LICENSE="Apache-2.0"
 SLOT="0"
 
 KEYWORDS="amd64 arm arm64"
-IUSE="static-libs"
+IUSE_A=( static-libs )
 
-CDEPEND="
-	dev-libs/libpcre:3
-	dev-libs/uthash"
-DEPEND="${CDEPEND}
-	virtual/pkgconfig"
-RDEPEND="${CDEPEND}"
+CDEPEND_A=(
+	"dev-libs/libpcre:3"
+	">=dev-libs/uthash-2"
+)
+DEPEND_A=( "${CDEPEND_A[@]}"
+	"virtual/pkgconfig"
+)
+RDEPEND_A=( "${CDEPEND_A[@]}" )
+
+REQUIRED_USE_A=(  )
+RESTRICT+=""
+
+inherit arrays
 
 src_prepare() {
 	eapply "${FILESDIR}"/makefile.patch
@@ -34,7 +41,7 @@ src_prepare() {
 }
 
 src_install() {
-	dolib.so lib${PN}.so*
+	dolib.so "lib${PN}.so"*
 	use static-libs && \
 		dolib.a "lib${PN}.a"
 
