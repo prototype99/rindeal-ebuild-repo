@@ -25,10 +25,10 @@ JAVA_ANT_ENCODING=UTF-8
 inherit java-pkg-2
 ## EXPORT_FUNCTIONS: src_configure
 inherit java-ant-2
-## functions: make_desktop_entry, doicon, newicon
-inherit eutils
 ## EXPORT_FUNCTIONS: src_prepare pkg_preinst pkg_postinst pkg_postrm
 inherit xdg
+## functions: make_desktop_entry, doicon, newicon
+inherit desktop
 
 DESCRIPTION="Java-based editor for the OpenStreetMap project"
 HOMEPAGE="https://josm.openstreetmap.de/"
@@ -59,10 +59,11 @@ DEPEND_A=( "${CDEPEND_A[@]}"
 	">=virtual/jdk-1.8"
 	"dev-java/javacc:0"
 	"dev-java/ant-contrib:0"
-	"app-text/xmlstarlet"
+	"app-text/xmlstarlet" # required for build files patching
 )
 RDEPEND_A=( "${CDEPEND_A[@]}"
 	">=virtual/jre-1.8"
+	"media-fonts/noto"
 )
 
 RESTRICT+=" mirror"
@@ -87,7 +88,8 @@ src_prepare-locales() {
 	l10n_get_locales locales app off
 	for l in ${locales} ; do
 		erm "${dir}/${pre}${l}${post}"
-		sed -e "/languages\.put.*\"${l}\"/d" -i -- src/org/openstreetmap/josm/tools/{I18n,LanguageInfo}.java || die
+		sed -e "/languages\.put.*\"${l}\"/d" \
+			-i -- src/org/openstreetmap/josm/tools/{I18n,LanguageInfo}.java || die
 	done
 }
 
@@ -104,7 +106,13 @@ src_prepare() {
 	src_prepare-locales
 
 	## fix debian paths
-	xmlstarlet ed --inplace -d "project/target[@name='init-properties']/path[@id='classpath']/fileset" build.xml || die
+	local xmlstarlet=(
+		xmlstarlet ed --inplace
+		-d "project/target[@name='init-properties']/path[@id='classpath']/fileset"
+		build.xml
+	)
+	echo "${xmlstarlet[@]}"
+	"${xmlstarlet[@]}" || die
 	local p f
 	for p in ${EANT_GENTOO_CLASSPATH} ; do
 		for f in $(java-pkg_getjars "${p}" | tr ':' ' ') ; do
@@ -115,19 +123,24 @@ src_prepare() {
 				-i "${base_xpath}/pathelement[last()]" -t attr -n location -v "${f}"
 				build.xml
 			)
+			echo "${xmlstarlet[@]}"
 			"${xmlstarlet[@]}" || die
 		done
 	done
-	sed -e "s|/usr/share/java/ant-contrib.jar|$(java-pkg_getjars --build-only ant-contrib)|" -i -- build.xml i18n/build.xml || die
-	sed -e "s|/usr/share/java/gettext-ant-tasks.jar|$(java-pkg_getjars --build-only gettext-ant-tasks)|" -i -- build.xml i18n/build.xml || die
+	sed -e "s,/usr/share/java/ant-contrib.jar,$(java-pkg_getjars --build-only ant-contrib),g" \
+		-i -- build.xml i18n/build.xml || die
+	sed -e "s,/usr/share/java/gettext-ant-tasks.jar,$(java-pkg_getjars --build-only gettext-ant-tasks),g" \
+		-i -- build.xml i18n/build.xml || die
 
-	# print stats for EPSG compilation
-	sed -e "s|printStats *= *false|printStats = true|" -i -- scripts/BuildProjectionDefinitions.java || die
+	## print stats for EPSG compilation
+	sed -e "s|printStats *= *false|printStats = true|" \
+		-i -- scripts/BuildProjectionDefinitions.java || die
 
-	# fix font path
-	sed -e 's|/usr/share/fonts/truetype/noto|/usr/share/fonts/noto|g' -i -- src/org/openstreetmap/josm/tools/FontsManager.java || die
+	## fix font path
+	sed -e 's,/usr/share/fonts/truetype/noto,/usr/share/fonts/noto,g' \
+		-i -- src/org/openstreetmap/josm/tools/FontsManager.java || die
 
-	# change default look and feel
+	## change default look and feel to GTK
 	sed -e 's|"javax.swing.plaf.metal.MetalLookAndFeel"|"com.sun.java.swing.plaf.gtk.GTKLookAndFeel"|' \
 		-i -- src/org/openstreetmap/josm/tools/PlatformHookUnixoid.java || die
 
@@ -137,11 +150,12 @@ src_prepare() {
 	sed -e '/Main.platform.getOSDescription/d' -i -- src/org/openstreetmap/josm/data/Version.java || die
 	sed -r -e 's|(getAgentString\(\)) *\+.*|\1;|' -i -- src/org/openstreetmap/josm/data/Version.java || die
 
-	# do not display MOTD by default
-	sed -e 's|getBoolean("help.displaymotd", true)|getBoolean("help.displaymotd", false)|' -i -- src/org/openstreetmap/josm/gui/GettingStarted.java || die
+	## do not display MOTD by default, as it requires calling home
+	sed -e 's|getBoolean("help.displaymotd", true)|getBoolean("help.displaymotd", false)|' \
+		-i -- src/org/openstreetmap/josm/gui/GettingStarted.java || die
 
-	# fix `TMSCachedTileLoader.java:129: error: method does not override or implement a method from a supertype`
-	# https://stackoverflow.com/a/7378912/2566213
+	## fix `TMSCachedTileLoader.java:129: error: method does not override or implement a method from a supertype`
+	## https://stackoverflow.com/a/7378912/2566213
 	gawk -i inplace '
 			!/hasOutstandingTasks/ {
 				if (m)
@@ -199,7 +213,7 @@ src_install() {
 	doins -r images styles data
 
 	### Icons
-	newicon images/logo.png ${PN}.png
+	newicon "images/logo.png" "${PN}.png"
 	doicon -s scalable "linux/tested/usr/share/icons/hicolor/scalable/apps/${PN}.svg"
 	local s
 	# unsupported sizes: 8 40 42 80
@@ -209,6 +223,7 @@ src_install() {
 
 	### Docs
 	doman "linux/tested/usr/share/man/man1/${PN}.1"
+	einstalldocs
 
 	### Misc
 	insinto /usr/share/appdata
