@@ -5,14 +5,16 @@ EAPI=6
 inherit rindeal
 
 GH_RN="github:adsr"
-GH_REF="49be202feadaa9aa22385d82e22b5def20110d0a" # 20161001
+GH_REF="v${PV}"
 
+## EXPORT_FUNCTIONS: src_unpack
 inherit git-hosting
 
 DESCRIPTION="Multiline buffer library"
 LICENSE="Apache-2.0"
 
-SLOT="0"
+# subslotting by soname
+SLOT="0/1"
 
 KEYWORDS="amd64 arm arm64"
 IUSE_A=( static-libs )
@@ -26,18 +28,18 @@ DEPEND_A=( "${CDEPEND_A[@]}"
 )
 RDEPEND_A=( "${CDEPEND_A[@]}" )
 
-REQUIRED_USE_A=(  )
-RESTRICT+=""
-
 inherit arrays
 
 src_prepare() {
-	eapply "${FILESDIR}"/makefile.patch
 	default
 
 	# use global utlist.h instead of bundled copy
 	sed -r -e 's|(#include *)"utlist.h"|\1<utlist.h>|g' \
 		-i -- *.{c,h} || die
+}
+
+src_configure() {
+	export PCRE_LDLIBS="$(pkg-config libpcre --libs-only-l)"
 }
 
 src_install() {
