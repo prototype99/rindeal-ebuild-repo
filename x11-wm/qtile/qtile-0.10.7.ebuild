@@ -41,7 +41,7 @@ CDEPEND_A=(
 
 	## optional
 	"dev-python/dbus-python[${PYTHON_USEDEP}]"
-	"dev-python/pygobject[${PYTHON_USEDEP}]"
+	"dev-python/pygobject:3[${PYTHON_USEDEP}]"
 )
 DEPEND_A=( "${CDEPEND_A[@]}"
 	"test? ("
