@@ -5,31 +5,37 @@
 EAPI=6
 inherit rindeal
 
-DESCRIPTION="Con Kolivas' Benchmarking Suite -- Successor to Contest"
-HOMEPAGE="http://users.tpg.com.au/ckolivas/interbench/"
+GH_RN="github:ckolivas"
+GH_REF="v${PV}"
+
+## EXPORT_FUNCTIONS: src_unpack
+inherit git-hosting
+## functions: tc-getCC
+inherit toolchain-funcs
+
+DESCRIPTION="Con Kolivas' Benchmarking Suite - Successor to Contest"
 LICENSE="GPL-2"
 
 SLOT="0"
-SRC_URI="http://ck.kolivas.org/apps/interbench/${P}.tar.bz2"
 
 KEYWORDS="~amd64 ~arm ~arm64"
 
 src_prepare() {
 	default
 
-	# respect FLAGS
-	sed -e 's|CFLAGS|#CFLAGS|' \
-		-e 's|CC|#CC|' \
-		-i -- Makefile || die
+	# "Fix numerous compile issues. Fix cpu calibration being unstable without affinity. Fix affinity. Determine processors automatically."
+	# https://github.com/ckolivas/interbench/commit/718667cb5dbc92e9142de61ed7fbdfa227ac788b
+	eapply "${FILESDIR}"/718667cb5dbc92e9142de61ed7fbdfa227ac788b.patch
 
 	# do not hardcode sched_priority (taken from FreeBSD Ports)
 	sed -e 's|sched_priority = 99|sched_priority = sched_get_priority_max(SCHED_FIFO)|' \
 		-e 's|set_fifo(96)|set_fifo(sched_get_priority_max(SCHED_FIFO) - 1)|' \
 		-e 's|\(set_thread_fifo(thi->pthread,\) 95|\1 sched_get_priority_max(SCHED_FIFO) - 1|' \
-		-i -- interbench.c || die
+		-i -- ${PN}.c || die
+}
 
-	# delete prebuilt binaries
-	rm -vf *.o ${PN} || die
+src_compile() {
+	emake CC="$(tc-getCC)" CFLAGS="${CFLAGS}"
 }
 
 src_install() {
