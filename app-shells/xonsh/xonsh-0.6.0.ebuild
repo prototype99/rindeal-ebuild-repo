@@ -5,12 +5,18 @@
 EAPI=6
 inherit rindeal
 
+## git-hosting.eclass:
 GH_RN="github"
 
+## python-*.eclass:
 PYTHON_COMPAT=( python3_{4,5,6} )
 
+## EXPORT_FUNCTIONS: src_unpack
 inherit git-hosting
+## EXPORT_FUNCTIONS: src_prepare src_configure src_compile src_test src_install
+## variables: PYTHON_USEDEP
 inherit distutils-r1
+## functions: optfeature
 inherit eutils
 
 DESCRIPTION="Python-powered, cross-platform, Unix-gazing shell"
@@ -23,7 +29,7 @@ LICENSE="BSD"
 SLOT="0"
 
 KEYWORDS="~amd64 ~arm ~arm64"
-IUSE="test"
+IUSE_A=( test )
 
 CDEPEND_A=(
 	"dev-python/ply[${PYTHON_USEDEP}]"
