@@ -6,12 +6,13 @@ inherit rindeal
 
 GH_RN="github:zevv"
 
+## EXPORT_FUNCTIONS: src_unpack
 inherit git-hosting
-# functions: tc-getCC
+## functions: tc-getCC
 inherit toolchain-funcs
-# functions: systemd_douserunit, systemd_get_userunitdir
+## functions: systemd_douserunit, systemd_get_userunitdir
 inherit systemd
-# functions: rindeal:expand_vars
+## functions: rindeal:expand_vars
 inherit rindeal-utils
 
 DESCRIPTION="Nostalgia bucklespring keyboard (IBM Model-M) sound emulator"
@@ -53,7 +54,7 @@ src_configure() {
 src_compile() {
 	default
 
-	# TODO: help2man.eclass
+	## TODO: help2man.eclass
 	local help2man=(
 		help2man
 		--name="${PN}" --version-string="${PV}"
