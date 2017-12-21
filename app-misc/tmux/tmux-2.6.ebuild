@@ -5,10 +5,14 @@
 EAPI=6
 inherit rindeal
 
+## git-hosting.eclass:
 GH_RN="github"
 
-inherit autotools
+## EXPORT_FUNCTIONS: src_unpack
+## variables: GH_HOMEPAGE
 inherit git-hosting
+## functions: eautoreconf
+inherit autotools
 
 DESCRIPTION="Terminal multiplexer"
 HOMEPAGE="https://tmux.github.io/ ${GH_HOMEPAGE}"
@@ -39,7 +43,7 @@ inherit arrays
 src_prepare() {
 	eapply_user
 
-	sed -r -e '/^(AM_)?CFLAGS/ s, -(O2|g),,g' -i -- Makefile.am || die
+	sed -r -e '/^(AM_)?CFLAGS/ s, -(O[0-3]|g), ,g' -i -- Makefile.am || die
 
 	eautoreconf
 }
