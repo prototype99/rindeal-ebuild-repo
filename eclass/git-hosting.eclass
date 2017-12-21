@@ -56,7 +56,7 @@ _gh_provider_gitlab:snap_url_tail() {
 
 
 _gh_provider_kernel:base_url()	{ printf '%s\n'	'git.kernel.org/pub/scm' ; }
-_gh_provider_kernel:snap_ext()	{ printf '%s\n'	'.tar.xz' ; }
+_gh_provider_kernel:snap_ext()	{ printf '%s\n'	'.tar.gz' ; }
 _gh_provider_kernel:snap_url_tail() {
 	(( $# != 1 )) && die
 	local -r -- ref="${1}" snap_ext="$(_gh_provider_kernel:snap_ext)"
