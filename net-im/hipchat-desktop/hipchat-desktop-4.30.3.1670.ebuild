@@ -25,6 +25,11 @@ RESTRICT+=" mirror"
 
 S="${WORKDIR}"
 
+src_prepare() {
+	eapply_user
+	eapply "${FILESDIR}/linuxbrowserlaunch.patch"
+}
+
 src_install() {
 	insinto /opt/
 	doins -r opt/HipChat$(get_major_version)

@@ -1,0 +1,14 @@
+--- a/opt/HipChat4/lib/linuxbrowserlaunch.sh
++++ b/opt/HipChat4/lib/linuxbrowserlaunch.sh
+@@ -5,5 +5,5 @@
+         then
+             echo "launching $1 $2"
+-            $1 $2
++            $1 "$2"
+             return 0
+         else
+@@ -15,3 +15,3 @@
+ export QT_PLUGIN_PATH=$HIPCHAT_QT_PLUGIN_PATH
+
+-launchUrl xdg-open $1 || launchUrl firefox $1 || launchUrl google-chrome $1 || launchUrl opera $1 || launchUrl rekonq $1 || launchUrl konqueror $1 || launchUrl epiphany $1
++launchUrl xdg-open "$1" || launchUrl firefox "$1" || launchUrl google-chrome "$1" || launchUrl opera "$1" || launchUrl rekonq "$1" || launchUrl konqueror "$1" || launchUrl epiphany "$1"
