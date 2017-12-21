@@ -4,12 +4,16 @@
 EAPI=6
 inherit rindeal
 
-PYTHON_COMPAT=( python{2_7,3_4,3_5} )
+## python-*.eclass:
+PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
 
+## git-hosting.eclass:
 GH_RN="github:jeffkaufman"
 GH_REF="release-${PV}"
 
+## EXPORT_FUNCTIONS: pkg_setup
 inherit python-single-r1
+## EXPORT_FUNCTIONS: src_unpack
 inherit git-hosting
 
 DESCRIPTION="Colourized diff that supports side-by-side diffing"
