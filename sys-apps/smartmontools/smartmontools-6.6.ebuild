@@ -22,7 +22,7 @@ LICENSE="GPL-2"
 SLOT="0"
 
 KEYWORDS="~amd64 ~arm ~arm64"
-IUSE_A=(caps examples selinux static nvme gnupg)
+IUSE_A=(caps examples selinux static nvme)
 
 CDEPEND_A=(
 	"caps? ("
@@ -65,7 +65,7 @@ src_configure() {
 		$(use_with caps libcap-ng)
 		$(use_with selinux)
 		--without-update-smart-drivedb
-		$(use_with gnupg)
+		--disable-gnupg
 
 		# --with-savestates
 		# --with-attributelog
