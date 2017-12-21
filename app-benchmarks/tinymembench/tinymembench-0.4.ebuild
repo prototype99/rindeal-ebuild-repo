@@ -5,17 +5,21 @@ EAPI=6
 inherit rindeal
 
 GH_RN='github:ssvb'
-GH_REF="v${PV}"
+[[ "${PV}" == *9999* ]] || \
+	GH_REF="v${PV}"
 
-inherit flag-o-matic
+## EXPORT_FUNCTIONS: src_unpack
 inherit git-hosting
+## functions: append-flags
+inherit flag-o-matic
 
 DESCRIPTION="Simple benchmark for memory throughput and latency"
 LICENSE="MIT"
 
 SLOT="0"
 
-KEYWORDS="amd64 arm ~arm64"
+[[ "${PV}" == *9999* ]] || \
+	KEYWORDS="amd64 arm arm64"
 
 src_prepare() {
 	# https://wiki.gentoo.org/wiki/Hardened/GNU_stack_quickstart
