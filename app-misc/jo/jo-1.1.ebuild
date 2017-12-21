@@ -4,10 +4,13 @@
 EAPI=6
 inherit rindeal
 
+## git-hosting.eclass:
 GH_RN='github:jpmens'
 GH_REF="v${PV}"
 
+## EXPORT_FUNCTIONS: src_unpack
 inherit git-hosting
+## functions: eautoreconf
 inherit autotools
 
 DESCRIPTION='Web log analyzer using probabilistic data structures'
