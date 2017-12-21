@@ -5,25 +5,41 @@
 EAPI="6"
 inherit rindeal
 
-# functions: append-cppflags
+## git-hosting.eclass:
+GH_RN="kernel:utils/${PN}"
+
+## EXPORT_FUNCTIONS: src_unpack
+inherit git-hosting
+## functinos: eautoreconf
+inherit autotools
+## functions: append-cppflags
 inherit flag-o-matic
-# functions: tc-getPKG_CONFIG
+## functions: tc-getPKG_CONFIG
 inherit toolchain-funcs
 
 DESCRIPTION="POSIX compliant shell, a direct descendant of the NetBSD version of ash"
-HOMEPAGE="http://gondor.apana.org.au/~herbert/dash/"
+HOMEPAGE="http://gondor.apana.org.au/~herbert/${PN}/ ${GH_HOMEPAGE}"
 LICENSE="BSD"
 
 SLOT="0"
-SRC_URI="http://gondor.apana.org.au/~herbert/${PN}/files/${P}.tar.gz"
 
-KEYWORDS="amd64 arm ~arm64"
+KEYWORDS="amd64 arm arm64"
 IUSE="+fnmatch libedit static"
 
-RDEPEND="!static? ( libedit? ( dev-libs/libedit ) )"
-DEPEND="${RDEPEND}
-	virtual/pkgconfig
-	libedit? ( static? ( dev-libs/libedit[static-libs] ) )"
+CDEPEND_A=(
+	"!static? ("
+		"libedit? ( dev-libs/libedit )"
+	")"
+)
+DEPEND_A=( "${CDEPEND_A[@]}"
+	"virtual/pkgconfig"
+	"libedit? ("
+		"static? ( dev-libs/libedit[static-libs] )"
+	")"
+)
+RDEPEND_A=( "${CDEPEND_A[@]}" )
+
+inherit arrays
 
 src_prepare() {
 	eapply "${FILESDIR}"/0.5.9.1-dumb_echo.patch
@@ -38,8 +54,10 @@ src_prepare() {
 	sed -e 's|LC_COLLATE=C|LC_ALL=C|g' -i -- src/mkbuiltins || die
 
 	# Use pkg-config for libedit linkage
-	sed -e "/LIBS/s|-ledit|\`$(tc-getPKG_CONFIG) --libs libedit $(usex static --static '')\`|" \
-		-i -- configure || die
+	sed -e "/LIBS/ s|-ledit|\`$(tc-getPKG_CONFIG) --libs libedit $(usex static --static '')\`|" \
+		-i -- configure.ac || die
+
+	eautoreconf
 }
 
 src_configure() {
