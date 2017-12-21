@@ -4,7 +4,7 @@
 EAPI=6
 inherit rindeal
 
-## git-r3.eclass
+## git-r3.eclass:
 EGIT_REPO_URI="https://anongit.freedesktop.org/git/xorg/app/${PN}.git"
 EGIT_CLONE_TYPE="shallow"
 EGIT_SUBMODULES=()
@@ -18,7 +18,8 @@ LICENSE="MIT"
 
 SLOT="0"
 
-KEYWORDS="~amd64 ~arm ~arm64"
+[[ "${PV}" == *9999* ]] || \
+	KEYWORDS="~amd64 ~arm ~arm64"
 IUSE_A=( )
 
 CDEPEND_A=()
@@ -31,7 +32,7 @@ RESTRICT+=""
 inherit arrays
 
 src_prepare() {
-    default
+	default
 
 	sed -e "s| -g||" -i -- Makefile || die
 }
