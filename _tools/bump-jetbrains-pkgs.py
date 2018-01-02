@@ -56,6 +56,7 @@ codes={
     'phpstorm': 'PS',
     'pycharm': 'PCP',
     'pycharm-community': 'PCC',
+    'rider': 'RD',
     'rubymine': 'RM',
     'webstorm': 'WS',
 }
