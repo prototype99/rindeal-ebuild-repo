@@ -215,6 +215,10 @@ _jetbrains-intellij_src_install-fix() {
 		echmod a+x **/jre*/**/bin/*
 		eshopts_pop
 	fi
+
+	if [[ -v JBIJ_ADDITIONAL_EXECUTABLES[@] ]] ; then
+		echmod a+x "${JBIJ_ADDITIONAL_EXECUTABLES[@]}"
+	fi
 }
 
 _jetbrains-intellij_src_install-post() {
