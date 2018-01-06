@@ -1,4 +1,4 @@
-# Copyright 2017 Jan Chren (rindeal)
+# Copyright 2017-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -39,8 +39,8 @@ MY_P="${PN}_0.0.svn${PV}"
 # Upstream doesn't provide versioned tarballs
 SRC_URI_A=(
 	## josm 0.0.svn13170+dfsg-2~bpo9+1
-	"http://snapshot.debian.org/archive/debian/20171127T035025Z/pool/main/j/josm/josm_0.0.svn13170+dfsg.orig.tar.gz"
-	"http://snapshot.debian.org/archive/debian/20171202T213943Z/pool/main/j/josm/josm_0.0.svn13170+dfsg-2~bpo9+1.debian.tar.xz"
+	"http://snapshot.debian.org/archive/debian/20180101T053014Z/pool/main/j/josm/josm_0.0.svn13265%2Bdfsg.orig.tar.gz"
+	"http://snapshot.debian.org/archive/debian/20180101T053014Z/pool/main/j/josm/josm_0.0.svn13265%2Bdfsg-1.debian.tar.xz"
 )
 
 KEYWORDS="~amd64"
