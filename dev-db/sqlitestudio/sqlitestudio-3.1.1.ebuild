@@ -22,7 +22,7 @@ IUSE="cli cups nls tcl test"
 CDEPEND_A=(
 	"dev-db/sqlite:3"
 
-	dev-qt/qt{core,gui,network,script,svg,widgets,xml}:5
+	dev-qt/qt{concurrent,core,gui,network,script,svg,widgets,xml}:5
 
 	"cups? ( dev-qt/qtprintsupport:5 )"
 	"cli? ( sys-libs/readline:* )"
