@@ -162,13 +162,13 @@ src_install() {
 	keepdir "${SQLITESTUDIO_ICONS_DIR}"
 	keepdir "${SQLITESTUDIO_FORMS_DIR}"
 
-	make_desktop_entry_args=(
+	local make_desktop_entry_args=(
 		"${EPREFIX}/usr/bin/${PN} -- %F"	# exec
 		'SQLiteStudio3'	# name
 		"${PN}"	# icon
 		'Development;Database;Utility'	# categories
 	)
-	make_desktop_entry_extras=( 'MimeType=application/x-sqlite3;' )
+	local make_desktop_entry_extras=( 'MimeType=application/x-sqlite3;' )
 	make_desktop_entry "${make_desktop_entry_args[@]}" \
 		"$( printf '%s\n' "${make_desktop_entry_extras[@]}" )"
 }
