@@ -65,7 +65,7 @@ src_configure() {
 		$(use_with caps libcap-ng)
 		$(use_with selinux)
 		--without-update-smart-drivedb
-		--disable-gnupg
+		--without-gnupg
 
 		# --with-savestates
 		# --with-attributelog
