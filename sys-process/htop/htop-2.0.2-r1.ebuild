@@ -14,6 +14,7 @@ inherit linux-info
 inherit git-hosting
 # EXPORT_FUNCTIONS: src_prepare, pkg_preinst, pkg_postinst, pkg_postrm
 inherit xdg
+inherit desktop
 
 DESCRIPTION="Interactive text-mode process viewer for Unix systems aiming to be a better top"
 HOMEPAGE="https://hisham.hm/htop/ ${GH_HOMEPAGE}"
