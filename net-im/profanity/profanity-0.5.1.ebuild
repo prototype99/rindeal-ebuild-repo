@@ -1,21 +1,25 @@
-# Copyright 2016-2017 Jan Chren (rindeal)
+# Copyright 2016-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 inherit rindeal
 
-# git-hosting.eclass
+## git-hosting.eclass
 GH_RN="github:boothj5"
-# python-*.eclass
+## python-*.eclass
 PYTHON_COMPAT=( python2_7 )
 
+## EXPORT_FUNCTIONS: src_unpack
+## variables: GH_HOMEPAGE
 inherit git-hosting
-# functions: eautoreconf
+## functions: eautoreconf
 inherit autotools
-# EXPORT_FUNCTIONS: pkg_setup
+## EXPORT_FUNCTIONS: pkg_setup
 inherit python-single-r1
-# functions: prune_libtool_files, newicon
-inherit eutils
+## functions: prune_libtool_files
+inherit ltprune
+## functions: newicon
+inherit desktop
 
 DESCRIPTION="Ncurses based XMPP client inspired by Irssi"
 HOMEPAGE="http://profanity.im/ ${GH_HOMEPAGE}"
