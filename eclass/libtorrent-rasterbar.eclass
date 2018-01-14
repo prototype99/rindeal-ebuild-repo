@@ -1,5 +1,5 @@
 # Copyright 1999-2016 Gentoo Foundation
-# Copyright 2016-2017 Jan Chren (rindeal)
+# Copyright 2016-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 if [ -z "${LT_RASTERBAR_ECLASS}" ] ; then
@@ -26,8 +26,8 @@ GH_RN='github:arvidn:libtorrent'
 GH_REF="libtorrent-${PV//./_}"
 
 
-## functions: prune_libtool_files()
-inherit eutils
+## functions: prune_libtool_files
+inherit ltprune
 ## functions: version_compare
 inherit versionator
 ## functions: append-cxxflags
