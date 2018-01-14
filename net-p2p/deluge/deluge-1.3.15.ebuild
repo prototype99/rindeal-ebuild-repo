@@ -1,25 +1,30 @@
-# Copyright 2016-2017 Jan Chren (rindeal)
+# Copyright 2016-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI='6'
+EAPI=6
 inherit rindeal
 
+## python-*.eclass:
 PYTHON_COMPAT=( python2_7 )
+## distutils-r1.eclass:
 DISTUTILS_SINGLE_IMPL=true
 
+## EXPORT_FUNCTIONS: src_prepare src_configure src_compile src_test src_install
+## functions: distutils-r1_python_prepare_all, distutils-r1_python_install_all
+## variables: PYTHON, PYTHON_USEDEP
 inherit distutils-r1
-inherit eutils
+## functions: systemd_dounit
 inherit systemd
 
-DESCRIPTION='BitTorrent client with a client/server model'
-HOMEPAGE='http://deluge-torrent.org/'
-LICENSE='GPL-2'
+DESCRIPTION="BitTorrent client with a client/server model"
+HOMEPAGE="http://deluge-torrent.org/"
+LICENSE="GPL-2"
 
-SLOT='0'
+SLOT="0"
 SRC_URI="http://git.deluge-torrent.org/deluge/snapshot/${P}.tar.bz2"
 
-KEYWORDS='amd64 arm arm64'
-IUSE='console +daemon geoip +gtk +libnotify +setproctitle +sound webui'
+KEYWORDS="amd64 arm arm64"
+IUSE_A=( console +daemon geoip +gtk +libnotify +setproctitle +sound webui )
 
 CDEPEND_A=(
 	"daemon? ("
@@ -76,12 +81,12 @@ src_prepare-locales() {
 
 python_prepare_all() {
 	# disable libtorrent checks
-	sed -e 's|build_libtorrent = True|build_libtorrent = False|' \
+	esed -e 's|build_libtorrent = True|build_libtorrent = False|' \
 		-e "/Compiling po file/a \\\tuptoDate = False" \
-        -i -- 'setup.py' || die
+        -i -- 'setup.py'
 	# disable new release checks
-	sed -e 's|"new_release_check": True|"new_release_check": False|' \
-        -i -- 'deluge/core/preferencesmanager.py' || die
+	esed -e 's|"new_release_check": True|"new_release_check": False|' \
+        -i -- 'deluge/core/preferencesmanager.py'
 
 	src_prepare-locales
 
