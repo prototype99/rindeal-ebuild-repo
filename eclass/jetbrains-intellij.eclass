@@ -1,4 +1,4 @@
-# Copyright 2016-2017 Jan Chren (rindeal)
+# Copyright 2016-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 # @ECLASS: jetbrains-intellij.eclass
@@ -16,13 +16,13 @@ esac
 inherit rindeal
 
 
-# functions: make_desktop_entry, newicon
-inherit eutils
-# functions: eshopts_push, eshopts_pop
+## functions: make_desktop_entry, newicon
+inherit desktop
+## functions: eshopts_push, eshopts_pop
 inherit estack
-# functions: get_version_component_range, get_major_version
+## functions: get_version_component_range, get_major_version
 inherit versionator
-# EXPORT_FUNCTIONS: src_prepare, pkg_preinst, pkg_postinst, pkg_postrm
+## EXPORT_FUNCTIONS: src_prepare, pkg_preinst, pkg_postinst, pkg_postrm
 inherit xdg
 
 
