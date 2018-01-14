@@ -1,21 +1,23 @@
 # Copyright 1999-2016 Gentoo Foundation
-# Copyright 2016-2017 Jan Chren (rindeal)
+# Copyright 2016-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 inherit rindeal
 
+## git-hosting.eclass:
 GH_RN="github"
 GH_REF="curl-${PV//./_}"
 
+## EXPORT_FUNCTIONS: src_unpack
 inherit git-hosting
-# functions: rindeal:dsf:eval, rindeal:dsf:prefix_flags
+## functions: rindeal:dsf:eval, rindeal:dsf:prefix_flags
 inherit rindeal-utils
-# functions: eautoreconf
+## functions: eautoreconf
 inherit autotools
-# functions: prune_libtool_files
-inherit eutils
-# functions: eprefixify
+## functions: prune_libtool_files
+inherit ltprune
+## functions: eprefixify
 inherit prefix
 
 DESCRIPTION="Command line tool and library for transferring data with URLs"
@@ -30,9 +32,9 @@ IUSE_A=(
 
 	libcurl-option manual +verbose
 
-	ipv6 +unix-sockets +zlib dns_c-ares dns_threaded idn psl
+	ipv6 +unix-sockets +zlib brotli dns_c-ares dns_threaded idn psl
 
-	+cookies metalink proxy ssh2
+	+cookies metalink proxy libssh2
 
 	$(rindeal:dsf:prefix_flags \
 		"auth_" \
@@ -76,8 +78,9 @@ CDEPEND_A=(
 	"auth_kerberos?		( >=virtual/krb5-0-r1 )"
 	"metalink?			( >=media-libs/libmetalink-0.1.1 )"
 	"protocol_rtmp?		( media-video/rtmpdump )"
-	"ssh2?				( net-libs/libssh2[static-libs?] )"
+	"libssh2?				( net-libs/libssh2[static-libs?] )"
 	"zlib?				( sys-libs/zlib )"
+	"brotli?			( app-arch/brotli )"
 	"protocol_ldap?		( net-nds/openldap )"
 	"protocol_ldaps?	( net-nds/openldap[ssl] )"
 	"psl?				( net-libs/libpsl )"
@@ -118,8 +121,8 @@ REQUIRED_USE_A=(
 	"protocol_smb?		( auth_digest ^^ ( $(rindeal:dsf:prefix_flags "ssl_" openssl libressl gnutls nss) ) )"
 	"protocol_smbs?		( protocol_smb ssl )"
 	"protocol_smtps?	( protocol_smtp ssl )"
-	"protocol_scp?		( ssh2 )"
-	"protocol_sftp?		( ssh2 )"
+	"protocol_scp?		( libssh2 )"
+	"protocol_sftp?		( libssh2 )"
 )
 
 inherit arrays
@@ -160,6 +163,7 @@ src_configure() {
 		$(use_enable	ipv6)
 		$(use_enable	unix-sockets)
 		$(use_with		zlib)
+		$(use_with		brotli)
 		$(use_enable	dns_c-ares ares) # =PATH
 		$(use_enable	dns_threaded threaded-resolver)
 		$(use_with		idn libidn2)
@@ -168,7 +172,7 @@ src_configure() {
 		$(use_enable	cookies)
 		$(use_with		metalink libmetalink)
 		$(use_enable	proxy)
-		$(use_with		ssh2 libssh2)
+		$(use_with		libssh2)
 	)
 
 	my_econf_args+=(
@@ -247,8 +251,8 @@ src_configure() {
 	fi
 	grep -q Requires.private libcurl.pc && die "need to update ebuild"
 	libs=$(printf '|%s' "${libs[@]}")
-	sed -r -e "/^Libs.private/s:(${libs#|})( |$)::g" \
-		-i -- libcurl.pc || die
+	esed -r -e "/^Libs.private/s:(${libs#|})( |$)::g" \
+		-i -- libcurl.pc
 	echo "Requires.private: ${priv[*]}" >> libcurl.pc
 }
 

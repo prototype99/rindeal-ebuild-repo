@@ -24,6 +24,7 @@
     <flag name="ipv6">IPv6 support</flag>
     <flag name="unix-sockets">Unix domain sockets</flag>
     <!-- zlib -->
+    <flag name="brotli">Brotli content encoding support</flag>
     <flag name="dns_c-ares">Use c-ares library for DNS lookups</flag>
     <flag name="dns_threaded">Use threaded DNS resolver</flag>
     <!-- idn -->
@@ -33,7 +34,7 @@
     <flag name="cookies">Cookies support</flag>
     <flag name="metalink">metalink (.meta4, .metalink files)</flag>
     <flag name="proxy">Proxy support</flag>
-    <flag name="ssh2">libssh2 support for (SCP, SFTP)</flag>
+    <flag name="libssh2">libssh2 support for (SCP, SFTP)</flag>
 
     <!-- ### Authentication methods -->
     <flag name="auth_digest">Digest access authentication</flag>
