@@ -1,17 +1,22 @@
 # Copyright 1999-2017 Gentoo Foundation
-# Copyright 2017 Jan Chren (rindeal)
+# Copyright 2017-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 inherit rindeal
 
+## git-hosting.eclass:
 GH_RN="github:rg3"
 
+## python-*.eclass
 PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
 
+## functions: newbashcomp
 inherit bash-completion-r1
+## EXPORT_FUNCTIONS: src_prepare src_configure src_compile src_test src_install
+## functions: distutils-r1_python_install_all
 inherit distutils-r1
-inherit eutils
+## EXPORT_FUNCTIONS: src_unpack
 inherit git-hosting
 
 DESCRIPTION="Download videos from YouTube.com (and more sites...)"
