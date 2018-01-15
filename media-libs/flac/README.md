@@ -1,2 +1,0 @@
-- EAPI6
-- additional USE flags (eg. to nuke docs)
