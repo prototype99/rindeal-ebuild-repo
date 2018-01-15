@@ -1,4 +1,4 @@
-# Copyright 2016 Jan Chren (rindeal)
+# Copyright 2016-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -6,11 +6,12 @@ inherit rindeal
 
 GH_RN="github:boothj5"
 
+## EXPORT_FUNCTIONS: src_unpack
 inherit git-hosting
-# functions: eautoreconf
+## functions: eautoreconf
 inherit autotools
-# functions: prune_libtool_files
-inherit eutils
+## functions: prune_libtool_files
+inherit ltprune
 
 DESCRIPTION="Fork of libstrophe for use with Profanity XMPP Client"
 LICENSE="MIT GPL-3"
@@ -40,7 +41,7 @@ inherit arrays
 src_prepare() {
 	default
 
-	sed -e '/^AM_CFLAGS/ s| -g||' -i Makefile.am || die
+	esed -e '/^AM_CFLAGS/ s| -g||' -i -- Makefile.am
 
 	eautoreconf
 }
