@@ -1,14 +1,14 @@
 # Copyright 2004-2016 Sabayon
-# Copyright 2017 Jan Chren (rindeal)
+# Copyright 2017-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 inherit rindeal
 
-# functions: eautoreconf
+## functions: eautoreconf
 inherit autotools
-# functions: prune_libtool_files
-inherit eutils
+## functions: prune_libtool_files
+inherit ltprune
 
 DESCRIPTION="Standardized interface for manipulating and administering user/group accounts"
 HOMEPAGE="https://pagure.io/libuser"
@@ -44,10 +44,10 @@ src_prepare() {
 
 	## change `man 1 lid` to `man 1 libuser-lid`
 	emv apps/{,libuser-}lid.1
-	sed -e 's@ apps/lid\.1 @ apps/libuser-lid.1 @' \
-		-i -- Makefile.am || die
+	esed -e 's@ apps/lid\.1 @ apps/libuser-lid.1 @' \
+		-i -- Makefile.am
 
-	use doc || { sed -e '/^SUBDIRS/ s| docs| |' -i -- Makefile.am || die ; }
+	use doc || esed -e '/^SUBDIRS/ s| docs| |' -i -- Makefile.am
 
 	eautoreconf
 }
