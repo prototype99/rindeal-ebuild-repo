@@ -1,15 +1,16 @@
 # Copyright 1999-2016 Gentoo Foundation
-# Copyright 2017 Jan Chren (rindeal)
+# Copyright 2017-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 inherit rindeal
 
 inherit eutils
+## functions: tc-getCC, tc-getPKG_CONFIG
 inherit toolchain-funcs
-inherit flag-o-matic
+## functions: enewgroup, enewuser
 inherit user
-# functions: systemd_dounit
+## functions: systemd_dounit
 inherit systemd
 
 ## TODO
@@ -21,7 +22,7 @@ HOMEPAGE="http://www.thekelleys.org.uk/dnsmasq/doc.html"
 LICENSE="|| ( GPL-2 GPL-3 )"
 
 SLOT="0"
-SRC_URI="http://thekelleys.org.uk/gitweb/?p=dnsmasq.git;a=snapshot;h=refs/tags/v${PV};sf=tgz -> ${P}--snapshot.tgz"
+SRC_URI="http://thekelleys.org.uk/gitweb/?p=${PN}.git;a=snapshot;h=refs/tags/v${PV};sf=tgz -> ${P}--snapshot.tgz"
 
 KEYWORDS="~amd64 ~arm ~arm64"
 IUSE_A=(
@@ -99,13 +100,13 @@ pkg_setup() {
 src_prepare() {
 	eapply_user
 
-	sed -r -e 's:lua5.[0-9]+:lua:' -i -- Makefile || die
-	sed -e "s:%%PREFIX%%:${EPREFIX}/usr:" -i -- dnsmasq.conf.example || die
+	esed -r -e 's:lua5.[0-9]+:lua:' -i -- Makefile
+	esed -e "s:%%PREFIX%%:${EPREFIX}/usr:" -i -- dnsmasq.conf.example
 
-	sed -e 's|CACHESIZ 150|CACHESIZ 2000|' \
+	esed -e 's|CACHESIZ 150|CACHESIZ 2000|' \
 		-e 's|CHUSER "nobody"|CHUSER "dnsmasq"|' \
 		-e 's|CHGRP "dip"|CHGRP "dnsmasq"|' \
-		-i -- src/config.h || die
+		-i -- src/config.h
 }
 
 my_use_have() {
@@ -193,7 +194,8 @@ src_install() {
 	emake "${common_emake_opts[@]}" DESTDIR="${ED}" \
 		install$(use nls && echo "-i18n")
 
-	[[ -d "${D}"/usr/share/locale/ ]] && rmdir -v --ignore-fail-on-non-empty "${ED}"/usr/share/locale/
+	[[ -d "${D}"/usr/share/locale/ ]] && \
+		ermdir --ignore-fail-on-non-empty "${ED}"/usr/share/locale/
 
 	dodoc CHANGELOG CHANGELOG.archive FAQ dnsmasq.conf.example
 
