@@ -1,14 +1,14 @@
 # Copyright 1999-2017 Gentoo Foundation
-# Copyright 2017 Jan Chren (rindeal)
+# Copyright 2017-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 inherit rindeal
 
-# functions: eautoreconf
+## functions: eautoreconf
 inherit autotools
-# functions: prune_libtool_files
-inherit eutils
+## functions: prune_libtool_files
+inherit ltprune
 
 DESCRIPTION="Ogg Vorbis sound file format library"
 HOMEPAGE="https://xiph.org/vorbis/"
@@ -37,8 +37,8 @@ S="${WORKDIR}/vorbis-v${PV}"
 src_prepare() {
 	default
 
-	sed -r -e '/CFLAGS="/ s, (-O3|-ffast-math|-mno-ieee-fp), ,' \
-		-i -- configure.ac || die
+	esed -r -e '/CFLAGS="/ s,( |")-(O3|ffast-math|mno-ieee-fp),\1,g' \
+		-i -- configure.ac
 
 	# Un-hack docdir redefinition.
 	find -name 'Makefile.am' \
@@ -47,10 +47,10 @@ src_prepare() {
 			{} + || die
 
 	if ! use doc ; then
-		sed \
+		esed \
 			-e '/^DISTCHECK_CONFIGURE_FLAGS/ s|--enable-docs|--disable-docs|' \
 			-e '/^SUBDIRS/ s| doc| |' \
-			-i -- Makefile.am || die
+			-i -- Makefile.am
 	fi
 
 	AT_M4DIR="m4" \
