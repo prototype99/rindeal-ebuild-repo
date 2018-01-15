@@ -1,19 +1,21 @@
-# Copyright 2016-2017 Jan Chren (rindeal)
+# Copyright 2016-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 inherit rindeal
 
+## git-hosting.eclass:
 GH_RN="github:Alexey-Yakovenko"
 
-# EXPORT_FUNCTIONS: src_unpack
+## EXPORT_FUNCTIONS: src_unpack
 inherit git-hosting
-# EXPORT_FUNCTIONS: src_prepare, pkg_preinst, pkg_postinst, pkg_postrm
+## EXPORT_FUNCTIONS: src_prepare, pkg_preinst, pkg_postinst, pkg_postrm
 inherit xdg
+## functions: eautoreconf
 inherit autotools
-# functions: prune_libtool_files
-inherit eutils
-# functions: rindeal:dsf:eval, rindeal:dsf:prefix_flags
+## functions: prune_libtool_files
+inherit ltprune
+## functions: rindeal:dsf:eval, rindeal:dsf:prefix_flags
 inherit rindeal-utils
 
 DESCRIPTION="Music player for *nix-like systems"
@@ -222,14 +224,14 @@ src_prepare() {
 	eapply_user
 
 	# clear out `docs_DATA`
-	sed -e '/^EXTRA_DIST/i docs_DATA =' -i -- Makefile.am || die
+	esed -e '/^EXTRA_DIST/i docs_DATA =' -i -- Makefile.am
 
 	# `groups extending the format should start with "X-"`
-	sed -r -e '\@^\[[^]]* Shortcut Group\]@ s@^\[@[X-@' -i -- ${PN}.desktop.in || die
+	esed -r -e '\@^\[[^]]* Shortcut Group\]@ s@^\[@[X-@' -i -- ${PN}.desktop.in
 	# TODO: remove in in 0.7.3+, fixed by https://github.com/Alexey-Yakovenko/deadbeef/pull/1697
-	sed -e '/^Keywords=/i Actions=Play;Pause;Stop;Next;Prev' -i -- ${PN}.desktop.in || die
+	esed -e '/^Keywords=/i Actions=Play;Pause;Stop;Next;Prev' -i -- ${PN}.desktop.in
 	# TODO: remove in in 0.7.3+, fixed by https://github.com/Alexey-Yakovenko/deadbeef/pull/1697
-	sed -r -e 's,(Desktop Action Prev)ious,\1,' -i -- ${PN}.desktop.in || die
+	esed -r -e 's,(Desktop Action Prev)ious,\1,' -i -- ${PN}.desktop.in
 
 	# automake: `error: required file `./config.rpath' not found`
 	touch config.rpath || die
