@@ -1,16 +1,18 @@
-# Copyright 2016 Jan Chren (rindeal)
+# Copyright 2016-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 inherit rindeal
 
+## git-hosting.eclass:
 GH_RN="github:strophe"
 
+## EXPORT_FUNCTIONS: src_unpack
 inherit git-hosting
-# functions: eautoreconf
+## functions: eautoreconf
 inherit autotools
-# functions: prune_libtool_files
-inherit eutils
+## functions: prune_libtool_files
+inherit ltprune
 
 DESCRIPTION="Simple, lightweight C library for writing XMPP clients"
 HOMEPAGE="http://strophe.im/libstrophe ${GH_HOMEPAGE}"
@@ -18,7 +20,7 @@ LICENSE="MIT GPL-3"
 
 SLOT="0"
 
-KEYWORDS="~amd64 ~arm"
+KEYWORDS="~amd64 ~arm ~arm64"
 IUSE_A=( doc libxml2 static-libs +tls )
 
 CDEPEND_A=(
@@ -47,7 +49,7 @@ inherit arrays
 src_prepare() {
 	default
 
-	sed -e '/^AM_CFLAGS/ s| -g||' -i Makefile.am || die
+	esed -e '/^AM_CFLAGS/ s| -g||' -i -- Makefile.am
 
 	eautoreconf
 }
