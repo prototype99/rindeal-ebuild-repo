@@ -1,17 +1,21 @@
 # Copyright 1999-2017 Gentoo Foundation
-# Copyright 2017 Jan Chren (rindeal)
+# Copyright 2017-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 inherit rindeal
 
+## git-hosting.eclass:
 GH_RN="github"
 GH_REF="s${PV}"
 
+## EXPORT_FUNCTIONS: src_unpack
 inherit git-hosting
+## functions: append-ldflags
 inherit flag-o-matic
-inherit eutils
+## functions: tc-export
 inherit toolchain-funcs
+## functions: fcaps
 inherit fcaps
 # functions: rindeal:dsf:eval
 inherit rindeal-utils
@@ -32,9 +36,9 @@ LIB_DEPEND="
 	idn? ( net-dns/libidn[static-libs(+)] )
 	ipv6? (
 		ssl? (
-		gcrypt? ( dev-libs/libgcrypt:0=[static-libs(+)] )
-		nettle? ( dev-libs/nettle[static-libs(+)] )
-		openssl? ( dev-libs/openssl:0[static-libs(+)] )
+			gcrypt? ( dev-libs/libgcrypt:0=[static-libs(+)] )
+			nettle? ( dev-libs/nettle[static-libs(+)] )
+			openssl? ( dev-libs/openssl:0[static-libs(+)] )
 		)
 	)
 "
@@ -72,12 +76,14 @@ inherit arrays
 
 src_prepare() {
 	eapply "${FILESDIR}/021109-uclibc-no-ether_ntohost.patch"
-	use SECURITY_HAZARD && eapply "${FILESDIR}"/${PN}-20150815-nonroot-floodping.patch
+	use SECURITY_HAZARD && \
+		eapply "${FILESDIR}"/${PN}-20150815-nonroot-floodping.patch
 	eapply_user
 }
 
 src_configure() {
-	use static && append-ldflags -static
+	use static && \
+		append-ldflags -static
 
 	TARGETS=(
 		ping
