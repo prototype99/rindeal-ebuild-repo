@@ -1,13 +1,14 @@
-# Copyright 2016-2017 Jan Chren (rindeal)
+# Copyright 2016-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 inherit rindeal
 
-# functions: newicon, make_desktop_entry
-inherit eutils
+## functions: newicon, make_desktop_entry
+inherit desktop
+## EXPORT_FUNCTIONS: src_prepare pkg_preinst pkg_postinst pkg_postrm
 inherit xdg
-# functions: get_major_version
+## functions: get_major_version
 inherit versionator
 
 DESCRIPTION="Free universal database manager and SQL client"
