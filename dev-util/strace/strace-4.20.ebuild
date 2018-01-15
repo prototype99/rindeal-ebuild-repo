@@ -1,5 +1,5 @@
 # Copyright 1999-2016 Gentoo Foundation
-# Copyright 2017 Jan Chren (rindeal)
+# Copyright 2017-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -9,14 +9,15 @@ inherit rindeal
 GH_RN="github"
 GH_REF="v${PV}"
 
-inherit flag-o-matic
-inherit eutils
-inherit toolchain-funcs
-## functions: eautoreconf
-inherit autotools
 ## EXPORT_FUNCTIONS: src_unpack
 ## variables: GH_HOMEPAGE
 inherit git-hosting
+## functions: append-ldflags
+inherit flag-o-matic
+## functions: tc-export_build_env
+inherit toolchain-funcs
+## functions: eautoreconf
+inherit autotools
 
 DESCRIPTION="Useful diagnostic, instructional, and debugging tool"
 HOMEPAGE="https://strace.io/ ${GH_HOMEPAGE} https://sourceforge.net/projects/strace/"
@@ -29,25 +30,30 @@ IUSE_A=( aio perl static unwind test )
 
 LIB_DEPEND="unwind? ( sys-libs/libunwind[static-libs(+)] )"
 # strace only uses the header from libaio to decode structs
-DEPEND="static? ( ${LIB_DEPEND} )
-	aio? ( >=dev-libs/libaio-0.3.106 )
-	sys-kernel/linux-headers"
-RDEPEND="!static? ( ${LIB_DEPEND//\[static-libs(+)]} )
-	perl? ( dev-lang/perl )"
+CDEPEND_A=()
+DEPEND_A=( "${CDEPEND_A[@]}"
+	"static? ( ${LIB_DEPEND} )"
+	"aio? ( >=dev-libs/libaio-0.3.106 )"
+	"sys-kernel/linux-headers"
+)
+RDEPEND_A=( "${CDEPEND_A[@]}"
+	"!static? ( ${LIB_DEPEND//\[static-libs(+)]} )"
+	"perl? ( dev-lang/perl )"
+)
 
 inherit arrays
 
 src_prepare() {
 	eapply_user
 
-	sed -e '/autoreconf/ s|^|## PORTAGE ##|' -i -- bootstrap || die
+	esed -e '/autoreconf/ s|^|## PORTAGE ##|' -i -- bootstrap
 
 	./bootstrap || die
 
 	eautoreconf
 
 	# Stub out the -k test since it's known to be flaky. #545812
-	sed -e '1iexit 77' -i -- tests*/strace-k.test || die
+	esed -e '1iexit 77' -i -- tests*/strace-k.test
 }
 
 src_configure() {
