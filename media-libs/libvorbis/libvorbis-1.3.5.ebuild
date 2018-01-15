@@ -5,18 +5,24 @@
 EAPI=6
 inherit rindeal
 
+## git-hosting.eclass:
+GH_RN="github:xiph:vorbis"
+GH_REF="v${PV}"
+
+## EXPORT_FUNCTIONS: src_unpack
+## variables: GH_HOMEPAGE
+inherit git-hosting
 ## functions: eautoreconf
 inherit autotools
 ## functions: prune_libtool_files
 inherit ltprune
 
 DESCRIPTION="Ogg Vorbis sound file format library"
-HOMEPAGE="https://xiph.org/vorbis/"
+HOMEPAGE="https://xiph.org/vorbis/ ${GH_HOMEPAGE}"
 LICENSE="BSD"
 
 # TODO: subslots could be based on lib sonames
 SLOT="0"
-SRC_URI="https://git.xiph.org/?p=vorbis.git;a=snapshot;h=refs/tags/v${PV};sf=tgz -> ${P}--snapshot.tgz"
 
 KEYWORDS="amd64 arm arm64"
 IUSE_A=( static-libs doc examples oggtest )
@@ -31,8 +37,6 @@ DEPEND_A=( "${CDEPEND_A[@]}"
 RDEPEND_A=( "${CDEPEND_A[@]}" )
 
 inherit arrays
-
-S="${WORKDIR}/vorbis-v${PV}"
 
 src_prepare() {
 	default
