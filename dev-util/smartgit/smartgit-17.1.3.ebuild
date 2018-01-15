@@ -1,15 +1,15 @@
-# Copyright 2015-2017 Jan Chren (rindeal)
+# Copyright 2015-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 inherit rindeal
 
-# functions: get_major_version, get_version_component_range
+## functions: get_major_version, get_version_component_range
 inherit versionator
-# xdg: src_prepare, pkg_preinst, pkg_postinst, pkg_postrm
+## EXPORT_FUNCTIONS: src_prepare, pkg_preinst, pkg_postinst, pkg_postrm
 inherit xdg
-# functions: newicon, make_desktop_entry
-inherit eutils
+## functions: newicon, make_desktop_entry
+inherit desktop
 
 # upstream moves older versions to a different SRC_URI, while the other one return 301 code instead of 404,
 # thus the only way is to manually reflect the upstream in the ebuild
