@@ -1,12 +1,12 @@
 # Copyright 1999-2016 Gentoo Foundation
-# Copyright 2016 Jan Chren (rindeal)
+# Copyright 2016-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 inherit rindeal
 
+## functions: append-ldflags
 inherit flag-o-matic
-inherit eutils
 
 DESCRIPTION="Utility to change hard drive performance parameters"
 HOMEPAGE="https://sourceforge.net/projects/${PN}/"
@@ -15,7 +15,7 @@ LICENSE="BSD GPL-2" # GPL-2 only
 SLOT="0"
 SRC_URI="mirror://sourceforge/${PN}/${P}.tar.gz"
 
-KEYWORDS="~amd64 ~arm"
+KEYWORDS="~amd64 ~arm ~arm64"
 IUSE="static"
 
 src_prepare() {
@@ -40,7 +40,7 @@ src_prepare() {
 		# respect LDFLAGS
 		-e "/^LDFLAGS/d"
 	)
-	sed "${sed_args[@]}" -i -- Makefile || die
+	esed "${sed_args[@]}" -i -- Makefile
 }
 
 src_configure() {
