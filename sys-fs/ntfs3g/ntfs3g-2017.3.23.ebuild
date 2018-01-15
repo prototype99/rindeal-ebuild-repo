@@ -1,14 +1,19 @@
 # Copyright 1999-2017 Gentoo Foundation
-# Copyright 2017 Jan Chren (rindeal)
+# Copyright 2017-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 inherit rindeal
 
-inherit eutils
+## functions: prune_libtool_files
+inherit ltprune
+## functions: linux-info_pkg_setup
 inherit linux-info
+## functions: udev_dorules
 inherit udev
+## functions: tc-ld-disable-gold
 inherit toolchain-funcs
+## functions: elibtoolize
 inherit libtool
 
 DESCRIPTION="Open source read/write NTFS driver for FUSE"
@@ -16,7 +21,7 @@ HOMEPAGE="https://www.tuxera.com/community/ntfs-3g-download/"
 LICENSE="GPL-2"
 
 # The subslot matches the SONAME major #.
-SLOT="0/87"
+SLOT="0/88"
 MY_PN="${PN/3g/-3g}"
 MY_P="${MY_PN}_ntfsprogs-${PV}"
 SRC_URI="https://tuxera.com/opensource/${MY_P}.tgz"
@@ -35,7 +40,6 @@ IUSE_A=(
 )
 
 CDEPEND_A=(
-	"!<sys-apps/util-linux-2.20.1-r2"
 	"!sys-fs/ntfsprogs"
 	"crypto? ("
 		">=dev-libs/libgcrypt-1.2.2:0"
@@ -72,8 +76,8 @@ src_prepare() {
 
 	# Keep the symlinks in the same place we put the main binaries.
 	# Having them in / when all the progs are in /usr is pointless.
-	sed -e 's:/sbin:$(sbindir):g' \
-		-i -- {ntfsprogs,src}/Makefile.in || die # gentoo#578336
+	esed -e 's:/sbin:$(sbindir):g' \
+		-i -- {ntfsprogs,src}/Makefile.in # gentoo#578336
 
 	# Note: patches apply to Makefile.in, so don't run autotools here.
 	elibtoolize
