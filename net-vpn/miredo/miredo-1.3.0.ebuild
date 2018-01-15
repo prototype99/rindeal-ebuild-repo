@@ -6,7 +6,7 @@ EAPI=6
 inherit rindeal
 
 ## git-hosting.eclass:
-GH_RN="gitlab:rindeal"
+GH_RN="gitlab:rindeal-forks"
 
 ## EXPORT_FUNCTIONS: src_unpack
 inherit git-hosting
