@@ -9,8 +9,8 @@ inherit rindeal
 GH_RN="github:shadow-maint"
 
 ## EXPORT_FUNCTIONS: src_unpack
+## variables: GH_HOMEPAGE
 inherit git-hosting
-inherit eutils
 ## functions: elibtoolize
 inherit libtool
 ## functions: dopamd, newpamd
@@ -79,7 +79,7 @@ src_prepare-locales() {
 		for l in ${locales} ; do
 			if use man ; then
 				# not all langs in `po/` dir are present also in `man/` dir
-				sed -r -e "/^SUBDIRS/ s, ${l}( |$), ," -i -- man/Makefile.am || die
+				esed -r -e "/^SUBDIRS/ s, ${l}( |$), ," -i -- man/Makefile.am
 				local f="man/${dir}/${pre}${l}${post}"
 				[[ -e "${f}" ]] && erm "${f}"
 			fi
@@ -94,7 +94,7 @@ src_prepare() {
 	src_prepare-locales
 
 	if ! use man ; then
-		sed -r -e '/^SUBDIRS/ s, man( |$), ,' -i -- Makefile.am || die
+		esed -r -e '/^SUBDIRS/ s, man( |$), ,' -i -- Makefile.am
 	fi
 
 	eautoreconf
@@ -133,15 +133,15 @@ src_configure() {
 	econf "${my_econf_args[@]}"
 }
 
-set_login_opt() {
+my_set_login_opt() {
 	local comment="" opt="$1" val="$2"
 	if [[ -z ${val} ]] ; then
 		comment="#"
-		sed -e "/^${opt}\>/ s|^|#|" \
-			-i -- "${ED}"/etc/login.defs || die
+		esed -e "/^${opt}\>/ s|^|#|" \
+			-i -- "${ED}"/etc/login.defs
 	else
-		sed -r -e "/^#?${opt}\>/ s|.*|${opt} ${val}|" \
-			-i -- "${ED}"/etc/login.defs || die
+		esed -r -e "/^#?${opt}\>/ s|.*|${opt} ${val}|" \
+			-i -- "${ED}"/etc/login.defs
 	fi
 	local res="$(grep "^${comment}${opt}\>" "${ED}"/etc/login.defs)"
 	elog "${res:-"Unable to find ${opt} in /etc/login.defs"}"
@@ -184,7 +184,7 @@ src_install() {
 		doins etc/login.access etc/limits
 	fi
 
-	set_login_opt CREATE_HOME yes
+	my_set_login_opt CREATE_HOME yes
 	if use pam ; then
 		dopamd "${FILESDIR}"/pam.d-include/shadow
 
@@ -218,14 +218,14 @@ src_install() {
 			SU_WHEEL_ONLY
 		)
 		for opt in "${opts[@]}" ; do
-			set_login_opt ${opt}
+			my_set_login_opt ${opt}
 			sed_args+=( -e "/^#${opt}\>/b pamnote" )
 		done
-		sed "${sed_args[@]}" \
+		esed "${sed_args[@]}" \
 			-e 'b exit' \
 			-e ': pamnote; i# NOTE: This setting should be configured via /etc/pam.d/ and not in this file.' \
 			-e ': exit' \
-			-i -- "${ED}"/etc/login.defs || die
+			-i -- "${ED}"/etc/login.defs
 
 		if use man ; then
 			# remove manpages that pam will install for us
@@ -243,12 +243,12 @@ src_install() {
 		# Remove pam.d files provided by sys-auth/pambase
 		erm "${ED}"/etc/pam.d/{login,passwd,su}
 	else
-		set_login_opt MAIL_CHECK_ENAB no
-		set_login_opt SU_WHEEL_ONLY yes
-		set_login_opt CRACKLIB_DICTPATH /usr/$(get_libdir)/cracklib_dict
-		set_login_opt LOGIN_RETRIES 3
-		set_login_opt ENCRYPT_METHOD SHA512
-		set_login_opt CONSOLE
+		my_set_login_opt MAIL_CHECK_ENAB no
+		my_set_login_opt SU_WHEEL_ONLY yes
+		my_set_login_opt CRACKLIB_DICTPATH /usr/$(get_libdir)/cracklib_dict
+		my_set_login_opt LOGIN_RETRIES 3
+		my_set_login_opt ENCRYPT_METHOD SHA512
+		my_set_login_opt CONSOLE
 	fi
 }
 
