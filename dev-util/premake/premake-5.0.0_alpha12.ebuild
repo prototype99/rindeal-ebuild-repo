@@ -1,10 +1,13 @@
-# Copyright 2016 Jan Chren (rindeal)
+# Copyright 2016-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 inherit rindeal
 
-inherit eutils flag-o-matic
+## functions: append-ldflags
+inherit flag-o-matic
+## functions: tc-getPKG_CONFIG
+inherit toolchain-funcs
 
 MY_PV="${PV//_/-}"
 MY_P="${PN}-${MY_PV}"
@@ -18,8 +21,15 @@ SLOT="5"
 KEYWORDS="~amd64 ~arm"
 IUSE=""
 
-RDEPEND="dev-libs/openssl:0"
-DEPEND="${RDEPEND} virtual/pkgconfig"
+CDEPEND_A=(
+	"dev-libs/openssl:0"
+)
+DEPEND_A=( "${CDEPEND_A[@]}"
+	"virtual/pkgconfig"
+)
+RDEPEND_A=( "${CDEPEND_A[@]}" )
+
+inherit arrays
 
 S="${WORKDIR}/${MY_P}"
 build_dir="${S}/build/gmake.unix"
