@@ -1,20 +1,20 @@
 # Copyright 1999-2016 Gentoo Foundation
-# Copyright 2016-2017 Jan Chren (rindeal)
+# Copyright 2016-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 inherit rindeal
 
-# EXPORT_FUNCTIONS: src_prepare pkg_preinst pkg_postinst pkg_postrm
+## EXPORT_FUNCTIONS: src_prepare pkg_preinst pkg_postinst pkg_postrm
 inherit xdg
-# functions: append-cxxflags
+## functions: append-cxxflags
 inherit flag-o-matic
-# functions: qt5_get_bindir
+## functions: qt5_get_bindir
 inherit qmake-utils
-# functions: eautoreconf
+## functions: eautoreconf
 inherit autotools
-# functions: prune_libtool_files
-inherit eutils
+## functions: prune_libtool_files
+inherit ltprune
 
 DESCRIPTION="Simple v4l2 full-featured video grabber"
 HOMEPAGE="http://guvcview.sourceforge.net/"
@@ -78,7 +78,7 @@ src_prepare-locales() {
 	l10n_get_locales locales app off
 	for l in ${locales} ; do
 		erm "${dir}/${pre}${l}${post}"
-		sed -e "/^ALL_LINGUAS/ s|${l}||" -i configure.ac || die
+		esed -e "/^ALL_LINGUAS/ s|${l}||" -i -- configure.ac
 	done
 }
 
@@ -90,9 +90,9 @@ src_prepare() {
 	src_prepare-locales
 
 	# do not make some compiler prefered over another and let user make the choice
-	sed -r -e 's:^AC_PROG_(CC|CXX).*:AC_PROG_\1:' -i -- configure.ac || die
+	esed -r -e 's:^AC_PROG_(CC|CXX).*:AC_PROG_\1:' -i -- configure.ac
 
-	sed -e '/^docdir/,/^$/d' -i -- Makefile.am || die
+	esed -e '/^docdir/,/^$/d' -i -- Makefile.am
 
 	eautoreconf
 }
