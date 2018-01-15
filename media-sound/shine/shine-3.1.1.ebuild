@@ -1,17 +1,18 @@
-# Copyright 2017 Jan Chren (rindeal)
+# Copyright 2017-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 inherit rindeal
 
+## git-hosting.eclass:
 GH_RN="github:toots"
 
-# EXPORT_FUNCTIONS: src_unpack
+## EXPORT_FUNCTIONS: src_unpack
 inherit git-hosting
-# functions: eautoreconf
+## functions: eautoreconf
 inherit autotools
-# functions: prune_libtool_files
-inherit eutils
+## functions: prune_libtool_files
+inherit ltprune
 
 DESCRIPTION="Super fast fixed-point MP3 encoder"
 LICENSE="LGPL-2.1"
@@ -30,7 +31,7 @@ inherit arrays
 src_prepare() {
 	default
 
-	sed -r -e '/^CFLAGS *=/ s,-funroll-loops|-O2,,' -i -- Makefile.am || die
+	esed -r -e '/^CFLAGS *=/ s,-funroll-loops|-O2,,g' -i -- Makefile.am
 
 	eautoreconf
 }
