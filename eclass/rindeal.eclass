@@ -156,6 +156,10 @@ erm() {
 	rm $(_NO_V) --interactive=never --preserve-root --one-file-system "$@" || die -n
 }
 
+ermdir() {
+	rmdir $(_NO_V) "${@}" || die -n
+}
+
 esed() {
 	local diff_prog=()
 
