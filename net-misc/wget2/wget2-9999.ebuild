@@ -1,10 +1,12 @@
-# Copyright 2017 Jan Chren (rindeal)
+# Copyright 2017-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 inherit rindeal
 
+## git-hosting.eclass:
 GH_RN="gitlab:gnuwget"
+## git-r3.eclass (part of git-hosting.eclass):
 EGIT_SUBMODULES=()
 
 ## functions: rindeal:dsf:eval rindeal:dsf:prefix_flags
@@ -14,7 +16,7 @@ inherit git-hosting
 ## functions: eautoreconf
 inherit autotools
 ## functions: prune_libtool_files
-inherit eutils
+inherit ltprune
 
 DESCRIPTION="Successor of GNU Wget, a file and recursive website downloader."
 LICENSE_A=(
@@ -38,6 +40,7 @@ IUSE_A=(
 	libidn libidn2
 	libpcre libpcre2
 	plugin-support
+	gpgme
 )
 
 RESTRICT+=""
@@ -64,6 +67,8 @@ CDEPEND_A=(
 	"$(rindeal:dsf:eval \
 		'libidn|libidn2' \
 			'virtual/libiconv' )"
+
+	"gpgme? ( app-crypt/gpgme )"
 )
 DEPEND_A=( "${CDEPEND_A[@]}"
 	"dev-libs/gnulib"
@@ -71,6 +76,13 @@ DEPEND_A=( "${CDEPEND_A[@]}"
 	"test? ( net-libs/libmicrohttpd )"
 	"virtual/pkgconfig"
 	"sys-devel/libtool"
+	"doc? ("
+		"app-doc/doxygen"
+		"|| ("
+			"app-text/pandoc-bin"
+			"app-text/pandoc"
+		")"
+	")"
 )
 RDEPEND_A=( "${CDEPEND_A[@]}" )
 
@@ -85,11 +97,11 @@ src_prepare() {
 	eapply_user
 
 	# lzip is only needed for tarball generation
-	sed -e "/^lzip/d" -i -- bootstrap.conf || die
+	esed -e "/^lzip/d" -i -- bootstrap.conf
 
-	sed -e "/^SUBDIRS/ s|\bexamples\b||" -i -- Makefile.am || die
+	esed -e "/^SUBDIRS/ s|\bexamples\b||" -i -- Makefile.am
 
-	sed -e "/^bin_PROGRAMS/ s|wget2_noinstall||" -e "/^wget2_noinstall/d" -i -- src/Makefile.am || die
+	esed -e "/^bin_PROGRAMS/ s|wget2_noinstall||" -e "/^wget2_noinstall/d" -i -- src/Makefile.am
 
 	./bootstrap --no-git --gnulib-srcdir="${EROOT}"/usr/share/gnulib $(usex nls '' '--skip-po') || die
 
@@ -121,6 +133,7 @@ src_configure() {
 		$(use_with libpcre)
 		$(use_with test libmicrohttpd) # build tests requiring libmicrohttpd
 		$(use_with plugin-support)
+		$(use_with gpgme)
 	)
 
 	econf "${my_econf_args[@]}"

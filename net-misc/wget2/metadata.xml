@@ -21,6 +21,7 @@
     <flag name="libpsl">Support for libpsl cookie checking</flag>
     <flag name="nghttp2">HTTP/2 support using Nghttp2</flag>
     <flag name="openssl">Use libcrypto hash routines</flag>
-    <flag name="plugin-support">plugin-support</flag>
+    <flag name="plugin-support">plugin support</flag>
+    <flag name="gpgme">gpgme support</flag>
   </use>
 </pkgmetadata>
