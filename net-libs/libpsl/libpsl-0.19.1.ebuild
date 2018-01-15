@@ -1,23 +1,26 @@
-# Copyright 2016-2017 Jan Chren (rindeal)
+# Copyright 2016-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 inherit rindeal
 
+## python-*.eclass:
 PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
 
+## git-hosting.eclass:
 GH_RN="github:rockdaboot"
 GH_REF="${PN}-${PV}"
 
+## EXPORT_FUNCTIONS: src_unpack
 inherit git-hosting
-# functions: eautoreconf
+## functions: eautoreconf
 inherit autotools
-# EXPORT_FUNCTIONS: pkg_setup
+## EXPORT_FUNCTIONS: pkg_setup
 inherit python-any-r1
-# functions: rindeal:dsf:eval
+## functions: rindeal:dsf:eval
 inherit rindeal-utils
-# functions: prune_libtool_files
-inherit eutils
+## functions: prune_libtool_files
+inherit ltprune
 
 DESCRIPTION="C library for the Publix Suffix List"
 HOMEPAGE="https://rockdaboot.github.io/libpsl ${GH_HOMEPAGE}"
