@@ -1,11 +1,12 @@
-# Copyright 2017 Jan Chren (rindeal)
+# Copyright 2017-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 inherit rindeal
 
-# functions: doicon, make_desktop_entry
-inherit eutils
+## functions: doicon, make_desktop_entry
+inherit desktop
+## EXPORT_FUNCTIONS: src_prepare pkg_preinst pkg_postinst pkg_postrm
 inherit xdg
 
 DESCRIPTION="Interior design application to draw house plans and arrange furniture"
@@ -31,7 +32,7 @@ S="${WORKDIR}"
 INST_DIR="/opt/${P}"
 
 src_prepare() {
-	default
+	xdg_src_prepare
 
 	erm -r linux/ macosx/ windows/
 }
@@ -50,8 +51,8 @@ src_install() {
 
 	## launcher
 	cat <<-_EOF_ > "${PN_NB}.sh" || die
-	#!/bin/sh
-	java -jar "${EPREFIX}/${INST_DIR}/${PN_NB,,}.jar" "\${@}"
+		#!/bin/sh
+		java -jar "${EPREFIX}/${INST_DIR}/${PN_NB,,}.jar" "\${@}"
 	_EOF_
 
 	exeinto "${INST_DIR}/bin"
