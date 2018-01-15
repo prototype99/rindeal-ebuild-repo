@@ -1,4 +1,4 @@
-# Copyright 2017 Jan Chren (rindeal)
+# Copyright 2017-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -11,7 +11,7 @@ inherit git-hosting
 ## functions: eautoreconf
 inherit autotools
 ## functions: prune_libtool_files
-inherit eutils
+inherit ltprune
 
 DESCRIPTION="Structured concurrency in C"
 LICENSE="MIT"
@@ -35,8 +35,8 @@ inherit arrays
 src_prepare() {
 	default
 
-	sed -r -e "\,(tutorial|perf)/,d" -i -- Makefile.am || die
-	sed -r -e "\|noinst_PROGRAMS *\+?\=| { s|^|# EBUILD MOD # |; s|\\\\$||; }" -i -- Makefile.am || die
+	esed -r -e "\,(tutorial|perf)/,d" -i -- Makefile.am
+	esed -r -e "\|noinst_PROGRAMS *\+?\=| { s|^|# EBUILD MOD # |; s|\\\\$||; }" -i -- Makefile.am
 
 	eautoreconf
 }
