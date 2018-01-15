@@ -1,20 +1,24 @@
 # Copyright 1999-2016 Gentoo Foundation
-# Copyright 2016-2017 Jan Chren (rindeal)
+# Copyright 2016-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI="6"
 inherit rindeal
 
+## git-hosting.eclass:
 GH_RN="github:videolan"
 EGIT_SUBMODULES=()
 
+## EXPORT_FUNCTIONS: src_unpack
+## variables: GH_HOMEPAGE
 inherit git-hosting
-inherit eutils
-# inherit multilib
+## functions: prune_libtool_files
+inherit ltprune
+## functions: eautoreconf
 inherit autotools
-inherit toolchain-funcs
+## functions: append-cxxflags, append-ldflags
 inherit flag-o-matic
-inherit versionator
+## functions: Xemake
 inherit virtualx
 
 DESCRIPTION="VLC media player - Video player and streamer"
@@ -386,7 +390,7 @@ src_prepare() {
 	eapply_user
 
 	# we call autoreconf manually in eautoreconf()
-	sed -e '/^autoreconf/ s|^|# |' -i ./bootstrap || die
+	esed -e '/^autoreconf/ s|^|# |' -i -- ./bootstrap
 	# Bootstrap when we are on a git checkout.
 	if [[ "${PV}" == *9999* ]] ; then
 		./bootstrap || die
@@ -406,7 +410,7 @@ src_prepare() {
 
 	# Don't use --started-from-file when not using dbus.
 	if ! use dbus ; then
-		sed 's, --started-from-file,,' -i -- share/vlc.desktop.in || die
+		esed 's, --started-from-file,,' -i -- share/vlc.desktop.in
 	fi
 
 	eautoreconf
@@ -597,7 +601,7 @@ src_configure() {
 		$(use_enable libtar)
 		--disable-macosx # OSX
 		--disable-sparkle # OSX
-		--disable-breakpad # OSX
+		--without-breakpad # OSX
 		--disable-minimal-macosx # OSX
 		$(use_enable ncurses)
 		$(use_enable lirc)
@@ -647,7 +651,7 @@ src_configure() {
 	# _FORTIFY_SOURCE is set to 2 in config.h, which is also the default value on Gentoo.
 	# Other values of _FORTIFY_SOURCE may break the build (bug 523144), so definition should not be removed from config.h.
 	# To prevent redefinition warnings, we undefine _FORTIFY_SOURCE at the very start of config.h file
-	sed -e '1i#undef _FORTIFY_SOURCE' -i -- "${S}"/config.h || die
+	esed -e '1i#undef _FORTIFY_SOURCE' -i -- "${S}"/config.h
 }
 
 src_test() {
