@@ -1,13 +1,18 @@
-# Copyright 2016-2017 Jan Chren (rindeal)
+# Copyright 2016-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 inherit rindeal
 
+## functions: eqmake5
 inherit qmake-utils
+## EXPORT_FUNCTIONS: src_prepare pkg_preinst pkg_postinst pkg_postrm
 inherit xdg
-inherit eutils
 inherit qt-pro-formatter
+## functions: make_desktop_entry, doicon
+inherit desktop
+## functions: eshopts_push, eshopts_pop
+inherit estack
 
 DESCRIPTION="Powerful cross-platform SQLite database manager"
 HOMEPAGE="https://sqlitestudio.pl"
@@ -17,7 +22,7 @@ SLOT="0"
 SRC_URI="https://sqlitestudio.pl/files/sqlitestudio3/complete/tar/${P}.tar.gz"
 
 KEYWORDS="~amd64"
-IUSE="cli cups nls tcl test"
+IUSE_A=( cli cups nls tcl test )
 
 CDEPEND_A=(
 	"dev-db/sqlite:3"
@@ -77,8 +82,8 @@ src_prepare() {
 
 	# fix wrong portable conditional
 	# it should be: `portable { ... ; linux { ... } ; }`
-	sed -e 's#linux|portable#portable#' \
-		-i -- "${MY_CORE_SRC_DIR}"/sqlitestudio/sqlitestudio.pro || die
+	esed -e 's#linux|portable#portable#' \
+		-i -- "${MY_CORE_SRC_DIR}"/sqlitestudio/sqlitestudio.pro
 
 	if ! use nls ; then
 		# delete all files with translations
@@ -107,7 +112,7 @@ src_prepare() {
 		regex="${regex%"|"}"
 
 		einfo "Disabling modules: '${modules[*]}' in '${file#${S}/}'"
-		sed -r -e "/${regex}/d" -i -- "${file}" || die
+		esed -r -e "/${regex}/d" -i -- "${file}"
 	}
 
 	## Core
@@ -138,11 +143,11 @@ src_configure() {
 	)
 
 	## Core
-	mkdir -p "${MY_CORE_BUILD_DIR}" && cd "${MY_CORE_BUILD_DIR}" || die
+	emkdir "${MY_CORE_BUILD_DIR}" && cd "${MY_CORE_BUILD_DIR}" || die
 	eqmake5 "${qmake_args[@]}" "${MY_CORE_SRC_DIR}"
 
 	## Plugins
-	mkdir -p "${MY_PLUGINS_BUILD_DIR}" && cd "${MY_PLUGINS_BUILD_DIR}" || die
+	emkdir "${MY_PLUGINS_BUILD_DIR}" && cd "${MY_PLUGINS_BUILD_DIR}" || die
 	eqmake5 "${qmake_args[@]}" "${MY_PLUGINS_SRC_DIR}"
 }
 
