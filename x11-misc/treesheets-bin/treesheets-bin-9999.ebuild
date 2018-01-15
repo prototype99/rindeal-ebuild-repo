@@ -1,15 +1,18 @@
-# Copyright 2016 Jan Chren (rindeal)
+# Copyright 2016-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 inherit rindeal
 
+## git-hosting.eclass:
 GH_RN="github:aardappel"
-GH_FETCH_TYPE=manual
+GH_FETCH_TYPE="manual"
 
+## EXPORT_FUNCTIONS: src_unpack
 inherit git-hosting
-# functions: domenu, newicon
-inherit eutils
+## functions: domenu, newicon
+inherit desktop
+## EXPORT_FUNCTIONS: src_prepare pkg_preinst pkg_postinst pkg_postrm
 inherit xdg
 
 DESCRIPTION="Free Form Data Organizer"
@@ -25,7 +28,9 @@ IUSE="doc examples"
 
 CDEPEND_A=( )
 DEPEND_A=( "${CDEPEND_A[@]}" )
-RDEPEND_A=( "${CDEPEND_A[@]}" )
+RDEPEND_A=( "${CDEPEND_A[@]}"
+	"media-libs/libpng:1.2"
+)
 
 RESTRICT="mirror test"
 
@@ -38,8 +43,8 @@ INST_DIR="/opt/${PN_NOBIN}"
 src_prepare() {
 	xdg_src_prepare
 
-	sed -r -e "s|(Try)?Exec=|\1Exec=${EPREFIX}${INST_DIR}/|" \
-		-i -- "${PN_NOBIN}.desktop" || die
+	esed -r -e "s|(Try)?Exec=|\1Exec=${EPREFIX}${INST_DIR}/|" \
+		-i -- "${PN_NOBIN}.desktop"
 }
 
 src_install() {
