@@ -1,48 +1,67 @@
 # Copyright 1999-2015 Gentoo Foundation
-# Copyright 2016 Jan Chren (rindeal)
+# Copyright 2016-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
+inherit rindeal
 
-inherit autotools eutils
+## git-hosting.eclass:
+GH_RN="github:xiph"
+
+## EXPORT_FUNCTIONS: src_unpack
+## variables: GH_HOMEPAGE
+inherit git-hosting
+## functions: eautoreconf
+inherit autotools
+## functions: prune_libtool_files
+inherit ltprune
 
 DESCRIPTION="Free lossless audio encoder and decoder"
-HOMEPAGE="https://xiph.org/flac/"
+HOMEPAGE="https://xiph.org/flac/ ${GH_HOMEPAGE}"
 LICENSE="BSD FDL-1.2 GPL-2 LGPL-2.1"
 
 SLOT="0"
-SRC_URI="http://downloads.xiph.org/releases/${PN}/${P}.tar.xz"
 
-KEYWORDS="amd64 arm"
-IUSE="altivec +cxx debug doc examples ogg cpu_flags_x86_sse static-libs"
+KEYWORDS="amd64 arm arm64"
+IUSE_A=( altivec +cxx debug doc examples ogg cpu_flags_x86_sse static-libs test )
 
-RDEPEND="
-	ogg? ( media-libs/libogg )"
-DEPEND="${RDEPEND}
-	app-arch/xz-utils
-	sys-devel/gettext
-	virtual/pkgconfig"
+CDEPEND_A=(
+	"ogg? ( media-libs/libogg )"
+)
+DEPEND_A=( "${CDEPEND_A[@]}"
+	"app-arch/xz-utils"
+	"sys-devel/gettext"
+	"virtual/pkgconfig"
+)
+RDEPEND_A=( "${CDEPEND_A[@]}" )
+
+inherit arrays
 
 src_prepare() {
-	local PATCHES=(
-		"${FILESDIR}"/1.3.0-dont_build_tests.patch
-		"${FILESDIR}"/1.3.2-configure_ac_flags.patch
-		"${FILESDIR}"/1.3.2-LTLIBICONV.patch
-		"${FILESDIR}"/1.3.2-honor_html_dir.patch
-	)
-	default
+	eapply "${FILESDIR}"/1.3.0-dont_build_tests.patch
+	eapply "${FILESDIR}"/1.3.2-configure_ac_flags.patch
+	eapply "${FILESDIR}"/1.3.2-LTLIBICONV.patch
+	eapply "${FILESDIR}"/1.3.2-honor_html_dir.patch
+	eapply_user
 
-	use doc || sed -e '/SUBDIRS/ s|html||' -i -- doc/Makefile.am || die
+	use doc || esed -e '/SUBDIRS/ s|html||' -i -- doc/Makefile.am
 	# https://sourceforge.net/p/flac/bugs/379/
 	find doc/ -type f -name Makefile.am | xargs sed \
 		-e 's|docdir = $(datadir)/doc/$(PACKAGE)-$(VERSION)|docdir = @docdir@|' -i --
 	assert
 	# delete doxygen tagfile
-	sed -e 's|FLAC.tag||g' -e '/doc_DATA =/d' -i -- doc/Makefile.am || die
+	esed -e 's|FLAC.tag||g' -e '/doc_DATA =/d' -i -- doc/Makefile.am
 
-	use examples || sed -e '/^SUBDIRS/ s| examples | |' -i -- Makefile.am || die
+	esed -r -e '/^SUBDIRS/ s, microbench( |$), ,' -i -- Makefile.am
+	use examples || esed -r -e '/^SUBDIRS/ s, examples( |$), ,' -i -- Makefile.am
+	if ! use test ; then
+		esed -r -e '/^SUBDIRS/ s, test( |$), ,' -i -- Makefile.am
+		esed -r -e '/(^|[ \t])test_.*\\$/d' -i -- src/Makefile.am
+	fi
 
-	AT_M4DIR="m4" eautoreconf
+	touch config.rpath || die
+	AT_M4DIR="m4" \
+		eautoreconf
 }
 
 src_configure() {
