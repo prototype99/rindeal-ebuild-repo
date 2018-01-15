@@ -1,13 +1,13 @@
-# Copyright 2016-2017 Jan Chren (rindeal)
+# Copyright 2016-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 inherit rindeal
 
-# functions: eautoreconf
+## functions: eautoreconf
 inherit autotools
-# functions: doicon
-inherit eutils
+## functions: doicon
+inherit desktop
 
 DESCRIPTION="Audio spectrum analyser in 3D"
 HOMEPAGE="http://spectrum3d.sourceforge.net https://sourceforge.net/projects/spectrum3d/"
@@ -19,7 +19,7 @@ MY_P="${MY_PN}-${PV}"
 SRC_URI="mirror://sourceforge/${MY_PN}/${MY_P}.tar.gz"
 
 KEYWORDS="~amd64"
-IUSE="gtk3 sdl jack gstreamer010"
+IUSE_A=( gtk3 sdl jack gstreamer010 )
 
 CDEPEND_A=(
 	"gtk3? ( x11-libs/gtk+:3 )"
@@ -60,12 +60,12 @@ src_prepare() {
 
 	## fix icons path (https://sourceforge.net/p/spectrum3d/discussion/bug-wishlist/thread/8c685767/)
 	# the svg icon is used only in the desktop menu entry
-	sed -r -e "s|^(svgicondir =).*|\1 \$(datadir)/icons/hicolor/scalable/apps|" -i -- data/Makefile.am || die
+	esed -r -e "s|^(svgicondir =).*|\1 \$(datadir)/icons/hicolor/scalable/apps|" -i -- data/Makefile.am
 
-	sed -e "1s|^|icondir = \$(datadir)/${PN}/icons\n|" -i -- src/Makefile.am || die
-	sed -r -e "s|^(icondir =).*|\1 \$(datadir)/${PN}/icons|" -i -- data/Makefile.am || die
+	esed -e "1s|^|icondir = \$(datadir)/${PN}/icons\n|" -i -- src/Makefile.am
+	esed -r -e "s|^(icondir =).*|\1 \$(datadir)/${PN}/icons|" -i -- data/Makefile.am
 	# pass $(icondir) to source files
-	sed -e "/^AM_CPPFLAGS =/ s|$| -D ICONDIR='\"\$(icondir)\"'|" -i -- src/Makefile.am || die
+	esed -e "/^AM_CPPFLAGS =/ s|$| -D ICONDIR='\"\$(icondir)\"'|" -i -- src/Makefile.am
 	grep --files-with-matches -r "g_build_filename.*DATADIR.*icons" |\
 		xargs \
 		sed -r -e '/g_build_filename.*DATADIR.*icons/ '"s|DATADIR, \"icons\"|ICONDIR|" -i --
