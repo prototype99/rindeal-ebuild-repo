@@ -1,5 +1,5 @@
 # Copyright 1999-2016 Gentoo Foundation
-# Copyright 2016-2017 Jan Chren (rindeal)
+# Copyright 2016-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 # original work by stefan-gr (https://github.com/stefan-gr), the maintainer of abendbrot overlay
@@ -7,13 +7,17 @@
 EAPI=6
 inherit rindeal
 
+## git-hosting.eclass:
 GH_RN="github:cmdrkotori"
+GH_REF="v${PV}"
 
+## EXPORT_FUNCTIONS: src_unpack
 inherit git-hosting
-# functions: eqmake5
+## functions: eqmake5
 inherit qmake-utils
-# functions: make_desktop_entry
-inherit eutils
+## functions: make_desktop_entry, doicon
+inherit desktop
+## EXPORT_FUNCTIONS: src_prepare pkg_preinst pkg_postinst pkg_postrm
 inherit xdg
 
 DESCRIPTION="Media Player Classic - Qute Theater; MPC-HC reimplemented using mpv/Qt"
