@@ -185,18 +185,18 @@ esed() {
 			fi
 		done
 
-		(( ${#file_list[*]} )) || die
+		(( ${#file_list[*]} )) || die -n
 
-		local temp_dir="$(mktemp -d)" || die
+		local temp_dir="$(mktemp -d)" || die -n
 
 		## backup original versions
 		local f
 		for f in "${!file_list[@]}" ; do
-			cp "${f}" "${temp_dir}/${file_list["${f}"]}" || die
+			cp "${f}" "${temp_dir}/${file_list["${f}"]}" || die -n
 		done
 	fi
 
-	sed "${@}" || die
+	sed "${@}" || die -n
 
 	if (( ${#diff_prog[*]} )) ; then
 		local f
@@ -205,10 +205,10 @@ esed() {
 			echo "*** for sed ${pretty_sed[*]}:"
 			"${diff_prog[@]}" "${temp_dir}/${file_list["${f}"]}" "${f}"
 			local code=$?
-			(( code == 2 )) && die
+			(( code == 2 )) && die -n
 			(( code == 0 )) && eqawarn "sed didn't change anything"
 		done
-		rm -r "${temp_dir}" || die
+		rm -r "${temp_dir}" || die -n
 	fi
 }
 
