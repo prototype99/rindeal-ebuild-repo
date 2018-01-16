@@ -1,13 +1,17 @@
 # Copyright 1999-2016 Gentoo Foundation
-# Copyright 2016 Jan Chren (rindeal)
+# Copyright 2016-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 inherit rindeal
 
-inherit eutils
+## functions: make_desktop_entry
+inherit desktop
+## functions: tc-export
 inherit toolchain-funcs
+## functions: eqmake5
 inherit qmake-utils
+## functions: systemd_dounit
 inherit systemd
 
 DESCRIPTION="IEEE 802.1X/WPA supplicant for secure wireless transfers"
@@ -21,7 +25,7 @@ KEYWORDS="~amd64 ~arm ~arm64"
 IUSE_A=(
 	debug +readline +dbus
 
-	gui qt5
+	gui
 
 	+openssl gnutls tls1_1 +tls1_2 smartcard
 
@@ -50,17 +54,10 @@ CDEPEND_A=(
 	"net-wireless/crda"
 
 	"gui? ("
-		"!qt5? ("
-			"dev-qt/qtcore:4"
-			"dev-qt/qtgui:4"
-			"dev-qt/qtsvg:4"
-		")"
-		"qt5? ("
-			"dev-qt/qtcore:5"
-			"dev-qt/qtgui:5"
-			"dev-qt/qtwidgets:5"
-			"dev-qt/qtsvg:5"
-		")"
+		"dev-qt/qtcore:5"
+		"dev-qt/qtgui:5"
+		"dev-qt/qtwidgets:5"
+		"dev-qt/qtsvg:5"
 	")"
 	"readline? ("
 		"sys-libs/ncurses:0="
@@ -130,17 +127,17 @@ src_prepare() {
 	epushd "${PN}"
 
 	# People seem to take the example configuration file too literally (bug gentoo#102361)
-	sed -i \
+	esed \
 		-e "s:^\(opensc_engine_path\):#\1:" \
 		-e "s:^\(pkcs11_engine_path\):#\1:" \
 		-e "s:^\(pkcs11_module_path\):#\1:" \
-		wpa_supplicant.conf || die
+		-i -- wpa_supplicant.conf
 
 	# Change configuration to match Gentoo locations (bug gentoo#143750)
-	sed \
+	esed \
 		-e "s:/usr/lib/opensc:/usr/$(get_libdir):" \
 		-e "s:/usr/lib/pkcs11:/usr/$(get_libdir):" \
-		-i -- wpa_supplicant.conf || die
+		-i -- wpa_supplicant.conf
 
 	# systemd entries to D-Bus service files (bug gentoo#372877)
 	echo 'SystemdService=wpa_supplicant.service' \
@@ -267,8 +264,8 @@ src_configure() {
 	epopd # "${PN}"
 
 	if use gui ; then
-		epushd "${PN}/wpa_gui-qt4"
-		eqmake$(usex qt5 5 4) wpa_gui.pro
+		epushd "${PN}/wpa_gui-qt4" # yes, even for qt5
+		eqmake5 wpa_gui.pro
 		epopd
 	fi
 }
@@ -308,7 +305,15 @@ src_install() {
 
 		dobin "wpa_gui"
 		doicon -s scalable "icons/wpa_gui.svg"
-		make_desktop_entry "wpa_gui" "WPA Supplicant Administration GUI" "wpa_gui" "Qt;Network;"
+		local make_desktop_entry_args=(
+			"wpa_gui"		# exec
+			"WPA Supplicant Administration GUI"	# name
+			"wpa_gui"		# icon
+			"Qt;Network;"	# categories; https://standards.freedesktop.org/menu-spec/latest/apa.html
+		)
+		local make_desktop_entry_extras=( )
+		make_desktop_entry "${make_desktop_entry_args[@]}" \
+			"$( printf '%s\n' "${make_desktop_entry_extras[@]}" )"
 
 		epopd
 	fi
