@@ -129,11 +129,11 @@ _NO_V() {
 }
 
 epushd() {
-	pushd "$@" >/dev/null || die -n
+	pushd "${@}" >/dev/null || die -n
 }
 
 epopd() {
-	popd "$@" >/dev/null || die -n
+	popd "${@}" >/dev/null || die -n
 }
 
 emkdir() {
@@ -153,7 +153,7 @@ echmod() {
 }
 
 erm() {
-	rm $(_NO_V) --interactive=never --preserve-root --one-file-system "$@" || die -n
+	rm $(_NO_V) --interactive=never --preserve-root --one-file-system "${@}" || die -n
 }
 
 ermdir() {
