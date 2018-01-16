@@ -1,7 +1,7 @@
 # Initial idea of repoman checks: https://github.com/mrueg/repoman-travis
 
 # use "Trusty" as "Precise" has bash 4.2 only, which doesn't support nameref vars
-sudo: required
+sudo: false
 dist: trusty
 language: python
 python:
