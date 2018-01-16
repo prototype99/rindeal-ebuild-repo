@@ -80,7 +80,6 @@
     <flag name="pivot_root">pivot_root(8) - change the root filesystem</flag>
     <flag name="raw">raw(8) - bind a Linux raw character device</flag>
     <flag name="rename">rename(1) - rename files</flag>
-    <flag name="reset">reset(1) - terminal initialization</flag>
     <flag name="runuser">runuser(1) - run a command with substitute user and group ID</flag>
     <flag name="schedutils">chrt(1) - manipulate the real-time attributes of a process;
                               ionice(1) - set or get process I/O scheduling class and priority;

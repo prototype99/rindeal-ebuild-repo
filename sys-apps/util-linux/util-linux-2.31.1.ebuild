@@ -1,34 +1,37 @@
 # Copyright 1999-2016 Gentoo Foundation
-# Copyright 2016-2017 Jan Chren (rindeal)
+# Copyright 2016-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 inherit rindeal
 
+## git-hosting.eclass:
 GH_RN="github:karelzak"
 GH_REF="v${PV}"
 
+## python-*.eclass:
 PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
 
-# functions: rindeal:dsf:eval
+## functions: rindeal:dsf:eval
 inherit rindeal-utils
-# functions: git-hosting_unpack
+## functions: git-hosting_unpack
+## variables: GH_HOMEPAGE
 inherit git-hosting
-# TODO: make it python-r1
+## TODO: make it python-r1
 inherit python-single-r1
-# functions: eautoreconf
+## functions: eautoreconf
 inherit autotools
-# functions: elibtoolize
+## functions: elibtoolize
 inherit libtool
-# functions: get_bashcompdir
+## functions: get_bashcompdir
 inherit bash-completion-r1
-# functions: systemd_get_systemunitdir
+## functions: systemd_get_systemunitdir
 inherit systemd
-# functions: prune_libtool_files
-inherit eutils
-# functions: gen_usr_ldscript
+## functions: prune_libtool_files
+inherit ltprune
+## functions: gen_usr_ldscript
 inherit toolchain-funcs
-# functions: newpamd
+## functions: newpamd
 inherit pam
 
 DESCRIPTION="Various useful system utilities for Linux"
@@ -82,7 +85,6 @@ IUSE_A=(
 	pivot_root
 	+raw
 	+rename
-	reset
 	runuser # bound to su
 	+schedutils
 	+setpriv
@@ -184,7 +186,6 @@ RDEPEND_A=( "${CDEPEND_A[@]}"
 	"$(rindeal:dsf:eval \
 		'chfn-chsh|login|su|vipw|nologin|newgrp' \
 			'!sys-apps/shadow' )"
-	"reset? ( !sys-libs/ncurses )"
 	"rfkill? ( !net-wireless/rfkill )"
 )
 
@@ -316,8 +317,8 @@ pkg_setup() {
 my_use_build_init() {
 	local flag="${1}" option="${2:-"${1}"}"
 	grep -F -q "UL_BUILD_INIT([${option}]" configure.ac || die
-	sed -r -e "s@^(UL_BUILD_INIT *\( *\[${option}\])(, *\[[a-z]{2,}\])?@\1, [$(usex ${flag})]@" \
-		-i -- configure.ac || die
+	esed -r -e "s@^(UL_BUILD_INIT *\( *\[${option}\])(, *\[[a-z]{2,}\])?@\1, [$(usex ${flag})]@" \
+		-i -- configure.ac
 }
 
 src_prepare-locales() {
@@ -506,7 +507,6 @@ src_configure() {
 		$(use_enable mesg)
 		$(use_enable raw)
 		$(use_enable rename)
-		$(use_enable reset)
 		$(use_enable vipw)
 		$(use_enable newgrp)
 
