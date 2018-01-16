@@ -1,15 +1,15 @@
 # Copyright 1999-2016 Gentoo Foundation
-# Copyright 2016-2017 Jan Chren (rindeal)
+# Copyright 2016-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 inherit rindeal
 
-# functions: make_desktop_entry
-inherit eutils
-# functions: tc-getCC
+## functions: make_desktop_entry, newicon
+inherit desktop
+## functions: tc-getCC
 inherit toolchain-funcs
-# EXPORT_FUNCTIONS: src_prepare
+## EXPORT_FUNCTIONS: src_prepare pkg_preinst pkg_postinst pkg_postrm
 inherit xdg
 
 DESCRIPTION="Tool for ripping and streaming Blu-ray, HD-DVD and DVD discs"
@@ -175,7 +175,7 @@ src_install-oss() {
 
 		instincdir="${ED}/${insdir}/${libdirname}/inc"
 		emv "${instincdir}"/* "${instincdir%%"/inc"}"
-		rmdir "${instincdir}" || die
+		ermdir "${instincdir}"
 	done
 	assert
 
