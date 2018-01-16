@@ -1,17 +1,23 @@
 # Copyright 1999-2015 Gentoo Foundation
-# Copyright 2016 Jan Chren (rindeal)
+# Copyright 2016-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 inherit rindeal
 
+## git-hosting.eclass:
 GH_RN="github:kcat:openal-soft"
 GH_REF="openal-soft-${PV}"
 
-inherit cmake-utils
+## EXPORT_FUNCTIONS: src_unpack
+## variables: GH_HOMEPAGE
 inherit git-hosting
+## EXPORT_FUNCTIONS: src_prepare src_configure src_compile src_test src_install
+inherit cmake-utils
+## EXPORT_FUNCTIONS: src_prepare pkg_preinst pkg_postinst pkg_postrm
 inherit xdg
-inherit eutils
+## functions: make_desktop_entry
+inherit desktop
 
 DESCRIPTION="Software implementation of the OpenAL 3D audio API"
 HOMEPAGE="http://kcat.strangesoft.net/openal.html ${GH_HOMEPAGE}"
@@ -19,30 +25,35 @@ LICENSE="LGPL-2+"
 
 SLOT="0"
 
-KEYWORDS="amd64 ~arm ~arm64"
+KEYWORDS="~amd64 ~arm ~arm64"
 backends=( alsa coreaudio jack oss portaudio pulseaudio )
 IUSE_A=(
 	${backends[@]}
 	debug examples gui tests utils
-	cpu_flags_x86_{sse,sse2,sse3,sse4_1} neon
+	cpu_flags_x86_{sse,sse2,sse3,sse4_1} cpu_flags_arm_neon
 )
 
-RDEPEND="
-	alsa? ( media-libs/alsa-lib )
-	examples? (
-		media-libs/libsdl2[sound]
-		media-video/ffmpeg
-	)
-	jack? ( media-sound/jack-audio-connection-kit )
-	portaudio? ( media-libs/portaudio )
-	pulseaudio? ( media-sound/pulseaudio )
-	gui? (
-		dev-qt/qtgui:4
-		dev-qt/qtcore:4
-	)"
-DEPEND="${RDEPEND}
-	oss? ( virtual/os-headers )
-	utils? ( sys-apps/help2man )"
+CDEPEND_A=(
+	"alsa? ( media-libs/alsa-lib )"
+	"jack? ( virtual/jack )"
+	"portaudio? ( media-libs/portaudio )"
+	"pulseaudio? ( media-sound/pulseaudio )"
+	"gui? ("
+		"dev-qt/qtcore:5"
+		"dev-qt/qtgui:5"
+		"dev-qt/qtwidgets:5"
+	")"
+
+	"examples? ("
+		"media-libs/libsdl2[sound]"
+		"media-video/ffmpeg"
+	")"
+)
+DEPEND_A=( "${CDEPEND_A[@]}"
+	"oss? ( virtual/os-headers )"
+	"utils? ( sys-apps/help2man )"
+)
+RDEPEND_A=( "${CDEPEND_A[@]}" )
 
 REQUIRED_USE_A=(
 	# at least one backend must be selected otherwise it segfaults
@@ -58,6 +69,7 @@ BUILD_DIR="${S}/build"
 
 src_prepare() {
 	eapply "${FILESDIR}"/1.17.2-disable_pulseaudio_auto_spawn.patch
+	eapply_user
 
 	# TODO: when some dependency is not found for examples/utils/tests, build doesn't die
 
@@ -67,27 +79,27 @@ src_prepare() {
 
 src_configure() {
 		local mycmakeargs=(
-			"-DALSOFT_BACKEND_ALSA=$(usex alsa)"
-			"-DALSOFT_BACKEND_COREAUDIO=$(usex coreaudio)"
-			"-DALSOFT_BACKEND_JACK=$(usex jack)"
-			"-DALSOFT_BACKEND_OSS=$(usex oss)"
-			"-DALSOFT_BACKEND_PORTAUDIO=$(usex portaudio)"
-			"-DALSOFT_BACKEND_PULSEAUDIO=$(usex pulseaudio)"
-			"-DALSOFT_BACKEND_WAVE=ON" # Wave File Writer
+			-D "ALSOFT_BACKEND_ALSA=$(usex alsa)"
+			-D "ALSOFT_BACKEND_COREAUDIO=$(usex coreaudio)"
+			-D "ALSOFT_BACKEND_JACK=$(usex jack)"
+			-D "ALSOFT_BACKEND_OSS=$(usex oss)"
+			-D "ALSOFT_BACKEND_PORTAUDIO=$(usex portaudio)"
+			-D "ALSOFT_BACKEND_PULSEAUDIO=$(usex pulseaudio)"
+			-D "ALSOFT_BACKEND_WAVE=ON" # Wave File Writer
 
-			"-DALSOFT_CPUEXT_SSE=$(usex cpu_flags_x86_sse)"
-			"-DALSOFT_CPUEXT_SSE2=$(usex cpu_flags_x86_sse2)"
-			"-DALSOFT_CPUEXT_SSE3=$(usex cpu_flags_x86_sse3)"
-			"-DALSOFT_CPUEXT_SSE4_1=$(usex cpu_flags_x86_sse4_1)"
-			"-DALSOFT_CPUEXT_NEON=$(usex neon)"
+			-D "ALSOFT_CPUEXT_SSE=$(usex cpu_flags_x86_sse)"
+			-D "ALSOFT_CPUEXT_SSE2=$(usex cpu_flags_x86_sse2)"
+			-D "ALSOFT_CPUEXT_SSE3=$(usex cpu_flags_x86_sse3)"
+			-D "ALSOFT_CPUEXT_SSE4_1=$(usex cpu_flags_x86_sse4_1)"
+			-D "ALSOFT_CPUEXT_NEON=$(usex cpu_flags_arm_neon)"
 
-			"-DALSOFT_EXAMPLES=$(usex examples)"
-			"-DALSOFT_INSTALL=ON"
+			-D "ALSOFT_EXAMPLES=$(usex examples)"
+			-D "ALSOFT_INSTALL=ON"
 			# Disable building the alsoft-config utility
-			"-DALSOFT_NO_CONFIG_UTIL=$(usex '!gui')"
-			"-DALSOFT_TESTS=$(usex tests)"
+			-D "ALSOFT_NO_CONFIG_UTIL=$(usex '!gui')"
+			-D "ALSOFT_TESTS=$(usex tests)"
 			# Build and install utility programs
-			"-DALSOFT_UTILS=$(usex utils)"
+			-D "ALSOFT_UTILS=$(usex utils)"
 		)
 
 		cmake-utils_src_configure
@@ -116,7 +128,7 @@ src_compile() {
 }
 
 src_install() {
-	DOCS=( alsoftrc.sample env-vars.txt hrtf.txt ChangeLog README )
+	DOCS=( alsoftrc.sample docs/env-vars.txt docs/hrtf.txt ChangeLog README )
 
 	cmake-utils_src_install
 
@@ -127,10 +139,14 @@ src_install() {
 	newins alsoftrc.sample alsoft.conf
 
 	if use gui ; then
-		make_desktop_entry \
-			"${EPREFIX}"/usr/bin/alsoft-config \
-			"OpenAL Soft Configuration" \
-			settings-configure \
-			"Settings;HardwareSettings;Audio;AudioVideo;"
+		local make_desktop_entry_args=(
+			"${EPREFIX}"/usr/bin/alsoft-config	# exec
+			"OpenAL Soft Configuration"	# name
+			settings-configure	# icon
+			"Settings;HardwareSettings;Audio;AudioVideo;"	# categories
+		)
+		local make_desktop_entry_extras=(  )
+		make_desktop_entry "${make_desktop_entry_args[@]}" \
+			"$( printf '%s\n' "${make_desktop_entry_extras[@]}" )"
 	fi
 }
