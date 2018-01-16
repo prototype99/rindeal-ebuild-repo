@@ -1,37 +1,35 @@
-# Copyright 2016-2017 Jan Chren (rindeal)
+# Copyright 2016-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 inherit rindeal
 
+## chromium-2.eclass:
 CHROMIUM_LANGS="
 	be bg bn ca cs da de el en-GB en-US es-419 es fil fi fr-CA fr
 	hi hr hu id it ja ko lt lv ms nb nl pl pt-BR pt-PT ro ru
 	sk sr sv sw ta te th tr uk vi zh-CN zh-TW
 "
 inherit chromium-2
-inherit unpacker
 inherit pax-utils
+## functions: get_version_component_range
 inherit versionator
 inherit xdg
 
-DESCRIPTION="Proprietary cross-platofmr web browser by Opera Software ASA"
+DESCRIPTION="Proprietary cross-platform web browser by Opera Software ASA"
 HOMEPAGE="https://www.opera.com/"
 LICENSE="OPERA-2014"
 
 SLOT="$(get_version_component_range 1)"
 PN_SLOTTED="${PN}${SLOT}"
-SRC_URI_OPERA_BASE="https://get.geo.opera.com/pub/${PN}/desktop/${PV}/linux/${PN}-stable_${PV}"
-SRC_URI_CODECS_V="62.0.3202.89-0ubuntu0.17.10.1386"
 SRC_URI_A=(
 	"amd64? ("
-		"${SRC_URI_OPERA_BASE}_amd64.deb"
-		"mirror://ubuntu/pool/universe/c/chromium-browser/chromium-codecs-ffmpeg-extra_${SRC_URI_CODECS_V}_amd64.deb"
+		"https://get.geo.opera.com/pub/${PN}/desktop/${PV}/linux/${PN}-stable_${PV}_amd64.deb"
 	")"
 )
 
 KEYWORDS="-* ~amd64"
-IUSE="autoupdate"
+IUSE_A=( autoupdate +ffmpeg-extra )
 
 RDEPEND_A=(
 	"dev-libs/expat"
@@ -63,6 +61,7 @@ RDEPEND_A=(
 	"x11-libs/libXtst"
 	"x11-libs/libnotify"
 	"x11-libs/pango[X]"
+	"ffmpeg-extra? ( www-plugins/chromium-codecs-ffmpeg-extra )"
 )
 
 inherit arrays
@@ -81,9 +80,6 @@ src_prepare() {
 
 	## fix libdir
 	emv -T "usr/lib/x86_64-linux-gnu/${PN}" "${OPERA_HOME#/}"
-	# install ffmpeg with H264 support
-	emkdir "${OPERA_HOME#/}/lib_extra"
-	emv -T "usr/lib/chromium-browser" "${OPERA_HOME#/}/lib_extra"
 	# delete the rest
 	erm -r "usr/lib"
 
@@ -117,8 +113,8 @@ src_prepare() {
 		-e "s|^Name=${PN}.*|& ${SLOT}|I"
 		-e "/^Icon=/ s|.*|Icon=${PN_SLOTTED}|"
 	)
-	sed -r "${sedargs[@]}" \
-		-i -- "applications/${PN}.desktop" || die
+	esed -r "${sedargs[@]}" \
+		-i -- "applications/${PN}.desktop"
 	# fix menu entry path
 	emv "applications"/{${PN},${PN_SLOTTED}}.desktop
 
@@ -139,8 +135,6 @@ src_install() {
 	doins -r *
 
 	dosym "${OPERA_HOME}/${PN}" "/usr/bin/${PN_SLOTTED}"
-# 	emkdir "${ED}/${OPERA_HOME}/lib_extra"
-# 	dosym "../libffmpeg.so" "${OPERA_HOME}/lib_extra/libffmpeg.so"
 
 	# fix permissions and pax-mark binaries
 	fperms a+x "${OPERA_HOME}/${PN}"

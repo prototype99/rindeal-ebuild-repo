@@ -22,7 +22,7 @@ LICENSE="OPERA-2014"
 SLOT="$(get_version_component_range 1)"
 PN_SLOTTED="${PN}${SLOT}"
 SRC_URI_OPERA_BASE="https://get.geo.opera.com/pub/${PN}/desktop/${PV}/linux/${PN}-stable_${PV}"
-SRC_URI_CODECS_V="62.0.3202.89-0ubuntu0.17.10.1386"
+SRC_URI_CODECS_V="63.0.3239.84-0ubuntu0.17.10.1"
 SRC_URI_A=(
 	"amd64? ("
 		"${SRC_URI_OPERA_BASE}_amd64.deb"
