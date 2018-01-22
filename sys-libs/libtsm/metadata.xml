@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>dev.rindeal+gentoo-overlay@gmail.com</email>
+    <name>Jan Chren (rindeal)</name>
+  </maintainer>
+  <use>
+<!--     <flag name="gtktsm">GtkTsmTerminal is a Gtk+-3.0 widget using libtsm; GtkTsm program is a small example that shows how to use GtkTsmTerminal widget</flag> -->
+  </use>
+</pkgmetadata>
