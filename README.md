@@ -83,7 +83,7 @@ emerge --sync
 ### Automatically with Layman
 
 ```sh
-layman -o 'https://ebuilds.janchren.eu/repos/rindeal/repositories.xml' -a rindeal
+layman -o 'https://ebuilds.janchren.eu/repos/rindeal/repositories.xml' -f -a rindeal
 ```
 
 Not so FAQ
