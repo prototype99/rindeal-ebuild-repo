@@ -1,5 +1,5 @@
 # Copyright 1999-2017 Gentoo Foundation
-# Copyright 2017 Jan Chren (rindeal)
+# Copyright 2017-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -10,7 +10,7 @@ inherit rindeal
 # fork is required for Meson to work, upstream autotools-based system is crap, but YMMV
 GH_RN="github:rindeal"
 [[ "${PV}" == *9999* ]] || \
-	GH_REF="release-${PV}"
+	GH_REF="rindeal-v${PV}"
 
 ## functions: eshopts_push, eshopts_pop
 inherit estack
@@ -28,13 +28,14 @@ inherit autotools
 ## EXPORT_FUNCTIONS: src_configure src_compile src_test src_install
 inherit meson
 
-DESCRIPTION="A software motion detector"
+DESCRIPTION="Software motion detector"
 HOMEPAGE="https://motion-project.github.io https://github.com/Motion-Project/motion ${GH_HOMEPAGE}"
 LICENSE="GPL-2"
 
 SLOT="0"
 
-KEYWORDS="~amd64 ~arm ~arm64"
+[[ "${PV}" == *9999* ]] || \
+	KEYWORDS="~amd64 ~arm ~arm64"
 IUSE_A=( ffmpeg mmal mysql pgsql +v4l2 webp sqlite3 )
 
 CDEPEND_A=(
@@ -80,7 +81,7 @@ src_prepare() {
 }
 
 src_configure() {
-	function usexb() {
+	usexb() {
 		usex $1 'true' 'false'
 	}
 
@@ -103,7 +104,7 @@ src_install() {
 
 	# meson doesn't know about docdir; https://github.com/mesonbuild/meson/issues/825
 	emv "${ED%/}"/usr/share/doc/{${PN}/*,${PF}}
-	rmdir "${ED%/}"/usr/share/doc/${PN} || die
+	ermdir "${ED%/}"/usr/share/doc/${PN}
 
 	epushd "${ED}/usr/share/doc/${PF}"
 	erm examples/*FreeBSD*
