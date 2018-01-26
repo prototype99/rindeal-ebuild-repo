@@ -130,7 +130,7 @@ IUSE_A=(
 	swaplabel +mkswap
 	look mcookie +namei +whereis +getopt +blockdev +prlimit +lslocks
 	+flock ipcmk
-	lsipc +lsns +renice rfkill +setsid readprofile +dmesg ctrlaltdel +fsfreeze +blkdiscard ldattach rtcwake setarch +script +scriptreplay col colcrt colrm +column +hexdump rev fincore
+	lsipc +lsns +renice rfkill +setsid readprofile +dmesg ctrlaltdel +fsfreeze +blkdiscard ldattach rtcwake setarch +script +scriptreplay col colcrt colrm +column +hexdump +rev fincore
 	+ionice +taskset +chrt
 )
 
