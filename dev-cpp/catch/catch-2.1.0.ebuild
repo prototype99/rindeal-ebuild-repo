@@ -5,11 +5,11 @@
 EAPI=6
 inherit rindeal
 
-GH_RN="github:philsquared:Catch"
+GH_RN="github:catchorg:Catch2"
 GH_REF="v${PV}"
 
-inherit cmake-utils
 inherit git-hosting
+inherit cmake-utils
 
 DESCRIPTION="Modern C++ header-only framework for unit-tests"
 LICENSE="Boost-1.0"
