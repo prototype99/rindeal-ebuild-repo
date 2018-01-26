@@ -1,26 +1,33 @@
 # Copyright 1999-2016 Gentoo Foundation
-# Copyright 2016-2017 Jan Chren (rindeal)
+# Copyright 2016-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 inherit rindeal
 
+## git-hosting.eclass:
 GH_RN="github:johnkerl"
 GH_REF="v${PV}"
 
+## EXPORT_FUNCTIONS: src_unpack
 inherit git-hosting
+## function: eautoreconf
 inherit autotools
 
-DESCRIPTION="A tool like sed, awk, cut, join, and sort for name-indexed data (CSV, JSON, ..)"
-HOMEPAGE="http://johnkerl.org/miller ${GH_HOMEPAGE}"
+DESCRIPTION="Tool like sed, awk, cut, join, and sort for name-indexed data (CSV, JSON, ..)"
+HOMEPAGE="https://johnkerl.org/miller ${GH_HOMEPAGE}"
 LICENSE="BSD-2"
 
 SLOT="0"
 
 KEYWORDS="~amd64 ~arm ~arm64"
-IUSE="doc test"
+IUSE_A=( doc test )
 
-DEPEND="sys-devel/flex"
+DEPEND_A=(
+	"sys-devel/flex"
+)
+
+inherit arrays
 
 my_for_each_test_dir() {
 	local test_dirs=( c/{reg,unit}_test )
@@ -44,10 +51,10 @@ src_prepare() {
 	assert
 
 	# disable docs rebuilding as they're shipped prebuilt
-	sed -e '/SUBDIRS[^=]*=/ s:doc::g' -i -- Makefile.am || die
+	esed -e '/SUBDIRS[^=]*=/ s:doc::g' -i -- Makefile.am
 
 	# disable building tests automagically
-	use test || sed -e '/SUBDIRS[^=]*=/ s:[^ ]*_test::g' -i -- c/Makefile.am || die
+	use test || esed -e '/SUBDIRS[^=]*=/ s:[^ ]*_test::g' -i -- c/Makefile.am
 
 	eautoreconf
 }
