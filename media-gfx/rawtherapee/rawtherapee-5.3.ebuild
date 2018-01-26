@@ -1,24 +1,28 @@
 # Copyright 1999-2014 Gentoo Foundation
-# Copyright 2016-2017 Jan Chren (rindeal)
+# Copyright 2016-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 inherit rindeal
 
+## git-hosting.eclass:
 GH_RN="github:Beep6581:RawTherapee"
 # check http://rawtherapee.com/downloads for a new commit number
 # GH_REF="50114c1a3658cb08dec16f4a3e33c1611e08aa98"
 
-inherit git-hosting cmake-utils toolchain-funcs xdg
+inherit git-hosting
+inherit cmake-utils
+inherit toolchain-funcs
+inherit xdg
 
 DESCRIPTION="Powerful cross-platform raw image processing program"
-HOMEPAGE="http://www.rawtherapee.com/ ${HOMEPAGE}"
+HOMEPAGE="http://www.rawtherapee.com/ ${GH_HOMEPAGE}"
 LICENSE="GPL-3"
 
 SLOT="0"
 
 KEYWORDS="~amd64"
-IUSE="auto-gdk-flush bzip2 debug +mmap openmp profile"
+IUSE_A=( auto-gdk-flush bzip2 debug +mmap openmp profile )
 
 CDEPEND_A=(
 	">=x11-libs/gtk+-3.16:3"
@@ -43,7 +47,8 @@ CDEPEND_A=(
 )
 DEPEND_A=( "${CDEPEND_A[@]}"
 	"app-arch/xz-utils"
-	"virtual/pkgconfig" )
+	"virtual/pkgconfig"
+)
 RDEPEND_A=( "${CDEPEND_A[@]}" )
 
 inherit arrays
@@ -58,7 +63,7 @@ src_prepare() {
 	xdg_src_prepare
 
 	# do not install LICENSE
-	sed -e '/^install/ s/.*LICENSE.txt.*//' -i -- CMakeLists.txt || die
+	esed -e '/^install/ s/.*LICENSE.txt.*//' -i -- CMakeLists.txt
 
 	# Generating this file automatically requires a valid GIT repo.
 	# This info is only shown in the "About" dialog.
