@@ -5,7 +5,7 @@
 EAPI=6
 inherit rindeal
 
-GH_RN="github:philsquared:Catch"
+GH_RN="github:catchorg:Catch2"
 GH_REF="v${PV}"
 
 inherit cmake-utils
