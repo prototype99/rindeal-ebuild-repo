@@ -5,4 +5,9 @@
     <email>dev.rindeal+gentoo-overlay@gmail.com</email>
     <name>Jan Chren (rindeal)</name>
   </maintainer>
+  <use>
+    <flag name="asio">Use ASIO event-loop</flag>
+    <flag name="libuv">Use libuv event-loop</flag>
+    <flag name="epoll">Use epoll event-loop</flag>
+  </use>
 </pkgmetadata>
