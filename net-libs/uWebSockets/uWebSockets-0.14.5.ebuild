@@ -36,11 +36,6 @@ REQUIRED_USE_A=(
 
 inherit arrays
 
-# ```
-# make[1]: warning: jobserver unavailable: using -j1.  Add '+' to parent make rule.
-# ```
-MAKEOPTS+=" -j1"
-
 src_prepare() {
 	eapply_user
 
@@ -59,11 +54,11 @@ src_compile() {
 	append-cppflags "$(my_use_def threads UWS_THREADSAFE)"
 	append-cppflags "-UUSE_MTCP"
 
-	emake
+	emake Linux
 }
 
 src_install() {
-	emake PREFIX="${ED}"/usr install
+	emake PREFIX="${ED}"/usr installLinux
 
 	einstalldocs
 }
