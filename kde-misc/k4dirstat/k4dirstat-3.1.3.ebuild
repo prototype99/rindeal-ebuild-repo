@@ -11,7 +11,9 @@ GH_REF="k4dirstat-${PV}"
 ## kde5.eclass:
 KDE_HANDBOOK="forceoptional"
 
+## EXPORT_FUNCTIONS: src_unpack
 inherit git-hosting
+## EXPORT_FUNCTIONS: pkg_setup pkg_nofetch src_unpack src_prepare src_configure src_compile src_test src_install pkg_preinst pkg_postinst pkg_postrm
 inherit kde5
 
 DESCRIPTION="Nice KDE replacement to the du command"
@@ -44,3 +46,7 @@ RDEPEND_A=( "${CDEPEND_A[@]}"
 )
 
 inherit arrays
+
+src_unpack() {
+	git-hosting_src_unpack
+}
