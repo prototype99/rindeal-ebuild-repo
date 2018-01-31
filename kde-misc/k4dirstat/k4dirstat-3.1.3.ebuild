@@ -6,8 +6,8 @@ EAPI=6
 inherit rindeal
 
 ## git-hosting.eclass:
-GH_RN="bitbucket:jeromerobert:k4dirstat"
-GH_REF="k4dirstat-${PV}"
+GH_RN="bitbucket:jeromerobert"
+GH_REF="${P}"
 ## kde5.eclass:
 KDE_HANDBOOK="forceoptional"
 
@@ -20,7 +20,7 @@ DESCRIPTION="Nice KDE replacement to the du command"
 LICENSE="GPL-2"
 
 KEYWORDS="~amd64"
-IUSE=""
+IUSE_A=( nls )
 
 CDEPEND_A=(
 	"$(add_frameworks_dep kconfig)"
@@ -38,7 +38,7 @@ CDEPEND_A=(
 	"sys-libs/zlib"
 )
 DEPEND_A=( "${CDEPEND_A[@]}"
-	"sys-devel/gettext"
+	"nls? ( sys-devel/gettext )"
 )
 RDEPEND_A=( "${CDEPEND_A[@]}"
 	"!kde-misc/kdirstat"
@@ -49,4 +49,14 @@ inherit arrays
 
 src_unpack() {
 	git-hosting_src_unpack
+}
+
+src_prepare() {
+	eapply_user
+
+	if ! use nls ; then
+		esed -e '/add_subdirectory( *po *)/d' -i -- CMakeLists.txt
+	fi
+
+	kde5_src_prepare
 }
