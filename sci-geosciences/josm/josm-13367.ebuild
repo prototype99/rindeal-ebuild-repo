@@ -38,9 +38,9 @@ SLOT="0"
 MY_P="${PN}_0.0.svn${PV}"
 # Upstream doesn't provide versioned tarballs
 SRC_URI_A=(
-	## josm 0.0.svn13170+dfsg-2~bpo9+1
-	"http://snapshot.debian.org/archive/debian/20180101T053014Z/pool/main/j/josm/josm_0.0.svn13265%2Bdfsg.orig.tar.gz"
-	"http://snapshot.debian.org/archive/debian/20180101T053014Z/pool/main/j/josm/josm_0.0.svn13265%2Bdfsg-1.debian.tar.xz"
+	## josm 0.0.svn13367+dfsg-1~bpo9+1
+	"http://snapshot.debian.org/archive/debian/20180203T092827Z/pool/main/j/josm/josm_0.0.svn13367%2Bdfsg-1%7Ebpo9%2B1.debian.tar.xz"
+	"http://snapshot.debian.org/archive/debian/20180129T164727Z/pool/main/j/josm/josm_0.0.svn13367%2Bdfsg.orig.tar.gz"
 )
 
 KEYWORDS="~amd64"
@@ -88,7 +88,7 @@ src_prepare-locales() {
 	l10n_get_locales locales app off
 	for l in ${locales} ; do
 		erm "${dir}/${pre}${l}${post}"
-		sed -e "/languages\.put.*\"${l}\"/d" \
+		esed -e "/languages\.put.*\"${l}\"/d" \
 			-i -- src/org/openstreetmap/josm/tools/{I18n,LanguageInfo}.java || die
 	done
 }
@@ -127,31 +127,31 @@ src_prepare() {
 			"${xmlstarlet[@]}" || die
 		done
 	done
-	sed -e "s,/usr/share/java/ant-contrib.jar,$(java-pkg_getjars --build-only ant-contrib),g" \
+	esed -e "s,/usr/share/java/ant-contrib.jar,$(java-pkg_getjars --build-only ant-contrib),g" \
 		-i -- build.xml i18n/build.xml || die
-	sed -e "s,/usr/share/java/gettext-ant-tasks.jar,$(java-pkg_getjars --build-only gettext-ant-tasks),g" \
+	esed -e "s,/usr/share/java/gettext-ant-tasks.jar,$(java-pkg_getjars --build-only gettext-ant-tasks),g" \
 		-i -- build.xml i18n/build.xml || die
 
 	## print stats for EPSG compilation
-	sed -e "s|printStats *= *false|printStats = true|" \
+	esed -e "s|printStats *= *false|printStats = true|" \
 		-i -- scripts/BuildProjectionDefinitions.java || die
 
 	## fix font path
-	sed -e 's,/usr/share/fonts/truetype/noto,/usr/share/fonts/noto,g' \
+	esed -e 's,/usr/share/fonts/truetype/noto,/usr/share/fonts/noto,g' \
 		-i -- src/org/openstreetmap/josm/tools/FontsManager.java || die
 
 	## change default look and feel to GTK
-	sed -e 's|"javax.swing.plaf.metal.MetalLookAndFeel"|"com.sun.java.swing.plaf.gtk.GTKLookAndFeel"|' \
+	esed -e 's|"javax.swing.plaf.metal.MetalLookAndFeel"|"com.sun.java.swing.plaf.gtk.GTKLookAndFeel"|' \
 		-i -- src/org/openstreetmap/josm/tools/PlatformHookUnixoid.java || die
 
 	## normalize user-agent
-	sed -r -e 's|(String *result *= *"JOSM/1.5 \(").*|\1 + v + ")";|' \
+	esed -r -e 's|(String *result *= *"JOSM/1.5 \(").*|\1 + v + ")";|' \
 		-i -- src/org/openstreetmap/josm/data/Version.java || die
-	sed -e '/Main.platform.getOSDescription/d' -i -- src/org/openstreetmap/josm/data/Version.java || die
-	sed -r -e 's|(getAgentString\(\)) *\+.*|\1;|' -i -- src/org/openstreetmap/josm/data/Version.java || die
+	esed -e '/Main.platform.getOSDescription/d' -i -- src/org/openstreetmap/josm/data/Version.java || die
+	esed -r -e 's|(getAgentString\(\)) *\+.*|\1;|' -i -- src/org/openstreetmap/josm/data/Version.java || die
 
 	## do not display MOTD by default, as it requires calling home
-	sed -e 's|getBoolean("help.displaymotd", true)|getBoolean("help.displaymotd", false)|' \
+	esed -e 's|getBoolean("help.displaymotd", true)|getBoolean("help.displaymotd", false)|' \
 		-i -- src/org/openstreetmap/josm/gui/GettingStarted.java || die
 
 	## fix `TMSCachedTileLoader.java:129: error: method does not override or implement a method from a supertype`
@@ -173,6 +173,39 @@ src_prepare() {
 			}
 		' \
 		src/org/openstreetmap/josm/data/imagery/TMSCachedTileLoader.java || die
+
+	## bugfix
+	## ```
+    ## [javac] /tmp/portage/sci-geosciences/josm-13367/work/josm-0.0.svn13367/src/org/openstreetmap/josm/data/imagery/ImageryInfo.java:516: error: cannot find symbol
+    ## [javac]                 Objects.equals(this.modTileFeatures, other.modTileFeatures) &&
+    ## [javac]                                    ^
+    ## [javac]   symbol: variable modTileFeatures
+    ## [javac] /tmp/portage/sci-geosciences/josm-13367/work/josm-0.0.svn13367/src/org/openstreetmap/josm/data/imagery/ImageryInfo.java:516: error: cannot find symbol
+    ## [javac]                 Objects.equals(this.modTileFeatures, other.modTileFeatures) &&
+    ## [javac]                                                           ^
+    ## [javac]   symbol:   variable modTileFeatures
+    ## [javac]   location: variable other of type ImageryInfo
+    ## ```
+	esed -e '/modTileFeatures/d' -i -- src/org/openstreetmap/josm/data/imagery/ImageryInfo.java
+
+	## bugfix
+	## ```
+    ## [javac] /tmp/portage/sci-geosciences/josm-13367/work/josm-0.0.svn13367/src/org/openstreetmap/josm/io/imagery/ImageryReader.java:475: error: cannot find symbol
+    ## [javac]                     entry.setModTileFeatures(Boolean.parseBoolean(accumulator.toString()));
+    ## ```
+	esed -e '/setModTileFeatures/d' -i -- src/org/openstreetmap/josm/io/imagery/ImageryReader.java
+
+	## bugfix
+	## ```
+	## [javac] /tmp/portage/sci-geosciences/josm-13367/work/josm-0.0.svn13367/src/org/openstreetmap/josm/gui/layer/AbstractTileSourceLayer.java:618: error: cannot find symbol
+	## [javac]             if (ExpertToggleAction.isExpert() && tileSource != null && tileSource.isModTileFeatures()) {
+	## [javac]                                                                                  ^
+	## [javac]   symbol:   method isModTileFeatures()
+	## [javac]   location: variable tileSource of type T
+	## [javac]   where T is a type-variable:
+	## [javac]     T extends AbstractTMSTileSource declared in class AbstractTileSourceLayer
+	## ```
+	esed -e 's| && tileSource\.isModTileFeatures()||' -i -- src/org/openstreetmap/josm/gui/layer/AbstractTileSourceLayer.java
 
 	# update `REVISION` entry
 	xmlstarlet ed --inplace -u "project/target[@name='create-revision']/echo[@file='\${revision.dir}/REVISION']" \
