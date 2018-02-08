@@ -192,7 +192,7 @@ esed() {
 		## backup original versions
 		local f
 		for f in "${!file_list[@]}" ; do
-			cp "${f}" "${temp_dir}/${file_list["${f}"]}" || die -n
+			cp -- "${f}" "${temp_dir}/${file_list["${f}"]}" || die -n
 		done
 	fi
 
@@ -208,7 +208,7 @@ esed() {
 			(( code == 2 )) && die -n
 			(( code == 0 )) && eqawarn "sed didn't change anything"
 		done
-		rm -r "${temp_dir}" || die -n
+		rm -r -- "${temp_dir}" || die -n
 	fi
 }
 
