@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>dev.rindeal+gentoo-overlay@gmail.com</email>
+    <name>Jan Chren (rindeal)</name>
+  </maintainer>
+  <use>
+    <flag name="c14n">add the Canonicalization support</flag>
+    <flag name="catalog">aaaaaaaaaaaaaaaaaa</flag>
+<!--     <flag name="debug">add the debugging module</flag> -->
+    <flag name="docbook">add Docbook SGML support</flag>
+    <flag name="fexceptions">add GCC flag -fexceptions for C++ exceptions</flag>
+    <flag name="ftp">add the FTP support</flag>
+    <flag name="history">add history support to xmllint shell</flag>
+    <flag name="html">add the HTML support</flag>
+    <flag name="http">add the HTTP support</flag>
+<!--     <flag name="iconv">add ICONV support</flag> -->
+<!--     <flag name="icu">add ICU support</flag> -->
+    <flag name="iso8859x">add ISO8859X support if no iconv</flag>
+    <flag name="legacy">add deprecated APIs for compatibility</flag>
+    <flag name="mem_debug">add the memory debugging module</flag>
+<!--     <flag name="minimum">build a minimally sized library  </flag> -->
+    <flag name="output">add the serialization support</flag>
+    <flag name="pattern">add the xmlPattern selection interface</flag>
+    <flag name="push">add the PUSH parser interfaces</flag>
+    <flag name="python">build Python bindings</flag>
+    <flag name="reader">add the xmlReader parsing interface</flag>
+    <flag name="readline">use readline</flag>
+    <flag name="regexps">add Regular Expressions support</flag>
+    <flag name="run_debug">add the runtime debugging module</flag>
+    <flag name="sax1">add the older SAX1 interface</flag>
+    <flag name="schemas">add Relax-NG and Schemas support</flag>
+    <flag name="schematron">add Schematron support</flag>
+<!--     <flag name="threads">add multithread support</flag> -->
+    <flag name="thread-alloc">add per-thread memory</flag>
+    <flag name="tree">add the DOM like tree manipulation APIs</flag>
+    <flag name="valid">add the DTD validation support</flag>
+    <flag name="writer">add the xmlWriter saving interface</flag>
+    <flag name="xinclude">add the XInclude support</flag>
+    <flag name="xpath">add the XPATH support</flag>
+    <flag name="xptr">add the XPointer support</flag>
+    <flag name="modules">add the dynamic modules support</flag>
+<!--     <flag name="zlib">use libz</flag> -->
+<!--     <flag name="lzma">use liblzma</flag> -->
+  </use>
+</pkgmetadata>
