@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>dev.rindeal+gentoo-overlay@gmail.com</email>
+    <name>Jan Chren (rindeal)</name>
+  </maintainer>
+  <use>
+    <flag name="xcb">XCB support</flag>
+    <flag name="xlib">Xlib support</flag>
+    <flag name="wayland">Wayland support</flag>
+    <flag name="mir">mir support</flag>
+    <flag name="demos-target-xcb">Set target for demos to XCB</flag>
+    <flag name="demos-target-xlib">Set target for demos to Xlib</flag>
+    <flag name="demos-target-wayland">Set target for demos to wayland</flag>
+    <flag name="demos-target-mir">Set target for demos to mir</flag>
+    <flag name="demos-target-display">Set target for demos to display</flag>
+    <flag name="loader">Build loader component</flag>
+    <flag name="layers">Build layers component</flag>
+    <flag name="demos">Build demos</flag>
+    <flag name="vkjson">Build vkjson component</flag>
+    <flag name="icd">Build ICD (Installable Client Driver)</flag>
+  </use>
+</pkgmetadata>
