@@ -15,6 +15,9 @@ esac
 
 inherit ninja-utils
 
+## functions: eshopts_push, eshopts_pop
+inherit estack
+
 
 ## PR: https://github.com/gentoo/gentoo/pull/1481
 _ninjaopts_from_makeopts() {
