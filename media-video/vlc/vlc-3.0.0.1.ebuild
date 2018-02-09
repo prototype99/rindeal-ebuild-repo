@@ -6,7 +6,7 @@ EAPI="6"
 inherit rindeal
 
 ## git-hosting.eclass:
-GH_RN="github:videolan"
+GH_RN="github:videolan:${PN}-3.0"
 EGIT_SUBMODULES=()
 
 ## EXPORT_FUNCTIONS: src_unpack
@@ -20,6 +20,8 @@ inherit autotools
 inherit flag-o-matic
 ## functions: Xemake
 inherit virtualx
+## EXPORT_FUNCTIONS: src_prepare pkg_preinst pkg_postinst pkg_postrm
+inherit xdg
 
 DESCRIPTION="VLC media player - Video player and streamer"
 HOMEPAGE="https://www.videolan.org/vlc/ ${GH_HOMEPAGE}"
@@ -27,12 +29,12 @@ LICENSE="LGPL-2.1 GPL-2"
 
 SLOT="0/5-8" # vlc - vlccore
 
+[[ "${PV}" == *9999* ]] || \
+	KEYWORDS="~amd64 ~arm ~arm64"
 IUSE_A=(
 	### Optional Features and Packages:
 	+shared-libs
 	static-libs
-	pic
-	+gnu-ld
 	nls
 	+rpath
 	dbus
@@ -137,6 +139,7 @@ IUSE_A=(
 	aribb25
 	kate
 	libtiger # tiger
+	css
 
 	### Video plugins:
 	gles2
@@ -196,17 +199,15 @@ IUSE_A=(
 	secret
 	kwallet
 	+libnotify # notify
+	libplacebo
 
 	### Components:
 	+vlc
 
 	### Custom ###
 	+truetype
-	+httpd
 	sdl
 )
-[[ "${PV}" == *9999* ]] || \
-KEYWORDS="~amd64 ~arm ~arm64"
 
 CDEPEND_A=(
 	"dev-libs/libgpg-error:0"
@@ -324,8 +325,8 @@ CDEPEND_A=(
 	")"
 	"vcd? ( >=dev-libs/libcdio-0.78.2:0 )"
 	"avahi? ( >=net-dns/avahi-0.6:0[dbus] )"
+	"libplacebo? ( media-libs/libplacebo )"
 )
-
 DEPEND_A=( "${CDEPEND_A[@]}"
 	"xcb? ( x11-proto/xproto:0 )"
 	"app-arch/xz-utils:0"
@@ -333,9 +334,6 @@ DEPEND_A=( "${CDEPEND_A[@]}"
 	">=sys-devel/gettext-0.19.6:*"
 	"virtual/pkgconfig:*"
 )
-
-# Temporarily block non-live FFMPEG versions as they break vdpau, 9999 works;
-# thus we'll have to wait for a new release there.
 RDEPEND_A=( "${CDEPEND_A[@]}"
 	"vdpau? ( >=x11-libs/libvdpau-0.6:0 )"
 	"vnc? ( >=net-libs/libvncserver-0.9.9:0 )"
@@ -356,7 +354,6 @@ REQUIRED_USE_A=(
 	"fribidi? ( truetype )"
 	"fontconfig? ( truetype )"
 	"gnutls? ( libgcrypt )"
-	"httpd? ( lua )"
 	"libcaca? ( X )"
 	"libtar? ( skins )"
 	"libtiger? ( kate )"
@@ -423,30 +420,31 @@ src_prepare() {
 src_configure() {
 	local econf_args=(
 		### Optional Features and Packages:
-# 		--with-binary-version=STRING
+		--disable-maintainer-mode
+		# --with-binary-version=STRING # To avoid plugins cache problem between binary version
 		--without-macosx-sdk
 		--without-macosx-version-min
 		--disable-winstore-app
 		--without-contrib
 		$(use_enable shared-libs shared)
 		$(use_enable static-libs static)
-		$(use_with pic)
+		--with-pic # use only PIC objects
 		--enable-fast-install
-		# --with-aix-soname
-		$(use_with gnu-ld)
+		--without-aix-soname
+		--with-gnu-ld
 		# --with-sysroot
 		--enable-libtool-lock
 		$(use_enable nls)
+# 		--with-gnu-ld # already specified
 		$(use_enable rpath)
 		$(use_enable dbus)
 
+		### Optimization options:
 		$(use_enable debug)
 		$(use_enable gprof)
 		$(use_enable cprof)
 		--disable-coverage
 		--without-sanitizer
-
-		### Optimization options:
 		--disable-optimizations
 		$(use_enable cpu_flags_x86_mmx mmx)
 		$(use_enable cpu_flags_x86_sse sse) # SSE (1-4)
@@ -454,7 +452,6 @@ src_configure() {
 		$(use_enable arm64) # arm 64-bit optimizations
 		--disable-altivec # powerpc optimizations
 		$(use_enable optimize-memory) # optimize memory usage over performance
-
 		$(use_enable run-as-root) # allow running VLC as root
 		$(use_enable sout) # disable streaming output
 		$(use_enable lua) # LUA scripting support
@@ -485,9 +482,9 @@ src_configure() {
 		$(use_enable vnc)
 		$(use_enable freerdp)
 		$(use_enable realrtsp)
-		$(use_enable asdcp)
 		--disable-macosx-qtkit
 		--disable-macosx-avfoundation
+		$(use_enable asdcp)
 
 		### Mux/Demux plugins:
 		$(use_enable dvbpsi)
@@ -554,6 +551,7 @@ src_configure() {
 		$(use_enable aribb25)
 		$(use_enable kate)
 		$(use_enable libtiger tiger)
+		$(use_enable css)
 
 		### Video plugins:
 		$(use_enable gles2)
@@ -618,6 +616,7 @@ src_configure() {
 		$(use_enable mtp)
 		$(use_enable upnp)
 		$(use_enable microdns)
+
 		### Misc options:
 		$(use_enable xml libxml2)
 		$(use_enable libgcrypt)
@@ -628,6 +627,7 @@ src_configure() {
 		--disable-update-check
 		--disable-osx-notifications # OSX
 		$(use_enable libnotify notify)
+		$(use_enable libplacebo)
 		# --with-kde-solid=PATH
 
 		### Components:
@@ -645,8 +645,6 @@ src_configure() {
 	fi
 
 	econf "${econf_args[@]}"
-
-	# ^ We don't have these disabled libraries in the Portage tree yet.
 
 	# _FORTIFY_SOURCE is set to 2 in config.h, which is also the default value on Gentoo.
 	# Other values of _FORTIFY_SOURCE may break the build (bug 523144), so definition should not be removed from config.h.
@@ -666,6 +664,8 @@ src_install() {
 }
 
 pkg_postinst() {
+	xdg_pkg_postinst
+
 	## Refresh plugins cache, required to prevent error messages like:
 	##
 	##     core libvlc error: stale plugins cache: modified /usr/local/lib/vlc/plugins/video_output/libcaca_plugin.so
