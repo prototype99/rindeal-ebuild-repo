@@ -193,7 +193,7 @@ REQUIRED_USE_A=(
 	"libpython? ( ${PYTHON_REQUIRED_USE} )"
 	# curses lib is selected via `CURSES_LIB_NAME`, which can be one of:
 	#     ncurses ncursesw slang
-	"^^ ( ncurses slang )"
+	"?? ( ncurses slang )"
 	# `UL_REQUIRES_BUILD([libfdisk], [libuuid])`
 	"libfdisk? ( libuuid )"
 	# `UL_REQUIRES_BUILD([libmount], [libblkid])`
