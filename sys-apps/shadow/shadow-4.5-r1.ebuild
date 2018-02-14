@@ -1,5 +1,5 @@
 # Copyright 1999-2016 Gentoo Foundation
-# Copyright 2017 Jan Chren (rindeal)
+# Copyright 2017-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -11,12 +11,12 @@ GH_RN="github:shadow-maint"
 ## EXPORT_FUNCTIONS: src_unpack
 ## variables: GH_HOMEPAGE
 inherit git-hosting
+## functions: eautoreconf
+inherit autotools
 ## functions: elibtoolize
 inherit libtool
 ## functions: dopamd, newpamd
 inherit pam
-## functions: eautoreconf
-inherit autotools
 
 DESCRIPTION="Utilities to deal with user accounts"
 HOMEPAGE="${GH_HOMEPAGE} http://pkg-shadow.alioth.debian.org/"
@@ -24,11 +24,14 @@ LICENSE="BSD GPL-2"
 
 SLOT="0"
 
-KEYWORDS="amd64 arm arm64"
+KEYWORDS="~amd64 ~arm ~arm64"
 IUSE_A=(
-	nls rpath +man +largefile
+	nls rpath +man +largefile static
 	audit selinux
 	acl libcrack pam skey xattr account-tools-setuid subordinate-ids utmpx shadowgrp +sha-crypt +nscd
+
+	# flags resolving collisions with util-linux
+	+vipw-vigr +newgrp +su +login +nologin +chfn-chsh
 )
 
 L10N_LOCALES=( bs ca cs da de dz el es eu fi fr gl he hu id it ja kk km ko nb ne nl nn pl pt pt_BR ro ru sk sq sv tl tr uk vi zh_CN zh_TW )
@@ -81,7 +84,8 @@ src_prepare-locales() {
 				# not all langs in `po/` dir are present also in `man/` dir
 				esed -r -e "/^SUBDIRS/ s, ${l}( |$), ," -i -- man/Makefile.am
 				local f="man/${dir}/${pre}${l}${post}"
-				[[ -e "${f}" ]] && erm "${f}"
+				[[ -e "${f}" ]] && \
+					erm "${f}"
 			fi
 		done
 	fi
@@ -93,6 +97,13 @@ src_prepare() {
 
 	src_prepare-locales
 
+	# move `passwd` from `/usr/bin` to `/bin`
+	# NOTE: shadow_cv_passwd_dir is being ignored by Makefiles
+	esed -r \
+		-e "/^(ubin_PROGRAMS|suidubins)/ s, passwd( |$), ," \
+		-e "/^(bin_PROGRAMS|suidbins)/   s,$, passwd," \
+		-i -- src/Makefile.am
+
 	if ! use man ; then
 		esed -r -e '/^SUBDIRS/ s, man( |$), ,' -i -- Makefile.am
 	fi
@@ -102,11 +113,15 @@ src_prepare() {
 }
 
 src_configure() {
+	# move passwd to / to help recover broke systems #64441
+	export shadow_cv_passwd_dir="/bin"
+
 	local my_econf_args=(
 		--enable-shared=yes
-		--enable-static=no
+		$(use_enable static)
 
-		--without-tcb # unsupported by upstream and actually by everything
+		# unsupported by upstream and actually by everything
+		--without-tcb
 		# HP-UX 10 limits to 16 characters, so 64 should be pretty safe, unlimited is too dangerous
 		--with-group-name-max-length=64
 
@@ -133,71 +148,34 @@ src_configure() {
 	econf "${my_econf_args[@]}"
 }
 
+## Comment out or assign value to definitions in `${ED}/etc/login.defs` file.
 my_set_login_opt() {
 	local comment="" opt="$1" val="$2"
-	if [[ -z ${val} ]] ; then
-		comment="#"
-		esed -e "/^${opt}\>/ s|^|#|" \
-			-i -- "${ED}"/etc/login.defs
-	else
-		esed -r -e "/^#?${opt}\>/ s|.*|${opt} ${val}|" \
-			-i -- "${ED}"/etc/login.defs
+
+	local -r def_file="/etc/login.defs"
+
+	# always comment it out first if not already, just in case opt is present multiple times
+	esed -r -e "/^${opt}\b/ s|^|#|" -i -- "${ED}${def_file}"
+
+	if [[ -n ${val} ]] ; then
+		# replace only the first occurence
+		esed -e "0,/^#${opt}\b/ s|^#${opt}\b.*|${opt} ${val}|" -i -- "${ED}${def_file}"
 	fi
-	local res="$(grep "^${comment}${opt}\>" "${ED}"/etc/login.defs)"
-	elog "${res:-"Unable to find ${opt} in /etc/login.defs"}"
+
+	## print out result
+	local res="$(egrep -m 1 "^#?${opt}\b" "${ED}${def_file}")"
+	elog "${def_file}: ${res:-"Unable to find '${opt}' in ${def_file}"}"
 }
 
-src_install() {
-	emake DESTDIR="${D}" suidperms=4711 install
-
-	dodoc ChangeLog NEWS TODO doc/{HOWTO,README*,WISHLIST,*.txt}
-	newdoc README README.download
-
-	## Remove manpages that are handled by other packages (sys-apps/coreutils sys-apps/man-pages)
-	if use man ; then
-		find \
-			"${ED}/usr/share/man" \
-			'-(' \
-				-name "passwd.5" -o \
-				-name "getspnam.3" \
-			'-)' | \
-		xargs rm -v
-		assert
-	fi
-
-	# needed for 'useradd -D'
-	insinto /etc/default
-	insopts -m0600
-	doins "${FILESDIR}"/default/useradd
-
-	# move passwd to / to help recover broke systems #64441
-	emv "${ED}"/usr/bin/passwd "${ED}"/bin/
-	dosym ../../bin/passwd /usr/bin/passwd
-
+src_install_login_defs() {
 	insinto /etc
 	insopts -m0644
 	newins etc/login.defs login.defs
 
-	if ! use pam ; then
-		insinto /etc
-		insopts -m0600
-		doins etc/login.access etc/limits
-	fi
-
 	my_set_login_opt CREATE_HOME yes
 	if use pam ; then
-		dopamd "${FILESDIR}"/pam.d-include/shadow
-
-		local x
-		for x in ch{,g}passwd newusers ; do
-			newpamd "${FILESDIR}"/pam.d-include/passwd ${x}
-		done
-		for x in ch{age,sh,fn} user{add,del,mod} group{add,del,mod} ; do
-			newpamd "${FILESDIR}"/pam.d-include/shadow ${x}
-		done
-
-		# comment out login.defs options that pam hates
-		local sed_args=() opt opts=(
+		## comment out login.defs options that pam hates
+		local opts=(
 			CHFN_AUTH
 			CONSOLE
 			CRACKLIB_DICTPATH
@@ -217,31 +195,18 @@ src_install() {
 			QUOTAS_ENAB
 			SU_WHEEL_ONLY
 		)
+		local sed_args=() opt
 		for opt in "${opts[@]}" ; do
 			my_set_login_opt ${opt}
+			# mark the option for addition of a note
 			sed_args+=( -e "/^#${opt}\>/b pamnote" )
 		done
+		# add notes
 		esed "${sed_args[@]}" \
 			-e 'b exit' \
 			-e ': pamnote; i# NOTE: This setting should be configured via /etc/pam.d/ and not in this file.' \
 			-e ': exit' \
 			-i -- "${ED}"/etc/login.defs
-
-		if use man ; then
-			# remove manpages that pam will install for us
-			# and/or don't apply when using pam
-			find \
-				"${ED}/usr/share/man" \
-				'-(' \
-					-name suauth.5 -o \
-					-name limits.5 \
-				'-)' | \
-			xargs rm -v
-			assert
-		fi
-
-		# Remove pam.d files provided by sys-auth/pambase
-		erm "${ED}"/etc/pam.d/{login,passwd,su}
 	else
 		my_set_login_opt MAIL_CHECK_ENAB no
 		my_set_login_opt SU_WHEEL_ONLY yes
@@ -249,6 +214,94 @@ src_install() {
 		my_set_login_opt LOGIN_RETRIES 3
 		my_set_login_opt ENCRYPT_METHOD SHA512
 		my_set_login_opt CONSOLE
+	fi
+}
+
+my_find_deleter() {
+	local dir="${1}" ; shift
+	local patterns=( "${@}" )
+
+	local find=( "find" "${dir}" "-(" )
+
+	local p
+	for (( i=0 ; i<=${#patterns[*]} ; i++ )) ; do
+		find+=( -name "${patterns[i]}" )
+
+		if (( i != ${#patterns[*]} )) ; then
+			find+=( "-o" )
+		fi
+	done
+
+	find+=( "-)" "-exec" "rm" "-v" "{}" ";" )
+
+	echo "${find[@]}"
+	"${find[@]}" || die
+}
+
+src_install() {
+	emake DESTDIR="${D}" suidperms=4711 install
+
+	dodoc ChangeLog NEWS TODO doc/{HOWTO,README*,WISHLIST,*.txt}
+	newdoc README README.download
+
+	## needed for 'useradd -D'
+	insinto /etc/default
+	insopts -m0600
+	doins "${FILESDIR}"/default/useradd
+
+	src_install_login_defs
+
+	if use pam ; then
+		dopamd "${FILESDIR}"/pam.d-include/shadow
+
+		local x
+		for x in ch{,g}passwd newusers ; do
+			newpamd "${FILESDIR}"/pam.d-include/passwd ${x}
+		done
+		for x in ch{age,sh,fn} user{add,del,mod} group{add,del,mod} ; do
+			newpamd "${FILESDIR}"/pam.d-include/shadow ${x}
+		done
+
+		## resolve file collisions
+
+		if use man ; then
+			# remove manpages that pam will install for us
+			# and/or don't apply when using pam
+			my_find_deleter "${ED}/usr/share/man" "suauth.5" "limits.5"
+		fi
+
+		# Remove pam.d files provided by sys-auth/pambase
+		erm "${ED}"/etc/pam.d/{login,passwd,su}
+	else #!use pam
+		insinto /etc
+		insopts -m0600
+		doins etc/login.access
+		doins etc/limits
+	fi
+
+	## Remove manpages that are handled by other packages (sys-apps/coreutils sys-apps/man-pages)
+	if use man ; then
+		my_find_deleter "${ED}/usr/share/man" "passwd.5" "getspnam.3"
+	fi
+
+	## resolve collisions with util-linux
+	if ! use vipw-vigr ; then
+		my_find_deleter "${ED}" "vipw*" "vigr*"
+	fi
+	if ! use newgrp ; then
+		my_find_deleter "${ED}" "newgrp*" "sg*"
+	fi
+	if ! use su ; then
+		my_find_deleter "${ED}" "su*"
+	fi
+	if ! use login ; then
+		my_find_deleter "${ED}" "login*"
+	fi
+	if ! use nologin ; then
+		my_find_deleter "${ED}" "nologin*"
+	fi
+	if ! use chfn-chsh ; then
+		my_find_deleter "${ED}" "chfn*" "chsh*"
 	fi
 }
 
@@ -267,6 +320,4 @@ pkg_postinst() {
 			ewarn "run 'grpconv' afterwards!"
 		fi
 	fi
-
-	einfo "The 'adduser' symlink to 'useradd' has been dropped."
 }
