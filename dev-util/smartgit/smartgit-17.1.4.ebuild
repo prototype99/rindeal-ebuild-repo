@@ -11,10 +11,6 @@ inherit xdg
 ## functions: newicon, make_desktop_entry
 inherit desktop
 
-# upstream moves older versions to a different SRC_URI, while the other one return 301 code instead of 404,
-# thus the only way is to manually reflect the upstream in the ebuild
-ARCHIVED=0
-
 DESCRIPTION="Git client with support for GitHub Pull Requests+Comments, SVN and Mercurial"
 HOMEPAGE="https://www.syntevo.com/${PN}"
 LICENSE="${PN}"
@@ -26,11 +22,10 @@ PV_MIN="$(get_version_component_range 2)"
 
 SLOT="${PV_MAJ}$( (( PV_MIN )) && echo ".${PV_MIN}" )"
 PN_SLOTTED="${PN}${SLOT}"
-if (( ARCHIVED )) ; then
-	SRC_URI="https://www.syntevo.com/static/smart/download/${PN}hg/archive/${PN}-linux-${PV//./_}.tar.gz"
-else
-	SRC_URI="https://www.syntevo.com/static/smart/download/${PN}/${PN}-linux-${PV//./_}.tar.gz"
-fi
+SRC_URI_A=(
+	"https://www.syntevo.com/downloads/${PN}/${PN}-linux-${PV//./_}.tar.gz"
+	"https://www.syntevo.com/downloads/${PN}/archive/${PN}-linux-${PV//./_}.tar.gz"
+)
 
 KEYWORDS="~amd64"
 
