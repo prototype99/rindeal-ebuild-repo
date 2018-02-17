@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>dev.rindeal+gentoo-overlay@gmail.com</email>
+    <name>Jan Chren (rindeal)</name>
+  </maintainer>
+  <use>
+    <flag name="reopen-arena-shm">Reopen the arena shm in child processes</flag>
+    <flag name="file-backed-arena">Arena memory is file-backed</flag>
+    <flag name="fork-resilience">Build with fork resilience</flag>
+  </use>
+</pkgmetadata>
