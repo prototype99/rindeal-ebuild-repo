@@ -1,12 +1,14 @@
-# Copyright 2017 Jan Chren (rindeal)
+# Copyright 2017-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 inherit rindeal
 
+## git-hosting.eclass:
 GH_RN="github:python"
-GH_REF="735abe6" # mypy-0.550
+GH_REF="97fb265" # mypy-0.560
 
+## EXPORT_FUNCTIONS: src_unpack
 inherit git-hosting
 
 DESCRIPTION="Collection of library stubs for Python, with static types"
