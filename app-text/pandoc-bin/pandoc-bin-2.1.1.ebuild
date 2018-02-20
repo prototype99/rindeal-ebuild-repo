@@ -1,10 +1,11 @@
-# Copyright 2016-2017 Jan Chren (rindeal)
+# Copyright 2016-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 inherit rindeal
 
 # to unpack .deb archive
+## EXPORT_FUNCTIONS: src_unpack
 inherit unpacker
 
 DESCRIPTION="Universal markup converter"
@@ -14,21 +15,24 @@ LICENSE="GPL-2"
 MY_PN="${PN//-bin/}"
 
 SLOT="0"
-SRC_URI="amd64? ( https://github.com/jgm/pandoc/releases/download/${PV}/${MY_PN}-${PV}-1-amd64.deb )"
+SRC_URI="amd64? ( https://github.com/jgm/${PN}/releases/download/${PV}/${MY_PN}-${PV}-1-amd64.deb )"
 
 KEYWORDS="-* amd64"
-IUSE="citeproc"
+IUSE_A=( citeproc )
+
+CDEPEND_A=(
+	"dev-libs/gmp:*"
+	"sys-libs/zlib:*"
+)
+DEPEND_A=( "${CDEPEND_A[@]}" )
+RDEPEND_A=( "${CDEPEND_A[@]}"
+	"!app-text/pandoc"
+	"citeproc? ( !dev-haskell/pandoc-citeproc )"
+)
+
 RESTRICT+=" mirror"
 
-CDEPEND="
-	dev-libs/gmp:*
-	sys-libs/zlib:*
-"
-DEPEND="${CDEPEND}"
-RDEPEND="${CDEPEND}
-	!app-text/pandoc
-	citeproc? ( !dev-haskell/pandoc-citeproc )
-"
+inherit arrays
 
 S="${WORKDIR}"
 
