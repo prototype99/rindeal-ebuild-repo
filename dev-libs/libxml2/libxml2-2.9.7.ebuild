@@ -13,6 +13,7 @@ GH_REF="v${PV}"
 PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
 PYTHON_REQ_USE="xml"
 
+# TODO order these
 ## EXPORT_FUNCTIONS: src_unpack
 inherit git-hosting
 ## functions: elibtoolize
@@ -56,13 +57,20 @@ CDEPEND_A=(
 	"history? ( sys-libs/ncurses:0 )"
 )
 DEPEND_A=( "${CDEPEND_A[@]}"
+	# `AC_PATH_PROG(PERL, perl, /usr/bin/perl)`
+	"dev-lang/perl"
+	# `AC_PATH_PROG(WGET, wget, /usr/bin/wget)`
+	"net-misc/wget"
+	# `AC_PATH_PROG(XSLTPROC, xsltproc, /usr/bin/xsltproc)`
+	"dev-libs/libxslt"
 	"dev-util/gtk-doc-am"
+	# `PKG_PROG_PKG_CONFIG`
 	"virtual/pkgconfig"
 )
 RDEPEND_A=( "${CDEPEND_A[@]}" )
 
 REQUIRED_USE_A=(
-	## configure.ac `hard dependancies on options` # yes, dancies
+	### configure.ac `hard dependancies on options` # yes, dancies
 	"schemas? ( pattern regexps )"
 	"schematron? ( pattern tree xpath )"
 	"reader? ( push )"
