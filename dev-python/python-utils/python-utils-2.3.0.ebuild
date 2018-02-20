@@ -8,11 +8,14 @@ inherit rindeal
 GH_RN="github:WoLpH"
 GH_REF="v${PV}"
 
+## python-*.eclass:
 PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
 
 ## EXPORT_FUNCTIONS: src_unpack
 inherit git-hosting
-## functions: eautoreconf
+## EXPORT_FUNCTIONS: src_prepare src_configure src_compile src_test src_install
+## functions: distutils-r1_python_prepare_all
+## variables: PYTHON_USEDEP
 inherit distutils-r1
 
 DESCRIPTION="Convenient utilities not included with the standard Python install"
@@ -31,8 +34,8 @@ RDEPEND_A=( "${CDEPEND_A[@]}"
 
 inherit arrays
 
-src_prepare() {
-	default
+python_prepare_all() {
 	esed -e "/setup_requires=\['pytest-runner'\]/d" -i -- setup.py
-	distutils-r1_src_prepare
+
+	distutils-r1_python_prepare_all
 }
