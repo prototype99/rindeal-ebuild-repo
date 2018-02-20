@@ -1,4 +1,7 @@
+gnu-ld - Assume the C compiler uses GNU ld
 largefile - Support for 64-bit file offsets (http://www.unix.org/version2/whatsnew/lfs20mar.html)
 man - Build and install manual pages
 rindeal-config - Install sane default config files prepared by rindeal
+rpath - Hardcode runtime library paths
+shared-libs - Build shared libraries, do not arbitrarily flip!
 system-jre - Use system-wide Java Runtime Environment instead of the bundled copy
