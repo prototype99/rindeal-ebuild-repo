@@ -1,15 +1,20 @@
 # Copyright 1999-2017 Gentoo Foundation
-# Copyright 2017 Jan Chren (rindeal)
+# Copyright 2017-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 inherit rindeal
 
+## git-hosting.eclass:
 GH_RN="github:python"
 
+## python-*.eclass:
 PYTHON_COMPAT=( python2_7 python3_4 pypy{,3} )
 
+## EXPORT_FUNCTIONS: src_unpack
+## variables: GH_HOMEPAGE
 inherit git-hosting
+## EXPORT_FUNCTIONS: src_prepare src_configure src_compile src_test src_install
 inherit distutils-r1
 
 DESCRIPTION="Type Hints for Python"
@@ -22,6 +27,7 @@ KEYWORDS="~amd64 ~arm ~arm64"
 
 python_test() {
 	cd "${BUILD_DIR}" || die
+
 	if [[ ${EPYTHON} == python2* || ${EPYTHON} == pypy ]]; then
 		ecp "${S}"/python2/test_typing.py .
 	else
