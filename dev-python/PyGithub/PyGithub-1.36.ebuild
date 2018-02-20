@@ -1,5 +1,5 @@
 # Copyright 1999-2017 Gentoo Foundation
-# Copyright 2017 Jan Chren (rindeal)
+# Copyright 2017-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -31,13 +31,13 @@ RDEPEND_A=( "${CDEPEND_A[@]}"
 
 inherit arrays
 
-src_prepare() {
+python_prepare_all() {
 	if ! use test ; then
-		sed -e '/"github.tests"/d' -i -- setup.py || die
-		sed -e '/"github": \["tests/d' -i -- setup.py || die
+		esed -e '/"github.tests"/d' -i -- setup.py
+		esed -e '/"github": \["tests/d' -i -- setup.py
 	fi
 
-	distutils-r1_src_prepare
+	distutils-r1_python_prepare_all
 }
 
 python_test() {
