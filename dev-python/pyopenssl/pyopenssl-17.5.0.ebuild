@@ -1,5 +1,5 @@
 # Copyright 1999-2017 Gentoo Foundation
-# Copyright 2017 Jan Chren (rindeal)
+# Copyright 2017-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -15,19 +15,22 @@ PYTHON_REQ_USE="threads(+)"
 ## EXPORT_FUNCTIONS: src_unpack
 ## variables: GH_HOMEPAGE
 inherit git-hosting
-## EXPORT_FUNCTIONS:
+## EXPORT_FUNCTIONS: src_prepare src_configure src_compile src_test src_install
+## functions: distutils-r1_python_install_all
+## variables: PYTHON_USEDEP
 inherit distutils-r1
 
 DESCRIPTION="Python interface to the OpenSSL library"
 HOMEPAGE="
+	${GH_HOMEPAGE}
 	https://pyopenssl.org/
 	https://pyopenssl.readthedocs.io/en/${PV}/
-	${GH_HOMEPAGE}
 	https://pypi.python.org/pypi/pyOpenSSL
 "
 LICENSE="Apache-2.0"
 
 SLOT="0"
+
 KEYWORDS="~amd64 ~arm ~arm64"
 IUSE_A=( doc examples test )
 
@@ -48,7 +51,8 @@ RDEPEND_A=( "${CDEPEND_A[@]}" )
 inherit arrays
 
 python_compile_all() {
-	use doc && emake -C doc html
+	use doc && \
+		emake -C doc html
 }
 
 python_test() {
