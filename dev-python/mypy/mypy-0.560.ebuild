@@ -1,16 +1,23 @@
 # Copyright 1999-2017 Gentoo Foundation
-# Copyright 2017 Jan Chren (rindeal)
+# Copyright 2017-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 inherit rindeal
 
+## git-hosting.eclass:
 GH_RN="github:python"
 GH_REF="v${PV}"
 
+## python-*.eclass:
 PYTHON_COMPAT=( python3_{4,5,6} )
 
+## EXPORT_FUNCTIONS: src_unpack
+## variables: GH_HOMEPAGE
 inherit git-hosting
+## EXPORT_FUNCTIONS: src_prepare src_configure src_compile src_test src_install
+## functions: distutils-r1_python_prepare_all, distutils-r1_python_install_all
+## variables: PYTHON_USEDEP
 inherit distutils-r1
 
 DESCRIPTION="Optional static typing for Python"
@@ -31,8 +38,7 @@ DEPEND_A=( "${CDEPEND_A[@]}"
 	")"
 )
 RDEPEND_A=( "${CDEPEND_A[@]}"
-	"=dev-python/typeshed-0.20171107
-	"
+	"=dev-python/typeshed-0.20171107"
 	">=dev-python/typed-ast-1.0.4[${PYTHON_USEDEP}]"
 	"<dev-python/typed-ast-1.1.0[${PYTHON_USEDEP}]"
 )
@@ -40,14 +46,15 @@ RDEPEND_A=( "${CDEPEND_A[@]}"
 inherit arrays
 
 python_prepare_all() {
-	sed -r -e "/typeshed_dir = os.path/ s| = .*|= os.path.join('/', '${EPREFIX}', 'usr', 'share', 'typeshed')|" \
-		-i -- "${PN}/build.py" || die
+	esed -r -e "/typeshed_dir = os.path/ s| = .*| = os.path.join('/', '${EPREFIX}', 'usr', 'share', 'typeshed')|" \
+		-i -- "${PN}/build.py"
 
 	distutils-r1_python_prepare_all
 }
 
 python_compile_all() {
-	use doc && emake -C docs html
+	use doc && \
+		emake -C docs html
 }
 
 python_test() {
