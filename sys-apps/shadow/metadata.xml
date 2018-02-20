@@ -26,11 +26,11 @@
     <flag name="nscd">enable support for nscd</flag>
 
     <!-- util-linux special -->
-    <flag name="vipw-vigr">Do not install `vipw`-related files to resolve collisions with util-linux suite</flag>
-    <flag name="newgrp">Do not install `newgrp`-related files to resolve collisions with util-linux suite</flag>
-    <flag name="su">Do not install `su`-related files to resolve collisions with util-linux suite</flag>
-    <flag name="login">Do not install `login`-related files to resolve collisions with util-linux suite</flag>
-    <flag name="nologin">Do not install `nologin`-related files to resolve collisions with util-linux suite</flag>
-    <flag name="chfn-chsh">Do not install `chfn`- and `chsh`-related files to resolve collisions with util-linux suite</flag>
+    <flag name="vipw-vigr">Install `vipw`-related files which collide with util-linux suite</flag>
+    <flag name="newgrp">Install `newgrp`-related files which collide with util-linux suite</flag>
+    <flag name="su">Install `su`-related files which collide with util-linux suite</flag>
+    <flag name="login">Install `login`-related files which collide with util-linux suite</flag>
+    <flag name="nologin">Install `nologin`-related files which collide with util-linux suite</flag>
+    <flag name="chfn-chsh">Install `chfn`- and `chsh`-related files which collide with util-linux suite</flag>
   </use>
 </pkgmetadata>
