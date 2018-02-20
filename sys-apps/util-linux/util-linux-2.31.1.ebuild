@@ -140,7 +140,7 @@ CDEPEND_A=(
 	# `UL_CHECK_LIB([audit]`
 	"audit? ( sys-process/audit )"
 	# `UL_CHECK_LIB([udev]`
-	"udev?	( virtual/libudev:= )"
+	"udev? ( virtual/libudev:= )"
 
 	# `UL_NCURSES_CHECK([ncursesw])`
 	# `UL_NCURSES_CHECK([ncurses])`
@@ -165,8 +165,8 @@ CDEPEND_A=(
 	"btrfs? ( sys-fs/btrfs-progs )"
 	# `PKG_CHECK_MODULES([SYSTEMD], [libsystemd], [have_systemd=yes], [have_systemd=no])`
 	"systemd? ( sys-apps/systemd )"
-	"pam?		( sys-libs/pam )"
-	"libpython?	( ${PYTHON_DEPS} )"
+	"pam? ( sys-libs/pam )"
+	"libpython? ( ${PYTHON_DEPS} )"
 )
 DEPEND_A=( "${CDEPEND_A[@]}"
 	"virtual/pkgconfig"
@@ -182,11 +182,15 @@ RDEPEND_A=( "${CDEPEND_A[@]}"
 	"schedutils? ( !sys-process/schedutils )"
 	"eject? ( !sys-block/eject )"
 	"!<app-shells/bash-completion-2.3-r2"
-	# TODO: make these utils in sys-apps/shadow optional
-	"$(rindeal:dsf:eval \
-		'chfn-chsh|login|su|vipw|nologin|newgrp' \
-			'!sys-apps/shadow' )"
 	"rfkill? ( !net-wireless/rfkill )"
+
+	## collisions with `shadow`
+	"vipw?      ( !sys-apps/shadow[vipw-vigr] )"
+	"newgrp?    ( !sys-apps/shadow[newgrp] )"
+	"su?        ( !sys-apps/shadow[su] )"
+	"login?     ( !sys-apps/shadow[login] )"
+	"nologin?   ( !sys-apps/shadow[nologin] )"
+	"chfn-chsh? ( !sys-apps/shadow[chfn-chsh] )"
 )
 
 REQUIRED_USE_A=(
