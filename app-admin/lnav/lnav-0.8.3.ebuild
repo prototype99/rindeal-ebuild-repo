@@ -1,16 +1,23 @@
 # Copyright 1999-2016 Gentoo Foundation
-# Copyright 2016-2017 Jan Chren (rindeal)
+# Copyright 2016-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 inherit rindeal
 
-GH_RN="github:tstack"
-GH_REF="v${PV}"
+## python-*.eclass
 PYTHON_COMPAT=( python2_7 )
 
-inherit git-hosting
+## git-hosting.eclass:
+GH_RN="github:tstack"
+GH_REF="v${PV}"
+
+## EXPORT_FUNCTIONS: pkg_setup
 inherit python-any-r1
+## EXPORT_FUNCTIONS: src_unpack
+## variables: GH_HOMEPAGE
+inherit git-hosting
+## functions: eautoreconf
 inherit autotools
 
 DESCRIPTION="Curses-based tool for viewing and analyzing log files"
@@ -20,38 +27,42 @@ LICENSE="BSD-2"
 SLOT="0"
 
 KEYWORDS="~amd64 ~arm ~arm64"
-IUSE="pcre readline static test unicode"
+IUSE_A=( pcre readline static test unicode )
 
 # system-wide yajl cannot be used, because lnav uses custom-patched version
-CDEPEND="
-	app-arch/bzip2
-	net-misc/curl
-	sys-libs/ncurses:0=[unicode?]
-	dev-libs/openssl:0
-	sys-libs/readline:0
-	dev-db/sqlite:3
-	sys-libs/zlib
+CDEPEND_A=(
+	"app-arch/bzip2"
+	"net-misc/curl"
+	"sys-libs/ncurses:0=[unicode?]"
+	"dev-libs/openssl:0"
+	"sys-libs/readline:0"
+	"dev-db/sqlite:3"
+	"sys-libs/zlib"
 
-	pcre? ( dev-libs/libpcre[cxx] )"
-DEPEND="${CDEPEND}
-	sys-apps/gawk
-	dev-util/re2c
+	"pcre? ( dev-libs/libpcre[cxx] )"
+)
+DEPEND_A=( "${CDEPEND_A[@]}"
+	"sys-apps/gawk"
+	"dev-util/re2c"
 
-	test? ( ${PYTHON_DEPS} )"
-RDEPEND="${CDEPEND}"
+	"test? ( ${PYTHON_DEPS} )"
+)
+RDEPEND_A=( "${CDEPEND_A[@]}" )
+
+inherit arrays
 
 src_prepare() {
 	default
 
 	# respect AR
 	# https://github.com/tstack/lnav/pull/356
-	sed -e '/^AC_PROG_RANLIB/ a AM_PROG_AR' -i configure.ac || die
+	esed -e '/^AC_PROG_RANLIB/ a AM_PROG_AR' -i -- configure.ac
 
 	eautoreconf
 }
 
 src_configure() {
-	local myeconfargs=(
+	local my_econf_args=(
 		--disable-static
 		# experimental support, available since v0.7.3
 		--without-jemalloc
@@ -63,7 +74,7 @@ src_configure() {
 		$(use_with readline)
 		$(use_with unicode ncursesw)
 	)
-	econf "${myeconfargs[@]}"
+	econf "${my_econf_args[@]}"
 }
 
 ## Tests
