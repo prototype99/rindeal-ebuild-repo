@@ -1,4 +1,4 @@
-# Copyright 2017 Jan Chren (rindeal)
+# Copyright 2017-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -12,7 +12,7 @@ PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
 inherit git-hosting
 inherit distutils-r1
 
-DESCRIPTION="Example package"
+DESCRIPTION="Python wrapper for the Cloudflare Client API v4"
 LICENSE="MIT"
 
 SLOT="0"
