@@ -8,8 +8,10 @@ GH_RN="github:cloudflare:python-cloudflare"
 
 PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
 
-# EXPORT_FUNCTIONS: src_unpack
+## EXPORT_FUNCTIONS: src_unpack
 inherit git-hosting
+## EXPORT_FUNCTIONS: src_prepare src_configure src_compile src_test src_install
+## functions: distutils-r1_python_prepare_all
 inherit distutils-r1
 
 DESCRIPTION="Python wrapper for the Cloudflare Client API v4"
@@ -30,10 +32,10 @@ RDEPEND_A=( "${CDEPEND_A[@]}"
 
 inherit arrays
 
-src_prepare() {
-	default
-
-	sed -r -e "/packages *=/ s|\[[^]]*\]\+||" -i -- setup.py || die
+python_prepare_all() {
+	esed -r -e "/packages *=/ s|\[[^]]*\]\+||" -i -- setup.py
 
 	erm -r examples
+
+	distutils-r1_python_prepare_all
 }
