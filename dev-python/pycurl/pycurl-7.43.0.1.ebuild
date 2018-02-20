@@ -1,20 +1,28 @@
 # Copyright 1999-2017 Gentoo Foundation
-# Copyright 2017 Jan Chren (rindeal)
+# Copyright 2017-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 inherit rindeal
 
+## git-hosting.eclass:
 GH_RN="github"
 GH_REF="REL_${PV//./_}"
 
+## python-*.eclass:
 # The selftests fail with pypy, and urlgrabber segfaults for me.
 PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
 
+## distutils-r1.eclass:
 # Needed for individual runs of testsuite by python impls.
 DISTUTILS_IN_SOURCE_BUILD=1
 
+## EXPORT_FUNCTIONS: src_unpack
+## variables: GH_HOMEPAGE
 inherit git-hosting
+## EXPORT_FUNCTIONS: src_prepare src_configure src_compile src_test src_install
+## functions: distutils-r1_python_prepare_all, distutils-r1_python_compile, distutils-r1_python_install_all
+## variables: PYTHON_USEDEP
 inherit distutils-r1
 
 DESCRIPTION="Python interface to libcurl"
@@ -26,7 +34,7 @@ LICENSE="LGPL-2.1"
 
 SLOT="0"
 KEYWORDS="amd64 arm arm64"
-IUSE="doc ssl_gnutls ssl_libressl ssl_nss +ssl_openssl examples ssl test"
+IUSE_A=( doc ssl_gnutls ssl_libressl ssl_nss +ssl_openssl examples ssl test )
 
 CDEPEND_A=(
 	# If the libcurl ssl backend changes pycurl should be recompiled.
@@ -55,8 +63,9 @@ DEPEND_A=( "${CDEPEND_A[@]}"
 )
 
 python_prepare_all() {
-	sed -e "/setup_args\['data_files'\] = /d" -i setup.py || die
-	sed -e '/pyflakes/d' -i Makefile || die
+	esed -e "/setup_args\['data_files'\] = /d" -i -- setup.py
+	esed -e '/pyflakes/d' -i -- Makefile
+
 	distutils-r1_python_prepare_all
 }
 
