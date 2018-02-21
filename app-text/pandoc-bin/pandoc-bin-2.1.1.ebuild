@@ -15,7 +15,7 @@ LICENSE="GPL-2"
 MY_PN="${PN//-bin/}"
 
 SLOT="0"
-SRC_URI="amd64? ( https://github.com/jgm/${PN}/releases/download/${PV}/${MY_PN}-${PV}-1-amd64.deb )"
+SRC_URI="amd64? ( https://github.com/jgm/${MY_PN}/releases/download/${PV}/${MY_PN}-${PV}-1-amd64.deb )"
 
 KEYWORDS="-* amd64"
 IUSE_A=( citeproc )
