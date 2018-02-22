@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+##
+# Copyright 2018 Jan Chren (rindeal)
+# Distributed under the terms of the GNU General Public License v2
+##
 
 # -----------------------------------------------------------------------------
 
@@ -111,11 +115,13 @@ class PkgList(_MyDict): # TODO
 
 # -----------------------------------------------------------------------------
 
+INDENT_PREFIX = "  "
+
 PAT1 = re.compile(
 	"""
 	^
 	(?P<msgcode>
-		[a-zA-Z.]+
+		[a-zA-Z\._]+
 	)
 	\ +          # followed by some spaces
 	(?P<msg>
@@ -129,7 +135,7 @@ PAT2 = re.compile(
 	^
 	## package id
 	(?P<pkgid>
-		[a-zA-Z-]+     # category
+		[a-zA-Z0-9-]+     # category
 		/
 		[a-zA-Z0-9_-]+ # pkg name
 	)
@@ -152,11 +158,9 @@ PAT2 = re.compile(
 	re.VERBOSE
 )
 
-PKGS = PkgList()
-OTHER_MSGCODES = MsgCodeList()
-INVALID_LINES = []
+# -----------------------------------------------------------------------------
 
-def process_line(line):
+def process_line(line, pkgs, other_msgcodes, invalid_lines):
 
 	m = re.match(PAT1, line)
 	if m is not None:
@@ -168,37 +172,36 @@ def process_line(line):
 			pkgid, filename, msg = m.group('pkgid', 'file', 'msg')
 
 			if filename is not None and msg is not None:
-				(PKGS[pkgid]
+				(pkgs[pkgid]
 					.files[filename]
 					.msgcodes[msgcode]
 					.msgs
 					.append(msg)
 				)
 			if filename is not None and msg is None:
-				(PKGS[pkgid]
+				(pkgs[pkgid]
 					.files[filename]
 					.msgcodes[msgcode]
 				)
 			if filename is None and msg is not None:
-				(PKGS[pkgid]
+				(pkgs[pkgid]
 					.msgcodes[msgcode]
 					.msgs
 					.append(msg)
 				)
 			if filename is None and msg is None:
-				(PKGS[pkgid]
+				(pkgs[pkgid]
 					.msgcodes[msgcode]
 				)
-
 		else:
-			(OTHER_MSGCODES[msgcode]
+			(other_msgcodes[msgcode]
 				.msgs
 				.append(msg)
 			)
 	else:
-		INVALID_LINES.append(line)
+		invalid_lines.append(line)
 
-INDENT_PREFIX = "  "
+# BEGIN: printing functions
 
 def truncate(line, width=129, placeholder="..."):
 	if len(line) > width:
@@ -220,7 +223,7 @@ def print_msgs(msgs, indent_lvl=0):
 def print_msgcodes(msgcodes, indent_lvl=0):
 	for msgcode in msgcodes.values():
 		print_indented_line(
-			msgcode.name + ":",
+			cyan(msgcode.name) + (":" if msgcode.msgs else ""),
 			indent_lvl
 		)
 		if msgcode.msgs:
@@ -229,7 +232,7 @@ def print_msgcodes(msgcodes, indent_lvl=0):
 def print_files(files, indent_lvl=0):
 	for f in files.values():
 		print_indented_line(
-			f.name + ":",
+			blue(f.name) + (":" if f.msgcodes else ""),
 			indent_lvl
 		)
 		if f.msgcodes:
@@ -238,7 +241,7 @@ def print_files(files, indent_lvl=0):
 def print_pkgs(pkgs, indent_lvl=0):
 	for pkg in pkgs.values():
 		print_indented_line(
-			yellow(bg_black(pkg.id)) + ":",
+			yellow(bg_black(bold(pkg.id))) + ":",
 			indent_lvl
 		)
 		if pkg.msgcodes:
@@ -248,14 +251,32 @@ def print_pkgs(pkgs, indent_lvl=0):
 		if pkg.msgs:
 			print_msgs(pkg.msgs, indent_lvl + 1)
 
-def print_results(pkgs):
+def print_results(pkgs, other_msgcodes, invalid_lines):
+	print()
+	print(yellow("Repoman results".center(80, ' ')))
+	print(green("="*80))
+	print()
+
 	if pkgs:
 		print_pkgs(pkgs, 0)
-	if OTHER_MSGCODES:
-		print("Other messages")
-		print_msgcodes(OTHER_MSGCODES)
+	if other_msgcodes:
+		print()
+		print(yellow(bg_black("Other messages")) + ":")
+		print_msgcodes(other_msgcodes, 1)
+	if invalid_lines:
+		print()
+		print(red(bg_black("Invalid unparsable lines")) + ":")
+		for l in invalid_lines:
+			print(l)
+
+# END: printing functions
+
+# -----------------------------------------------------------------------------
 
 RAW_INPUT = []
+PKGS = PkgList()
+OTHER_MSGCODES = MsgCodeList()
+INVALID_LINES = []
 
 with fileinput.input() as stdin:
 	for line in stdin:
@@ -271,41 +292,16 @@ with fileinput.input() as stdin:
 
 		RAW_INPUT.append(line)
 
-		process_line(line)
+		line = line.rstrip()
+		process_line(line, PKGS, OTHER_MSGCODES, INVALID_LINES)
 
 PKGS.sort()
 
-print_results(PKGS)
+print_results(PKGS, OTHER_MSGCODES, INVALID_LINES)
 
-class travis_ci_fold:
-
-	_tag = ""
-	_desc = ""
-	_started = 0
-
-	def __init__(self, tag, description=""):
-		self._tag = tag
-		self._desc = description
-
-	def start(self):
-		if self._started:
-			raise Exception("travis fold already started")
-		print("travis_fold:start:{}\033[33;1m{}\033[0m".format(self._tag, self._desc))
-		self._started = 1
-
-	def end(self):
-		if not self._started:
-			raise Exception("travis fold not started yet")
-		print("\ntravis_fold:end:{}\r".format(self._tag))
-
-	def __enter__(self):
-		self.start()
-		return self
-
-	def __exit__(self, type, value, traceback):
-		self.end()
+# -------
 
 if 'TRAVIS' in os.environ:
-	with travis_ci_fold("repoman.results.raw"):
+	with TravisCiFold("repoman.results.raw"):
 		for line in RAW_INPUT:
 			print(line, end='')
