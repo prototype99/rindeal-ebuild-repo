@@ -9,8 +9,8 @@ _Packages done right™_
 [![Commit Activity in 4 Weeks][commit-activity-4w-badge]](https://github.com/rindeal/rindeal-ebuild-repo/pulse/monthly)
 [![Commit Activity in a year][commit-activity-y-badge]](https://github.com/rindeal/rindeal-ebuild-repo/pulse/monthly)
 <br/>
-[![Issue Stats](http://issuestats.com/github/rindeal/rindeal-ebuild-repo/badge/issue?style=flat-square)](http://issuestats.com/github/rindeal/rindeal-ebuild-repo)
-[![Issue Stats](http://issuestats.com/github/rindeal/rindeal-ebuild-repo/badge/pr?style=flat-square)](http://issuestats.com/github/rindeal/rindeal-ebuild-repo)
+[![Issue Closure Stats][issue-closure-stats-badge]](http://issuestats.com/github/rindeal/rindeal-ebuild-repo)
+[![Pull Request Closure Stats][pr-closure-stats-badge]](http://issuestats.com/github/rindeal/rindeal-ebuild-repo)
 
 
 Many ebuilds here are my own creatures, others are heavily modified forks, but all share the following:
@@ -118,7 +118,11 @@ If you trust official [Gentoo™] repos, you can trust this, too. Getting commit
 
 ### Colophon
 
-- All code in this repo is licenced under GPL-2 ([full licence](./LICENSE)), if not stated otherwise. As opposed to other similar repositories the copyright to work that goes into developing this repository is not dedicated to the&nbsp;_Gentoo&nbsp;Foundation,&nbsp;Inc._, which means it cannot be copied into the main [Gentoo™] ebuild repository. TL;DR: if you're trying to get a code from here to the main [Gentoo™] ebuild repository, you're out of luck.
+- All code in this repo is licenced under GPL-2 ([full licence](./LICENSE)), if not stated otherwise.
+- As opposed to other similar repositories the copyright to work that goes into developing this repository
+is not dedicated to the&nbsp;_Gentoo&nbsp;Foundation,&nbsp;Inc._, which means it cannot be legally copied
+to the main [Gentoo™] ebuild repository.
+<br />TL;DR: if you're trying to get a code from here to the main [Gentoo™] ebuild repository, you're out of luck.
 - _Gentoo_ is a trademark of the _Gentoo Foundation, Inc._
 - [Animal vector designed by Freepik](http://www.freepik.com/free-photos-vectors/animal)
 
@@ -126,8 +130,11 @@ If you trust official [Gentoo™] repos, you can trust this, too. Getting commit
 [LISTING]: ./LISTING.md
 [New issue]: https://github.com/rindeal/rindeal-ebuild-repo/issues/new
 [ci-master]: https://travis-ci.org/rindeal/rindeal-ebuild-repo
-[ci-master-badge]: https://img.shields.io/travis/rindeal/rindeal-ebuild-repo/master.svg?style=flat-square&label=master%20build&maxAge=300
 [Gentoo™]: https://www.gentoo.org/ "main Gentoo project website"
-[commit-activity-4w-badge]: https://img.shields.io/github/commit-activity/4w/rindeal/rindeal-ebuild-repo.svg?style=flat-square
-[commit-activity-y-badge]: https://img.shields.io/github/commit-activity/y/rindeal/rindeal-ebuild-repo.svg?style=flat-square
-[last-commit-badge]: https://img.shields.io/github/last-commit/rindeal/rindeal-ebuild-repo/master.svg?style=flat-square
+
+[ci-master-badge]: https://img.shields.io/travis/rindeal/rindeal-ebuild-repo/master.svg?style=flat-square&label=master%20build&maxAge=300
+[last-commit-badge]:         https://img.shields.io/github/last-commit/rindeal/rindeal-ebuild-repo/master.svg?style=flat-square&maxAge=3600
+[commit-activity-4w-badge]:  https://img.shields.io/github/commit-activity/4w/rindeal/rindeal-ebuild-repo.svg?style=flat-square&maxAge=3600
+[commit-activity-y-badge]:   https://img.shields.io/github/commit-activity/y/rindeal/rindeal-ebuild-repo.svg?style=flat-square&maxAge=3600
+[issue-closure-stats-badge]: https://img.shields.io/issuestats/i/long/github/rindeal/rindeal-ebuild-repo.svg?style=flat-square&maxAge=172800
+[pr-closure-stats-badge]:    https://img.shields.io/issuestats/p/long/github/rindeal/rindeal-ebuild-repo.svg?style=flat-square&maxAge=172800
