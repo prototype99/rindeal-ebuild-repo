@@ -301,7 +301,7 @@ print_results(PKGS, OTHER_MSGCODES, INVALID_LINES)
 
 # -------
 
-if 'TRAVIS' in os.environ:
-	with TravisCiFold("repoman.results.raw"):
-		for line in RAW_INPUT:
-			print(line, end='')
+#if 'TRAVIS' in os.environ:
+	#with TravisCiFold("repoman.results.raw"):
+		#for line in RAW_INPUT:
+			#print(line, end='')
