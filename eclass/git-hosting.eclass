@@ -21,6 +21,7 @@ declare -g -r -a -- _GH_AVAILABLE_PROVIDERS=(
 	github
 	gitlab
 	kernel
+	freedesktop
 )
 
 ### END Constants
@@ -71,6 +72,18 @@ _gh_provider:kernel:snap_url_tail() {
 
 	local -r -- ref="${1}"
 	local -r -- snap_ext="$(_gh_provider:kernel:snap_ext)"
+
+	printf '%s' "snapshot/${ref}${snap_ext}"
+}
+
+
+_gh_provider:freedesktop:base_url() { printf '%s' 'cgit.freedesktop.org' ; }
+_gh_provider:freedesktop:snap_ext() { printf '%s' '.tar.bz2'             ; }
+_gh_provider:freedesktop:snap_url_tail() {
+	(( $# != 1 )) && die
+
+	local -r -- ref="${1}"
+	local -r -- snap_ext="$(_gh_provider:freedesktop:snap_ext)"
 
 	printf '%s' "snapshot/${ref}${snap_ext}"
 }
@@ -144,10 +157,11 @@ _gh_gen_repo_url() {
 
 	local -r -- base_url="$(_gh_provider:${provider}:base_url)"
 
-	repo_url_nref="https://${base_url}/${path}/${repo}"
+	repo_url_nref="https://${base_url}${path:+"/${path}"}${repo:+"/${repo}"}"
 
 	return 0
 }
+
 
 ##
 # @FUNCTION:	git-hosting_gen_live_url
@@ -173,43 +187,32 @@ git-hosting_gen_live_url() {
 
 ##
 # @FUNCTION:	git-hosting_gen_snapshot_url
-# @USAGE:		$0 "${rn}" "${ref}" snapshot_url snapshot_ext
+# @USAGE:		$0 "${rn}" "${ref}" snapshot_url distfile
 # @DESCRIPTION: Generate snapshot URL
 ##
 git-hosting_gen_snapshot_url() {
-	case $# in
-	# interface mostly for external use
-	'4' )
-		local -r -- rn="${1}" ; shift
+	(( $# != 4 )) && die
 
-		local -- provider path repo
-		_gh_parse_rn "${rn}" provider path repo
-		readonly provider path repo
-
-		local -- repo_url
-		_gh_gen_repo_url "${provider}" "${path}" "${repo}" repo_url
-		readonly repo_url
-		;;
-
-	# interface mostly for internal use
-	'5' )
-		local -r -- provider="${1}" ; shift
-		local -r -- repo_url="${1}" ; shift
-		;;
-
-	* )
-		die "${FUNCNAME}: Not enough arguments provided"
-		;;
-	esac
-
+	local -r -- rn="${1}" ; shift
 	local -r -- ref="${1}" ; shift
 	local -n -- snapshot_url_nref="${1}" ; shift
-	local -n -- snap_ext_nref="${1}" ; shift
+	local -n -- distfile_nref="${1}" ; shift
+
+	local -- provider path repo
+	_gh_parse_rn "${rn}" provider path repo
+	readonly provider path repo
+
+	local -- repo_url
+	_gh_gen_repo_url "${provider}" "${path}" "${repo}" repo_url
+	readonly repo_url
 
 	local -r -- snap_url_tail="$( _gh_provider:${provider}:snap_url_tail "${ref}" )"
 
+	local -- _distfile_base="${provider}--${path}--${repo}--${ref}"
+	_distfile_base="${_distfile_base//'/'/_}"
+
 	snapshot_url_nref="${repo_url}/${snap_url_tail}"
-	snap_ext_nref="$( _gh_provider:${provider}:snap_ext )"
+	distfile_nref="${_distfile_base}$( _gh_provider:${provider}:snap_ext )"
 }
 
 ##
@@ -378,19 +381,11 @@ declare -g -r -- GH_REPO_URL
 ##
 declare -g -r -- GH_HOMEPAGE="${GH_REPO_URL}"
 
-##
-# @ECLASS-VARIABLE: GH_DISTFILE
-# @DESCRIPTION:
-# Name of the distfile (without any extensions).
-##
-: "${GH_DISTFILE:="${GH_PROVIDER}--${_GH_PATH}--${GH_REPO}--${GH_REF}"}"
-GH_DISTFILE="${GH_DISTFILE//'/'/_}"
-declare -g -r -- GH_DISTFILE
 
 case "${GH_FETCH_TYPE}" in
 'snapshot' )
-	git-hosting_gen_snapshot_url "${GH_PROVIDER}" "${GH_REPO_URL}" "${GH_REF}" _GH_SNAPSHOT_SRC_URI _GH_DISTFILE_EXT
-	declare -g -r -- _GH_SNAPSHOT_SRC_URI _GH_DISTFILE_EXT
+	git-hosting_gen_snapshot_url "${_GH_RN}" "${GH_REF}" _GH_SNAPSHOT_SRC_URI _GH_DISTFILE
+	declare -g -r -- _GH_SNAPSHOT_SRC_URI _GH_DISTFILE
 	;;
 'live' | 'manual' )
 	:
@@ -434,7 +429,7 @@ esac
 # set SRC_URI only for 'snapshot' GH_FETCH_TYPE
 case "${GH_FETCH_TYPE}" in
 'snapshot' )
-	SRC_URI="${_GH_SNAPSHOT_SRC_URI} -> ${GH_DISTFILE}${_GH_DISTFILE_EXT}"
+	SRC_URI="${_GH_SNAPSHOT_SRC_URI} -> ${_GH_DISTFILE}"
 	;;
 'live' | 'manual' )
 	:
@@ -486,7 +481,7 @@ git-hosting_src_unpack() {
 		git-r3_src_unpack
 		;;
 	'snapshot' )
-		git-hosting_unpack "${DISTDIR}/${GH_DISTFILE}${_GH_DISTFILE_EXT}" "${WORKDIR}/${P}"
+		git-hosting_unpack "${DISTDIR}/${_GH_DISTFILE}" "${WORKDIR}/${P}"
 		;;
 	'manual' )
 		default
