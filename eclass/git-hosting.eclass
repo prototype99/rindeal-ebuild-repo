@@ -16,7 +16,7 @@ esac
 
 ### BEGIN Constants
 
-declare -g -a -- _GH_AVAILABLE_PROVIDERS=(
+declare -g -r -a -- _GH_AVAILABLE_PROVIDERS=(
 	bitbucket
 	github
 	gitlab
@@ -28,39 +28,51 @@ declare -g -a -- _GH_AVAILABLE_PROVIDERS=(
 
 ### BEGIN Base classes
 
-_gh_provider_bitbucket:base_url()	{ printf '%s\n'	'bitbucket.org' ; }
-_gh_provider_bitbucket:snap_ext()	{ printf '%s\n'	'.tar.bz2' ; }
-_gh_provider_bitbucket:snap_url_tail() {
+_gh_provider:bitbucket:base_url() { printf '%s' 'bitbucket.org' ; }
+_gh_provider:bitbucket:snap_ext() { printf '%s' '.tar.bz2'      ; }
+_gh_provider:bitbucket:snap_url_tail() {
 	(( $# != 1 )) && die
-	local -r -- ref="${1}" snap_ext="$(_gh_provider_bitbucket:snap_ext)"
-								printf '%s\n' 	"get/${ref}${snap_ext}"
+
+	local -r -- ref="${1}"
+	local -r -- snap_ext="$(_gh_provider:bitbucket:snap_ext)"
+
+	printf '%s' "get/${ref}${snap_ext}"
 }
 
 
-_gh_provider_github:base_url()	{ printf '%s\n'	'github.com' ; }
-_gh_provider_github:snap_ext()	{ printf '%s\n'	'.tar.gz' ; }
-_gh_provider_github:snap_url_tail() {
+_gh_provider:github:base_url() { printf '%s' 'github.com' ; }
+_gh_provider:github:snap_ext() { printf '%s' '.tar.gz'    ; }
+_gh_provider:github:snap_url_tail() {
 	(( $# != 1 )) && die
-	local -r -- ref="${1}" snap_ext="$(_gh_provider_github:snap_ext)"
-								printf '%s\n' 	"archive/${ref}${snap_ext}"
+
+	local -r -- ref="${1}"
+	local -r -- snap_ext="$(_gh_provider:github:snap_ext)"
+
+	printf '%s' "archive/${ref}${snap_ext}"
 }
 
 
-_gh_provider_gitlab:base_url()	{ printf '%s\n'	'gitlab.com' ; }
-_gh_provider_gitlab:snap_ext()	{ printf '%s\n'	'.tar.bz2' ; }
-_gh_provider_gitlab:snap_url_tail() {
+_gh_provider:gitlab:base_url() { printf '%s' 'gitlab.com' ; }
+_gh_provider:gitlab:snap_ext() { printf '%s' '.tar.bz2'   ; }
+_gh_provider:gitlab:snap_url_tail() {
 	(( $# != 1 )) && die
-	local -r -- ref="${1}" snap_ext="$(_gh_provider_gitlab:snap_ext)"
-								printf '%s\n' 	"repository/archive${snap_ext}?ref=${ref}"
+
+	local -r -- ref="${1}"
+	local -r -- snap_ext="$(_gh_provider:gitlab:snap_ext)"
+
+	printf '%s' "repository/archive${snap_ext}?ref=${ref}"
 }
 
 
-_gh_provider_kernel:base_url()	{ printf '%s\n'	'git.kernel.org/pub/scm' ; }
-_gh_provider_kernel:snap_ext()	{ printf '%s\n'	'.tar.gz' ; }
-_gh_provider_kernel:snap_url_tail() {
+_gh_provider:kernel:base_url() { printf '%s' 'git.kernel.org/pub/scm' ; }
+_gh_provider:kernel:snap_ext() { printf '%s' '.tar.gz'                ; }
+_gh_provider:kernel:snap_url_tail() {
 	(( $# != 1 )) && die
-	local -r -- ref="${1}" snap_ext="$(_gh_provider_kernel:snap_ext)"
-								printf '%s\n' 	"snapshot/${ref}${snap_ext}"
+
+	local -r -- ref="${1}"
+	local -r -- snap_ext="$(_gh_provider:kernel:snap_ext)"
+
+	printf '%s' "snapshot/${ref}${snap_ext}"
 }
 
 ### END Base classes
@@ -68,7 +80,7 @@ _gh_provider_kernel:snap_url_tail() {
 
 ### BEGIN Functions
 
-_gh_provider_exists() {
+_gh_provider:exists() {
 	(( $# != 1 )) && die
 
 	local -r -- provider="${1}"
@@ -130,7 +142,7 @@ _gh_gen_repo_url() {
 	local -r -- repo="${1}" ; shift
 	local -n -- repo_url_nref="${1}" ; shift
 
-	local -r -- base_url="$(_gh_provider_${provider}:base_url)"
+	local -r -- base_url="$(_gh_provider:${provider}:base_url)"
 
 	repo_url_nref="https://${base_url}/${path}/${repo}"
 
@@ -194,12 +206,10 @@ git-hosting_gen_snapshot_url() {
 	local -n -- snapshot_url_nref="${1}" ; shift
 	local -n -- snap_ext_nref="${1}" ; shift
 
-	local _provider_class="_gh_provider_${provider}"
-
-	local -r -- snap_url_tail="$( ${_provider_class}:snap_url_tail "${ref}" )"
+	local -r -- snap_url_tail="$( _gh_provider:${provider}:snap_url_tail "${ref}" )"
 
 	snapshot_url_nref="${repo_url}/${snap_url_tail}"
-	snap_ext_nref="$( ${_provider_class}:snap_ext )"
+	snap_ext_nref="$( _gh_provider:${provider}:snap_ext )"
 }
 
 ##
@@ -347,7 +357,7 @@ declare -g -r -- GH_REF
 # @DESCRIPTION:
 # Base
 ##
-declare -g -r -- _GH_DOMAIN="$(_gh_provider_${GH_PROVIDER}:base_url)"
+declare -g -r -- _GH_DOMAIN="$(_gh_provider:${GH_PROVIDER}:base_url)"
 
 ##
 # @ECLASS-VARIABLE: GH_REPO_URL
