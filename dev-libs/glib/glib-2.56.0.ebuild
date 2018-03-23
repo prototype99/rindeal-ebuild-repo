@@ -36,7 +36,7 @@ KEYWORDS="~amd64 ~arm ~arm64"
 IUSE_A=(
 	dbus debug +mime selinux static-libs systemtap utils xattr
 	+iconv_libc iconv_gnu iconv_native
-	internal-pcre man libmount doc nls
+	internal-pcre man +libmount doc nls
 )
 
 # FIXME: verify all deps
