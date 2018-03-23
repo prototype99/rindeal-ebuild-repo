@@ -152,6 +152,10 @@ eln() {
 	ln $(_NO_V) "${@}" || die -n
 }
 
+echown() {
+	chown $(_NO_V) "${@}" || die -n
+}
+
 echmod() {
 	chmod $(_NO_V) "${@}" || die -n
 }
