@@ -7,12 +7,15 @@ inherit rindeal
 
 ## git-hosting.eclass:
 GH_RN="github:Beep6581:RawTherapee"
-# check http://rawtherapee.com/downloads for a new commit number
-# GH_REF="50114c1a3658cb08dec16f4a3e33c1611e08aa98"
 
+## EXPORT_FUNCTIONS: src_unpack
+## variables: GH_HOMEPAGE
 inherit git-hosting
-inherit cmake-utils
+## functions: tc-has-openmp
 inherit toolchain-funcs
+## EXPORT_FUNCTIONS: src_prepare src_configure src_compile src_test src_install
+inherit cmake-utils
+## EXPORT_FUNCTIONS: src_prepare pkg_preinst pkg_postinst pkg_postrm
 inherit xdg
 
 DESCRIPTION="Powerful cross-platform raw image processing program"
@@ -60,7 +63,7 @@ pkg_pretend() {
 }
 
 src_prepare() {
-	xdg_src_prepare
+	eapply_user
 
 	# do not install LICENSE
 	esed -e '/^install/ s/.*LICENSE.txt.*//' -i -- CMakeLists.txt
@@ -73,6 +76,9 @@ src_prepare() {
 		set(GIT_CHANGESET ${GH_REF})
 		set(GIT_TAGDISTANCE ${GH_REF})
 	_EOF_
+
+	xdg_src_prepare
+	cmake-utils_src_prepare
 }
 
 src_configure() {
