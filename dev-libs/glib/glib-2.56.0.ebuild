@@ -8,7 +8,7 @@ inherit rindeal
 GH_RN="github:GNOME"
 inherit git-hosting
 
-PYTHON_COMPAT=( python2_7 )
+PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
 
 ## functions: linux-info_pkg_setup
 inherit linux-info
@@ -61,6 +61,7 @@ DEPEND_A=( "${CDEPEND_A[@]}"
 	"dev-libs/libxslt"
 	"sys-devel/gettext"
 	"systemtap? ( dev-util/systemtap )"
+	"${PYTHON_DEPS}"
 )
 RDEPEND_A=( "${CDEPEND_A[@]}" )
 PDEPEND_A=(
@@ -83,7 +84,7 @@ pkg_setup() {
 	CONFIG_CHECK="~INOTIFY_USER"
 	linux-info_pkg_setup
 
-	python_setup
+	python_setup "python3*"
 
 	GIOMODULE_CACHE="usr/$(get_libdir)/gio/modules/giomodule.cache"
 	GSCHEMAS_CACHE="usr/share/glib-2.0/schemas/gschemas.compiled"
