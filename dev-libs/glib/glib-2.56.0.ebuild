@@ -142,9 +142,9 @@ src_configure() {
 		$(meson_use xattr)
 		$(meson_use libmount)
 		$(meson_use internal-pcre internal_pcre)
-		-D with-man=$(usex man true false)
-		$(meson_use systemtap enable-dtrace)
-		$(meson_use systemtap enable-systemtap)
+		-D man=$(usex man true false)
+		$(meson_use systemtap dtrace)
+		$(meson_use systemtap)
 		# -D tapset_install_dir
 		-D gtk_doc=$(usex doc true false)
 	)
