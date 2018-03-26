@@ -9,7 +9,7 @@ docker=(
 	docker run
 	-v ${PWD}:/repo:ro
 	"${DOCKER_REPO}:${DOCKER_TAG}"
-	repoman-pretty-scan --travis-ci -- --xmlparse --without-mask
+	repoman-pretty-scan --travis-ci -- --xmlparse --ignore-arches
 )
 
 "${docker[@]}"
