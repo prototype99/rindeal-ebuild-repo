@@ -5,7 +5,7 @@ EAPI=6
 inherit rindeal
 
 DESCRIPTION="Virtual package to satisfy gentoo deps"
-HOMEPAGE=""
+HOMEPAGE="https://developer.gnome.org/gio/stable/gdbus-codegen.html"
 LICENSE="no-source-code"
 
 SLOT="0"
