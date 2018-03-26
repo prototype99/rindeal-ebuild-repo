@@ -36,6 +36,7 @@ CDEPEND_A=(
 DEPEND_A=( "${CDEPEND_A[@]}" )
 RDEPEND_A=( "${CDEPEND_A[@]}"
 	"selinux? ( sec-policy/selinux-smartmon )"
+	"!sys-apps/${PN}"
 )
 
 inherit arrays

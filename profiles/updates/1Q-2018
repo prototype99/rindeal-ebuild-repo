@@ -1,1 +1,2 @@
 move net-misc/miredo net-vpn/miredo
+move sys-apps/smartmontools sys-block/smartmontools
