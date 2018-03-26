@@ -1,57 +1,38 @@
 # Initial idea of repoman checks: https://github.com/mrueg/repoman-travis
 
 # use "Trusty" as "Precise" has bash 4.2 only, which doesn't support nameref vars
-sudo: false
 dist: trusty
-language: python
-python:
-    - "3.5"
-#addons:
-#    apt:
-#        sources:
-#            - debian-sid
-#        packages:
-#            - shellcheck
+sudo: required
+language: generic
+services:
+    - docker
 
 git:
     depth: 1
 branches:
     only:
-        - master
-        - /^dev\//
-        - /^ci\//
+        - 'master'
+        - '/^dev\//'
+        - '/^ci\//'
 
 ## env config and env-based matrix
 env:
     global:
         ## configurable variables
-        - OVERLAY_NAME='rindeal'
-    matrix:
-        - PORTAGE_VER="2.3.19" REPOMAN_VER="2.3.6"
-#        - SHELLCHECK=1
+        - 'DOCKER_REPO=rindeal/portage-amd64-base'
+        - 'DOCKER_TAG=latest'
+
 ## final touches to the matrix
 matrix:
     fast_finish: true
-#    allow_failures:
-#            - env: SHELLCHECK=1
-
-cache:
-    pip: true
-    directories:
-        - ${VIRTUAL_ENV}/lib/python${TRAVIS_PYTHON_VERSION}/site-packages/
-before_cache:
-    - rm -v -f ${HOME}/.cache/pip/log/debug.log
 
 # -----------------------------------------------------------------------------
 
-before_install:
-    - source .travis/setup_environment.sh
-
 install:
-    - .travis/run_install.sh
+    - 'docker pull "${DOCKER_REPO}:${DOCKER_TAG}"'
 
 script:
-    - .travis/run_tests.sh
+    - '.travis/script.sh "${DOCKER_REPO}" "${DOCKER_TAG}"'
 
 # after_success:
 #     - cd "${TRAVIS_BUILD_DIR}"
