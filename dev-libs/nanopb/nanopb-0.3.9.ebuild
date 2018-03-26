@@ -19,7 +19,7 @@ inherit python-single-r1
 
 DESCRIPTION="Protocol Buffers with small code size"
 HOMEPAGE="${GH_HOMEPAGE} https://jpa.kapsi.fi/nanopb/"
-LICENSE="BSD-3"
+LICENSE="BSD"
 
 SLOT="0"
 
