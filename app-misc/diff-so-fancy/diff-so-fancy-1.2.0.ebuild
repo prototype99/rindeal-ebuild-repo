@@ -11,7 +11,7 @@ GH_REF="v${PV}"
 ## EXPORT_FUNCTIONS: src_unpack
 inherit git-hosting
 
-DESCRIPTION="Good-lookin' diffs. Actually… nah… The best-lookin' diffs."
+DESCRIPTION="Good-lookin' diffs. Actually... nah... The best-lookin' diffs."
 LICENSE="MIT"
 
 SLOT="0"
