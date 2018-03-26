@@ -23,16 +23,13 @@ inherit rindeal-utils
 inherit ltprune
 
 DESCRIPTION="C library for the Publix Suffix List"
-HOMEPAGE="https://rockdaboot.github.io/libpsl ${GH_HOMEPAGE}"
+HOMEPAGE="${GH_HOMEPAGE} https://rockdaboot.github.io/${PN}"
 LICENSE="MIT"
 
 SLOT="0"
-declare -g --		PSL_LIST_EXT=""
-declare -g -r --	PSL_LIST_COMMIT="e8c69a6"
-declare -g -r --	PSL_LIST_DISTFILE="${PN}-list-${PSL_LIST_COMMIT}"
-git-hosting_gen_snapshot_url "github:publicsuffix:list" "${PSL_LIST_COMMIT}" psl_list_url PSL_LIST_EXT
+git-hosting_gen_snapshot_url "github:publicsuffix:list" "c45eff1" psl_list_url PSL_LIST_DISTFILE
 SRC_URI+="
-	${psl_list_url} -> ${PSL_LIST_DISTFILE}${PSL_LIST_EXT}
+	${psl_list_url} -> ${PSL_LIST_DISTFILE}
 "
 
 KEYWORDS="~amd64 ~arm ~arm64"
@@ -87,8 +84,8 @@ inherit arrays
 src_unpack() {
 	git-hosting_src_unpack
 
-	rmdir -v "${S}/list" || die
-	git-hosting_unpack "${DISTDIR}/${PSL_LIST_DISTFILE}${PSL_LIST_EXT}" "${S}/list"
+	ermdir "${S}/list"
+	git-hosting_unpack "${DISTDIR}/${PSL_LIST_DISTFILE}" "${S}/list"
 }
 
 src_prepare() {
