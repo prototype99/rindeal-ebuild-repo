@@ -39,8 +39,8 @@ MY_P="${PN}_0.0.svn${PV}"
 # Upstream doesn't provide versioned tarballs
 SRC_URI_A=(
 	## josm 0.0.svn13367+dfsg-1~bpo9+1
-	"http://snapshot.debian.org/archive/debian/20180203T092827Z/pool/main/j/josm/josm_0.0.svn13367%2Bdfsg-1%7Ebpo9%2B1.debian.tar.xz"
-	"http://snapshot.debian.org/archive/debian/20180129T164727Z/pool/main/j/josm/josm_0.0.svn13367%2Bdfsg.orig.tar.gz"
+	"http://snapshot.debian.org/archive/debian/20180318T163348Z/pool/main/j/josm/josm_0.0.svn13500%2Bdfsg-2.debian.tar.xz"
+	"http://snapshot.debian.org/archive/debian/20180304T215030Z/pool/main/j/josm/josm_0.0.svn13500%2Bdfsg.orig.tar.gz"
 )
 
 KEYWORDS="~amd64"
@@ -154,59 +154,6 @@ src_prepare() {
 	esed -e 's|getBoolean("help.displaymotd", true)|getBoolean("help.displaymotd", false)|' \
 		-i -- src/org/openstreetmap/josm/gui/GettingStarted.java || die
 
-	## fix `TMSCachedTileLoader.java:129: error: method does not override or implement a method from a supertype`
-	## https://stackoverflow.com/a/7378912/2566213
-	gawk -i inplace '
-			!/hasOutstandingTasks/ {
-				if (m)
-					print buf
-				buf=$0
-				m=1
-			}
-			/hasOutstandingTasks/ {
-				m=0
-				print "//",buf
-				print
-			}
-			ENDFILE {
-				print buf
-			}
-		' \
-		src/org/openstreetmap/josm/data/imagery/TMSCachedTileLoader.java || die
-
-	## bugfix
-	## ```
-    ## [javac] /tmp/portage/sci-geosciences/josm-13367/work/josm-0.0.svn13367/src/org/openstreetmap/josm/data/imagery/ImageryInfo.java:516: error: cannot find symbol
-    ## [javac]                 Objects.equals(this.modTileFeatures, other.modTileFeatures) &&
-    ## [javac]                                    ^
-    ## [javac]   symbol: variable modTileFeatures
-    ## [javac] /tmp/portage/sci-geosciences/josm-13367/work/josm-0.0.svn13367/src/org/openstreetmap/josm/data/imagery/ImageryInfo.java:516: error: cannot find symbol
-    ## [javac]                 Objects.equals(this.modTileFeatures, other.modTileFeatures) &&
-    ## [javac]                                                           ^
-    ## [javac]   symbol:   variable modTileFeatures
-    ## [javac]   location: variable other of type ImageryInfo
-    ## ```
-	esed -e '/modTileFeatures/d' -i -- src/org/openstreetmap/josm/data/imagery/ImageryInfo.java
-
-	## bugfix
-	## ```
-    ## [javac] /tmp/portage/sci-geosciences/josm-13367/work/josm-0.0.svn13367/src/org/openstreetmap/josm/io/imagery/ImageryReader.java:475: error: cannot find symbol
-    ## [javac]                     entry.setModTileFeatures(Boolean.parseBoolean(accumulator.toString()));
-    ## ```
-	esed -e '/setModTileFeatures/d' -i -- src/org/openstreetmap/josm/io/imagery/ImageryReader.java
-
-	## bugfix
-	## ```
-	## [javac] /tmp/portage/sci-geosciences/josm-13367/work/josm-0.0.svn13367/src/org/openstreetmap/josm/gui/layer/AbstractTileSourceLayer.java:618: error: cannot find symbol
-	## [javac]             if (ExpertToggleAction.isExpert() && tileSource != null && tileSource.isModTileFeatures()) {
-	## [javac]                                                                                  ^
-	## [javac]   symbol:   method isModTileFeatures()
-	## [javac]   location: variable tileSource of type T
-	## [javac]   where T is a type-variable:
-	## [javac]     T extends AbstractTMSTileSource declared in class AbstractTileSourceLayer
-	## ```
-	esed -e 's| && tileSource\.isModTileFeatures()||' -i -- src/org/openstreetmap/josm/gui/layer/AbstractTileSourceLayer.java
-
 	# update `REVISION` entry
 	xmlstarlet ed --inplace -u "project/target[@name='create-revision']/echo[@file='\${revision.dir}/REVISION']" \
 		-v "$(cat <<-_EOF_
@@ -246,7 +193,6 @@ src_install() {
 	doins -r images styles data
 
 	### Icons
-	newicon "images/logo.png" "${PN}.png"
 	doicon -s scalable "linux/tested/usr/share/icons/hicolor/scalable/apps/${PN}.svg"
 	local s
 	# unsupported sizes: 8 40 42 80
