@@ -26,7 +26,10 @@ IUSE_A=( )
 
 CDEPEND_A=()
 DEPEND_A=( "${CDEPEND_A[@]}" )
-RDEPEND_A=( "${CDEPEND_A[@]}" )
+RDEPEND_A=( "${CDEPEND_A[@]}"
+	"app-portage/repoman"
+	"dev-python/travis-ci-utils[${PYTHON_USEDEP}]"
+)
 
 REQUIRED_USE_A=(  )
 RESTRICT+=""
