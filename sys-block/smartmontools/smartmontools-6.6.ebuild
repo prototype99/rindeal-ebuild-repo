@@ -37,6 +37,7 @@ DEPEND_A=( "${CDEPEND_A[@]}" )
 RDEPEND_A=( "${CDEPEND_A[@]}"
 	"selinux? ( sec-policy/selinux-smartmon )"
 	"!sys-apps/${PN}"
+	"${CATEGORY}/${PN}-drivedb"
 )
 
 inherit arrays
@@ -77,9 +78,6 @@ src_configure() {
 
 src_install() {
 	default
-
-	insinto "${MY_DB_PATH}"
-	newins "${FILESDIR}/20171118-drivedb.h" "drivedb.h"
 
 	use examples || erm -r "${ED}"/usr/share/doc/${PF}/example*
 }
