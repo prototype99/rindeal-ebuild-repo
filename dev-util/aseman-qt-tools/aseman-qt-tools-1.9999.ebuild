@@ -45,7 +45,7 @@ BUILD_DIR="${WORKDIR}/build"
 src_prepare() {
 	default
 
-	mkdir -p "${BUILD_DIR}" >/dev/null || die
+	emkdir "${BUILD_DIR}"
 }
 
 src_configure() {
