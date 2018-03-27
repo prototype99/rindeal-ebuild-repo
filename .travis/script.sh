@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -vue
+set -ue
 
 DOCKER_REPO="${1}" ; shift
 DOCKER_TAG="${1}" ; shift
