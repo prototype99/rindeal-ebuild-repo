@@ -10,11 +10,17 @@ CHROMIUM_LANGS="
 	hi hr hu id it ja ko lt lv ms nb nl pl pt-BR pt-PT ro ru
 	sk sr sv sw ta te th tr uk vi zh-CN zh-TW
 "
+
+## functions: chromium_remove_language_paks
 inherit chromium-2
+## functions: pax-mark
 inherit pax-utils
 ## functions: get_version_component_range
 inherit versionator
+## EXPORT_FUNCTIONS: src_prepare pkg_preinst pkg_postinst pkg_postrm
 inherit xdg
+## functions: unpack
+inherit unpacker
 
 DESCRIPTION="Proprietary cross-platform web browser by Opera Software ASA"
 HOMEPAGE="https://www.opera.com/"
@@ -69,6 +75,10 @@ inherit arrays
 S="${WORKDIR}"
 
 OPERA_HOME="/opt/${PN}/${PN_SLOTTED}"
+
+src_unpack() {
+	unpack_deb ${A}
+}
 
 src_prepare() {
 	xdg_src_prepare
