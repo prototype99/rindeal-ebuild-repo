@@ -34,7 +34,7 @@ IUSE_A=(
 
 	ipv6 +unix-sockets +zlib brotli dns_c-ares dns_threaded idn psl
 
-	+cookies metalink proxy libssh2
+	+cookies metalink proxy libssh2 libssh
 
 	$(rindeal:dsf:prefix_flags \
 		"auth_" \
@@ -78,7 +78,8 @@ CDEPEND_A=(
 	"auth_kerberos?		( >=virtual/krb5-0-r1 )"
 	"metalink?			( >=media-libs/libmetalink-0.1.1 )"
 	"protocol_rtmp?		( media-video/rtmpdump )"
-	"libssh2?				( net-libs/libssh2[static-libs?] )"
+	"libssh2?			( net-libs/libssh2[static-libs?] )"
+	"libssh?			( net-libs/libssh[static-libs?] )"
 	"zlib?				( sys-libs/zlib )"
 	"brotli?			( app-arch/brotli )"
 	"protocol_ldap?		( net-nds/openldap )"
@@ -107,6 +108,7 @@ REQUIRED_USE_A=(
 				axtls gnutls libressl mbedtls nss openssl polarssl)
 		")"
 	")"
+	"?? ( libssh2 libssh )"
 
 	"auth_kerberos?	( auth_digest auth_gssapi )"
 	"auth_ntlm-wb?	( auth_ntlm protocol_http )"
@@ -121,8 +123,8 @@ REQUIRED_USE_A=(
 	"protocol_smb?		( auth_digest ^^ ( $(rindeal:dsf:prefix_flags "ssl_" openssl libressl gnutls nss) ) )"
 	"protocol_smbs?		( protocol_smb ssl )"
 	"protocol_smtps?	( protocol_smtp ssl )"
-	"protocol_scp?		( libssh2 )"
-	"protocol_sftp?		( libssh2 )"
+	"protocol_scp?		( || ( libssh2 libssh ) )"
+	"protocol_sftp?		( || ( libssh2 libssh ) )"
 )
 
 inherit arrays
@@ -173,6 +175,7 @@ src_configure() {
 		$(use_with		metalink libmetalink)
 		$(use_enable	proxy)
 		$(use_with		libssh2)
+		$(use_with		libssh)
 	)
 
 	my_econf_args+=(
