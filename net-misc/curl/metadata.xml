@@ -35,6 +35,7 @@
     <flag name="metalink">metalink (.meta4, .metalink files)</flag>
     <flag name="proxy">Proxy support</flag>
     <flag name="libssh2">libssh2 support for (SCP, SFTP)</flag>
+    <flag name="libssh">libssh support for (SCP, SFTP)</flag>
 
     <!-- ### Authentication methods -->
     <flag name="auth_digest">Digest access authentication</flag>
@@ -79,6 +80,5 @@
     <flag name="ssl_mbedtls">mbed TLS (previously PolarSSL)</flag>
     <flag name="ssl_nss">Mozilla Network Security Services</flag>
     <flag name="ssl_openssl">OpenSSL</flag>
-    <flag name="ssl_polarssl">PolarSSL (old versions of mbed TLS)</flag>
   </use>
 </pkgmetadata>
