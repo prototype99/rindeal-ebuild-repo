@@ -38,9 +38,11 @@ DEPEND_A=( "${CDEPEND_A[@]}"
 	")"
 )
 RDEPEND_A=( "${CDEPEND_A[@]}"
-	"=dev-python/typeshed-0.20171107"
-	">=dev-python/typed-ast-1.0.4[${PYTHON_USEDEP}]"
-	"<dev-python/typed-ast-1.1.0[${PYTHON_USEDEP}]"
+	# NOTE > remember to bump < NOTE
+	"=dev-python/typeshed-0.0.0.0_p20180317"
+	# NOTE ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ NOTE
+	">=dev-python/typed-ast-1.1.0[${PYTHON_USEDEP}]"
+	"<dev-python/typed-ast-1.2.0[${PYTHON_USEDEP}]"
 )
 
 inherit arrays
