@@ -48,7 +48,7 @@ IUSE_A=(
 	+ssl
 	$(rindeal:dsf:prefix_flags \
 		"ssl_" \
-		axtls gnutls libressl mbedtls nss +openssl polarssl)
+		axtls gnutls libressl mbedtls nss +openssl)
 )
 
 # tests lead to lots of false negatives, bug gentoo#285669
@@ -58,7 +58,7 @@ CDEPEND_A=(
 	"protocol_ldap? ( net-nds/openldap )"
 	"ssl? ("
 		"$(rindeal:dsf:eval \
-			"ssl_openssl|ssl_libressl|ssl_gnutls|ssl_polarssl" \
+			"ssl_openssl|ssl_libressl|ssl_gnutls" \
 				"app-misc/ca-certificates")"
 
 		"ssl_axtls?		( net-libs/axtls )"
@@ -70,7 +70,6 @@ CDEPEND_A=(
 		"ssl_mbedtls?	( net-libs/mbedtls:0= )"
 		"ssl_openssl?	( dev-libs/openssl:0=[static-libs?] )"
 		"ssl_nss?		( dev-libs/nss:0 )"
-		"ssl_polarssl?	( net-libs/polarssl:0= )"
 	")"
 	"protocol_http2?	( net-libs/nghttp2 )"
 	"idn?				( net-dns/libidn2:0[static-libs?] )"
@@ -105,7 +104,7 @@ REQUIRED_USE_A=(
 		"^^ ("
 			$(rindeal:dsf:prefix_flags \
 				"ssl_" \
-				axtls gnutls libressl mbedtls nss openssl polarssl)
+				axtls gnutls libressl mbedtls nss openssl)
 		")"
 	")"
 	"?? ( libssh2 libssh )"
@@ -226,10 +225,9 @@ src_configure() {
 		$(use_with $(my_use_ssl libressl)	ssl)
 		$(use_with $(my_use_ssl mbedtls)	mbedtls)
 		$(use_with $(my_use_ssl nss)		nss)
-		$(use_with $(my_use_ssl polarssl)	polarssl)
 		$(use_with $(my_use_ssl openssl)	ssl)
 	)
-	if use ssl_openssl || use ssl_libressl || use ssl_gnutls || use ssl_polarssl ; then
+	if use ssl_openssl || use ssl_libressl || use ssl_gnutls ; then
 		my_econf_args+=( --with-ca-path="${EPREFIX}"/etc/ssl/certs )
 	else
 		my_econf_args+=( --without-ca-path )
