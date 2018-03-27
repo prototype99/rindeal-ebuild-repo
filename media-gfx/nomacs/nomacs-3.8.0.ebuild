@@ -132,7 +132,7 @@ src_configure() {
 		-D ENABLE_TIFF=$(usex tiff)
 		-D ENABLE_QT_DEBUG=$(usex debug)
 # 		-D ENABLE_INCREMENTER
- 		-D ENABLE_READ_BUILD=OFF
+		-D ENABLE_READ_BUILD=OFF
 		-D ENABLE_TRANSLATIONS=$(use nls)
 		-D ENABLE_PLUGINS=$(usex plugins)
 		-D ENABLE_CODE_COV=OFF
