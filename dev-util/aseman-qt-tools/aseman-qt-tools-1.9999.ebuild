@@ -26,7 +26,7 @@ CDEPEND_A=(
 	"dev-qt/qtdeclarative:5" # QtQuick, QML
 
 	"dbus?			( dev-qt/qtdbus:5 )"
-	"keychain?		( dev-libs/qtkeychain[qt5] )"
+	"keychain?		( dev-libs/qtkeychain )"
 	"multimedia?	( dev-qt/qtmultimedia:5 )"
 	"positioning?	( dev-qt/qtpositioning:5 )"
 	"sensors?		( dev-qt/qtsensors:5 )"
