@@ -1,10 +1,10 @@
-# Copyright 2016-2017 Jan Chren (rindeal)
+# Copyright 2016-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 inherit rindeal
 
-# functions: systemd_douserunit
+## functions: systemd_douserunit
 inherit systemd
 
 DESCRIPTION='Sync files to and from Google Drive, S3, Swift, Cloudfiles, Dropbox, ...'
@@ -12,15 +12,15 @@ HOMEPAGE='http://rclone.org/ https://github.com/ncw/rclone'
 LICENSE='MIT'
 
 PN_NB="${PN%-bin}"
-SLOT='0'
-src_uri_base="http://downloads.rclone.org/${PN_NB}-v${PV}-linux"
+SLOT="0"
+src_uri_base="https://github.com/ncw/${PN_NB}/releases/download/v${PV}/${PN_NB}-v${PV}-linux"
 SRC_URI="
 	amd64?	( ${src_uri_base}-amd64.zip )
 	arm?	( ${src_uri_base}-arm.zip )
 	arm64?	( ${src_uri_base}-arm64.zip )
 "
 
-KEYWORDS='-* ~amd64 ~arm ~arm64'
+KEYWORDS="-* ~amd64 ~arm ~arm64"
 
 RDEPEND="!!${CATEGORY}/${PN_NB}"
 
@@ -28,6 +28,7 @@ RESTRICT+=" mirror"
 
 src_unpack() {
 	default
+
 	cd "${WORKDIR}"/${PN_NB}-*/ || die
 	S="${PWD}"
 }
