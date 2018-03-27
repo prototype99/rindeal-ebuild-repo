@@ -61,7 +61,7 @@ CDEPEND_A=(
 	"libidn? ( net-dns/libidn:0 )"
 	"libidn2? ( net-dns/libidn2:0 )"
 
-	"libpcre? ( dev-libs/libpcre:0 )"
+	"libpcre? ( dev-libs/libpcre:3 )"
 	"libpcre2? ( dev-libs/libpcre2:0 )"
 
 	"$(rindeal:dsf:eval \
