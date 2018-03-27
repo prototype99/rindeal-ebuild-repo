@@ -1,13 +1,15 @@
-# Copyright 2017 Jan Chren (rindeal)
+# Copyright 2017-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 inherit rindeal
 
+## git-hosting.eclass:
 GH_RN="github:troydhanson"
 GH_REF="v${PV}"
 
 ## EXPORT_FUNCTIONS: src_unpack
+## variables: GH_HOMEPAGE
 inherit git-hosting
 
 DESCRIPTION="C macros for hash tables and more "
@@ -16,7 +18,7 @@ LICENSE="BSD-1"
 
 SLOT="0"
 
-KEYWORDS="~amd64 ~arm ~arm64"
+KEYWORDS="amd64 arm arm64"
 IUSE_A=( test )
 
 CDEPEND_A=()
