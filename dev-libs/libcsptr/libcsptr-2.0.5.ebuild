@@ -38,7 +38,6 @@ src_prepare() {
 	esed -e 's,\bSTATIC\b,SHARED,' -e "s,\blib\b,$(get_libdir)," -i -- CMakeLists.txt
 	esed -r -e 's, -(Werror|g)\b,,g' -i -- CMakeLists.txt
 
-
 	cmake-utils_src_prepare
 }
 
