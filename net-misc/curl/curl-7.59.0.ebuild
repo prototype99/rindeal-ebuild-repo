@@ -26,7 +26,7 @@ LICENSE="MIT"
 
 SLOT="0"
 
-KEYWORDS="~amd64 ~arm ~arm64"
+KEYWORDS="amd64 arm arm64"
 IUSE_A=(
 	curldebug +largefile libgcc +rt +symbol-hiding versioned-symbols static-libs test threads
 
