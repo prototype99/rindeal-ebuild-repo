@@ -42,7 +42,7 @@ CDEPEND_A=(
 	"ssl? ("
 		# Depend on a curl with ssl_* USE flags.
 		# libcurl must not be using an ssl backend we do not support.
-		"net-misc/curl[ssl_gnutls(-)=,ssl_nss(-)=,ssl_openssl(-)=,-ssl_axtls(-),-ssl_cyassl(-),-ssl_polarssl(-)]"
+		"net-misc/curl[ssl_gnutls(-)=,ssl_nss(-)=,ssl_openssl(-)=,-ssl_axtls(-)]"
 		# If curl uses gnutls, depend on at least gnutls 2.11.0 so that pycurl
 		# does not need to initialize gcrypt threading and we do not need to
 		# explicitly link to libgcrypt.
@@ -55,7 +55,7 @@ DEPEND_A=( "${CDEPEND_A[@]}"
 		"dev-python/flaky[${PYTHON_USEDEP}]"
 		"dev-python/nose[${PYTHON_USEDEP}]"
 		"dev-python/nose-show-skipped[${PYTHON_USEDEP}]"
-		"net-misc/curl[ssl_gnutls(-)=,ssl_nss(-)=,ssl_openssl(-)=,-ssl_axtls(-),-ssl_cyassl(-),-ssl_polarssl(-),kerberos]"
+		"net-misc/curl[ssl_gnutls(-)=,ssl_nss(-)=,ssl_openssl(-)=,-ssl_axtls(-),auth_kerberos]"
 		# bottle-0.12.7: https://github.com/pycurl/pycurl/issues/180
 		# bottle-0.12.7: https://github.com/defnull/bottle/commit/f35197e2a18de1672831a70a163fcfd38327a802
 		">=dev-python/bottle-0.12.7[${PYTHON_USEDEP}]"
