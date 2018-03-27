@@ -32,7 +32,7 @@ SRC_URI+="
 	${psl_list_url} -> ${PSL_LIST_DISTFILE}
 "
 
-KEYWORDS="~amd64 ~arm ~arm64"
+KEYWORDS="amd64 arm arm64"
 IUSE_A=( doc man static-libs nls +rpath
 	+builtin +builtin_libicu builtin_libidn2 builtin_libidn
 	+runtime +runtime_libicu runtime_libidn2 runtime_libidn
