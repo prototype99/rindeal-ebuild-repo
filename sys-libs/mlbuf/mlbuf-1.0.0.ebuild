@@ -1,9 +1,10 @@
-# Copyright 2016-2017 Jan Chren (rindeal)
+# Copyright 2016-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 inherit rindeal
 
+## git-hosting.eclass:
 GH_RN="github:adsr"
 GH_REF="v${PV}"
 
@@ -21,7 +22,7 @@ IUSE_A=( static-libs )
 
 CDEPEND_A=(
 	"dev-libs/libpcre:3"
-	">=dev-libs/uthash-2"
+	"=dev-libs/uthash-2*"
 )
 DEPEND_A=( "${CDEPEND_A[@]}"
 	"virtual/pkgconfig"
@@ -34,8 +35,8 @@ src_prepare() {
 	default
 
 	# use global utlist.h instead of bundled copy
-	sed -r -e 's|(#include *)"utlist.h"|\1<utlist.h>|g' \
-		-i -- *.{c,h} || die
+	esed -r -e 's|(#include *)"utlist.h"|\1<utlist.h>|g' \
+		-i -- *.{c,h}
 }
 
 src_configure() {
