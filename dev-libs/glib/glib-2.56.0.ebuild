@@ -32,7 +32,7 @@ SLOT="2"
 git-hosting_gen_snapshot_url "freedesktop::pkg-config" "pkg-config-0.28" pkg_config_snap_url pkg_config_distfile
 SRC_URI+=" ${pkg_config_snap_url} -> ${pkg_config_distfile}"
 
-KEYWORDS="~amd64 ~arm ~arm64"
+KEYWORDS="amd64 arm arm64"
 IUSE_A=(
 	dbus debug +mime selinux static-libs systemtap utils xattr
 	+iconv_libc iconv_gnu iconv_native
