@@ -18,7 +18,9 @@ IUSE_A=( )
 
 CDEPEND_A=()
 DEPEND_A=( "${CDEPEND_A[@]}" )
-RDEPEND_A=( "${CDEPEND_A[@]}" )
+RDEPEND_A=( "${CDEPEND_A[@]}"
+	"!<${CATEGORY}/${PN%-drivedb}-6.6-r1"
+)
 
 REQUIRED_USE_A=(  )
 RESTRICT+=""
