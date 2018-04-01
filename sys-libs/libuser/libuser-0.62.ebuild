@@ -17,9 +17,9 @@ LICENSE="GPL-2"
 SLOT="0"
 SRC_URI="https://releases.pagure.org/${PN}/${P}.tar.xz"
 
-KEYWORDS="~amd64 ~arm ~arm64"
+KEYWORDS="amd64 arm arm64"
 IUSE_A=(
-	static-libs nls doc
+	+shared-libs static-libs nls doc
 
 	+popt ldap sasl selinux
 )
@@ -55,11 +55,11 @@ src_prepare() {
 src_configure() {
 	local my_econf_args=(
 		--without-python # too much pain to implement, for no gain
-		--enable-shared
 		--disable-Werror
 		--enable-largefile
 		--disable-rpath
 
+		$(use_enable shared-libs shared)
 		$(use_enable static-libs static)
 
 		$(use_enable doc gtk-doc)
