@@ -42,7 +42,7 @@ SLOT="0"
 
 KEYWORDS="~amd64 ~arm ~arm64"
 IUSE_A=(
-	doc libpython test nls static-libs +assert +symvers +largefile rpath +unicode
+	doc libpython test nls +shared-libs static-libs +assert +symvers +largefile rpath +unicode
 
 	# TODO: categorize these
 	+suid selinux audit +udev +ncurses systemd +pam
@@ -464,6 +464,8 @@ src_configure() {
 		$(use_enable largefile)
 		$(use_enable nls)
 		$(use_enable rpath)
+		--disable-asan
+		$(use_enable shared-libs shared)
 		$(use_enable static-libs static)
 
 		$(use_enable unicode widechar) # compile wide character support
