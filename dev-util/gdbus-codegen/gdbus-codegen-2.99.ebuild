@@ -14,16 +14,18 @@ KEYWORDS="amd64 arm arm64"
 
 S="${WORKDIR}"
 
-PDEPEND="dev-libs/glib:2"
+RDEPEND="dev-libs/glib:2"
 
 src_configure() { : ; }
 src_compile()   { : ; }
 src_install()   { : ; }
 
 pkg_postinst() {
-	echo
-	ewarn "This is a virtual package existing just to satisfy gentoo deps."
-	ewarn "Make sure you use ${CATEGORY}/${PN} package from 'rindeal' repo."
-	ewarn "Otherwise you'll end up with no ${PN}, which will cause subsequent builds to fail."
-	echo
+	if ! rindeal::has_version dev-libs/glib:2::rindeal ; then
+		echo
+		ewarn "This is a virtual package existing just to satisfy gentoo deps."
+		ewarn "Make sure you use ${CATEGORY}/${PN} package from 'rindeal' repo."
+		ewarn "Otherwise you'll end up with no ${PN}, which will cause subsequent builds to fail."
+		echo
+	fi
 }
