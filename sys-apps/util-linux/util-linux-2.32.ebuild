@@ -40,7 +40,7 @@ LICENSE="GPL-2 LGPL-2.1 BSD-4 MIT public-domain"
 
 SLOT="0"
 
-KEYWORDS="~amd64 ~arm ~arm64"
+KEYWORDS="amd64 arm arm64"
 IUSE_A=(
 	doc libpython test nls +shared-libs static-libs +assert +symvers +largefile rpath +unicode
 
