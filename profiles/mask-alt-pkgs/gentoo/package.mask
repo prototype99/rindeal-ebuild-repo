@@ -18,6 +18,7 @@ dev-java/svgsalamander::gentoo
 dev-libs/capnproto::gentoo
 dev-libs/glib::gentoo
 dev-libs/gnulib::gentoo
+dev-libs/libgit2::gentoo
 dev-libs/libxml2::gentoo
 dev-libs/uthash::gentoo
 dev-python/PyGithub::gentoo
@@ -70,8 +71,6 @@ sys-apps/miller::gentoo
 sys-apps/progress::gentoo
 sys-apps/sandbox::gentoo
 sys-apps/shadow::gentoo
-sys-apps/smartmontools::gentoo
-sys-apps/systemd::gentoo
 sys-apps/util-linux::gentoo
 sys-auth/libfprint::gentoo
 sys-block/gparted::gentoo
