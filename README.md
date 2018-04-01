@@ -70,11 +70,32 @@ emerge --sync
 layman -o 'https://ebuilds.janchren.eu/repos/rindeal/repositories.xml' -f -a rindeal
 ```
 
-#### 3. Enable "unstable" packages
+
+Additional repository configuration
+------------------------------------
+
+### Enable "unstable" packages
+
+Most packages in this repository have tilde before their keywords.
+Only some old packages or packages which have to satisfy Gentoo dependencies have been marked "stable".
+So if you want to enable the full potential of this repository, make sure you have the following configuration enabled:
 
 `/etc/portage/package.accepted_keywords`:
 ```sh
 */*::rindeal ~amd64 # or ~arm/~arm64
+```
+
+### Prevent collisions between this repository and [Gentoo™] repository
+
+Many packages here have their _inferior_ counterparts in the [Gentoo™] repository.
+All my ebuild have been coded with the assumption that if there is such an overlap, it's always resolved in favour of my repository.
+Breaking this assumption may lead to all kinds of nasty issues.
+To make sure you're using only packages from my repository, there are several regularly updated `package.mask` files in `profiles/mask-alt-pkgs` directory, which
+you can link to your `/etc/portage/package.mask` directory and thus mask all [Gentoo™] counterparts of packages from this repository.
+To help automate the setup of these symlinks, I've created a small script called `profiles/mask-alt-pkgs/link.sh`, which you can use like this:
+
+```sh
+<RINDEAL_REPO_DIR>/profiles/mask-alt-pkgs/link.sh /etc/portage/package.mask/rindeal-mask-alt-pkgs/
 ```
 
 
@@ -85,11 +106,11 @@ You should be able to use any package from my repository without regrets, becaus
 To achieve this goal I'm using several safety guards:
 
 - my brain (not always so obvious)
-- _[CI](https://travis-ci.org/)_, which runs:
+- continuous integration servers, which run:
     - _[repoman](https://wiki.gentoo.org/wiki/Repoman)_ checks
     - custom checks
-- _GitHub_'s feature called _[protected branches]_, which means that all merges to _master_ must pass CI tests
-- last but not least I wish _really hard_ it would all just work
+    - [_Docker_ image](https://hub.docker.com/r/rindeal/portage-amd64-base/) builds
+- last but not least I wish _really hard_ it would all just work :unicorn: :rainbow:
 
 This all, of course, doesn't prevent build failures, missing dependencies, etc. So, should you find
 any issues, don't like something or just want to report morning news, please send me a PR or [file an issue][New issue].
