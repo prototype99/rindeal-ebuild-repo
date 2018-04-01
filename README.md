@@ -132,9 +132,9 @@ to the main [Gentoo™] ebuild repository.
 [ci-master]: https://travis-ci.org/rindeal/rindeal-ebuild-repo
 [Gentoo™]: https://www.gentoo.org/ "main Gentoo project website"
 
-[ci-master-badge]: https://img.shields.io/travis/rindeal/rindeal-ebuild-repo/master.svg?style=flat-square&label=master%20build&maxAge=300
+[ci-master-badge]:           https://img.shields.io/travis/rindeal/rindeal-ebuild-repo/master.svg?style=flat-square&label=master%20build&maxAge=3600
 [last-commit-badge]:         https://img.shields.io/github/last-commit/rindeal/rindeal-ebuild-repo/master.svg?style=flat-square&maxAge=3600
-[commit-activity-4w-badge]:  https://img.shields.io/github/commit-activity/4w/rindeal/rindeal-ebuild-repo.svg?style=flat-square&maxAge=3600
-[commit-activity-y-badge]:   https://img.shields.io/github/commit-activity/y/rindeal/rindeal-ebuild-repo.svg?style=flat-square&maxAge=3600
-[issue-closure-stats-badge]: https://img.shields.io/issuestats/i/long/github/rindeal/rindeal-ebuild-repo.svg?style=flat-square&maxAge=172800
-[pr-closure-stats-badge]:    https://img.shields.io/issuestats/p/long/github/rindeal/rindeal-ebuild-repo.svg?style=flat-square&maxAge=172800
+[commit-activity-4w-badge]:  https://img.shields.io/github/commit-activity/4w/rindeal/rindeal-ebuild-repo.svg?style=flat-square&maxAge=60
+[commit-activity-y-badge]:   https://img.shields.io/github/commit-activity/y/rindeal/rindeal-ebuild-repo.svg?style=flat-square&maxAge=60
+[issue-closure-stats-badge]: https://img.shields.io/issuestats/i/long/github/rindeal/rindeal-ebuild-repo.svg?style=flat-square&maxAge=86400
+[pr-closure-stats-badge]:    https://img.shields.io/issuestats/p/long/github/rindeal/rindeal-ebuild-repo.svg?style=flat-square&maxAge=86400
