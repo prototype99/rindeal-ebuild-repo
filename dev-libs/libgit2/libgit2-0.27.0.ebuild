@@ -15,12 +15,14 @@ inherit rindeal-utils
 inherit git-hosting
 ## EXPORT_FUNCTIONS: src_prepare src_configure src_compile src_test src_install
 inherit cmake-utils
+## functions: get_version_component_range
+inherit versionator
 
 DESCRIPTION="Linkable library implementation of Git"
 HOMEPAGE="${GH_HOMEPAGE} https://libgit2.github.com/"
 LICENSE="GPL-2-with-linking-exception"
 
-SLOT="0/26"
+SLOT="0/$(get_version_component_range 2)"
 
 KEYWORDS="~amd64 ~arm ~arm64"
 IUSE_A=( debug +curl examples gssapi +ssh test +threads trace +https
