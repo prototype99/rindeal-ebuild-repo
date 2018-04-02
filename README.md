@@ -59,15 +59,15 @@ priority = 9999
 
 ```sh
 # Preferrably
-eix-sync
+$ eix-sync
 # or if you need to
-emerge --sync
+$ emerge --sync
 ```
 
 ### Automatically with Layman
 
 ```sh
-layman -o 'https://ebuilds.janchren.eu/repos/rindeal/repositories.xml' -f -a rindeal
+$ layman -o 'https://ebuilds.janchren.eu/repos/rindeal/repositories.xml' -f -a rindeal
 ```
 
 
@@ -82,7 +82,7 @@ So if you want to enable the full potential of this repository, make sure you ha
 
 `/etc/portage/package.accepted_keywords`:
 ```sh
-*/*::rindeal ~amd64 # or ~arm/~arm64
+*/*::rindeal ~amd64  # or ~arm/~arm64
 ```
 
 ### Prevent collisions between this repository and [Gentoo™] repository
@@ -95,7 +95,7 @@ you can link to your `/etc/portage/package.mask` directory and thus mask all [Ge
 To help automate the setup of these symlinks, I've created a small script called `profiles/mask-alt-pkgs/link.sh`, which you can use like this:
 
 ```sh
-<RINDEAL_REPO_DIR>/profiles/mask-alt-pkgs/link.sh /etc/portage/package.mask/rindeal-mask-alt-pkgs/
+$ <RINDEAL_REPO_DIR>/profiles/mask-alt-pkgs/link.sh /etc/portage/package.mask/rindeal-mask-alt-pkgs/
 ```
 
 
