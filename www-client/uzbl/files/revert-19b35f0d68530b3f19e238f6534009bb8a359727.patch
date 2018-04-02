@@ -1,0 +1,60 @@
+commit 19b35f0d68530b3f19e238f6534009bb8a359727
+Author: David Keijser <keijser@gmail.com>
+Date:   Fri Feb 10 17:01:35 2017 +0100
+
+    Build event-manager python wheel
+    
+    Build a wheel from the uzbl python package during `make` with version
+    information pulled from `misc/hash.sh`. This is later installed using
+    pip which avoids touching the dist directory as root.
+
+diff --git b/Makefile a/Makefile
+index e86be77..f6d051f 100644
+--- b/Makefile
++++ a/Makefile
+@@ -18,7 +18,6 @@ ENABLE_WEBKIT2 ?= no
+ ENABLE_GTK3    ?= auto
+ 
+ PYTHON  ?= python3
+-PIP     ?= pip3
+ 
+ # --- configuration ends here ---
+ 
+@@ -47,10 +46,6 @@ ARCH := $(shell uname -m)
+ 
+ COMMIT_HASH := $(shell ./misc/hash.sh)
+ 
+-# Convert version to pip format, v0.9.1-23-g69480a3 becomes 0.9.1+23.g69480a3
+-PYVERSION := $(shell echo ${COMMIT_HASH} | sed 's/^v//;s/-/+/;s/-/./g')
+-PYWHEEL := uzbl-${PYVERSION}-py3-none-any.whl
+-
+ CPPFLAGS += -D_XOPEN_SOURCE=500 -DARCH=\"$(ARCH)\" -DCOMMIT=\"$(COMMIT_HASH)\" -DLIBDIR=\"$(LIBDIR)\"
+ 
+ HAVE_LIBSOUP_VERSION := $(shell pkg-config --exists 'libsoup-2.4 >= 2.41.1' && echo yes)
+@@ -140,11 +135,11 @@ icons: ${ICONS}
+ icons/%.png: examples/data/uzbl-logo.svg
+ 	convert -background none -resize $(shell echo $@ | grep -oE '[0-9]*x[0-9]*') $^ $@
+ 
+-dist/${PYWHEEL}: ${PY}
+-	VERSION=$(PYVERSION) $(PYTHON) setup.py bdist_wheel
++build: ${PY}
++	$(PYTHON) setup.py build
+ 
+ .PHONY: uzbl-event-manager
+-uzbl-event-manager: dist/${PYWHEEL}
++uzbl-event-manager: build
+ 
+ # this is here because the .so needs to be compiled with -fPIC on x86_64
+ ${LOBJ}: ${SRC} ${HEAD}
+@@ -254,9 +249,9 @@ install-uzbl-core: uzbl-core install-dirs
+ install-event-manager: install-dirs
+ 	$(INSTALL) -m644 uzbl-event-manager.1 $(MANDIR)/man1/uzbl-event-manager.1
+ ifeq ($(DESTDIR),)
+-	$(PIP) install -I --prefix=$(PREFIX) --install-option="$(PYINSTALL_EXTRA)" dist/${PYWHEEL}
++	$(PYTHON) setup.py install --prefix=$(PREFIX) $(PYINSTALL_EXTRA)
+ else
+-	$(PIP) install -I --prefix=$(PREFIX) --root=$(DESTDIR) --install-option="$(PYINSTALL_EXTRA)" dist/${PYWHEEL}
++	$(PYTHON) setup.py install --prefix=$(PREFIX) --root=$(DESTDIR) $(PYINSTALL_EXTRA)
+ endif
+ 
+ install-uzbl-browser: uzbl-browser install-dirs install-uzbl-core install-event-manager

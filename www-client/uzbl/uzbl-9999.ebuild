@@ -1,20 +1,27 @@
-# Copyright 2016-2017 Jan Chren (rindeal)
+# Copyright 2016-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 inherit rindeal
 
-## git-hosting.eclass
+## git-hosting.eclass:
 GH_RN="github"
-## git-r3.eclass
+
+## git-r3.eclass:
 EGIT_BRANCH="next"
-## python-*.eclass
+
+## python-*.eclass:
 PYTHON_COMPAT=( python2_7 python3_{4,5,6} pypy pypy3 )
-## distutils-*.eclass
+
+## distutils-*.eclass:
 # event-manager is required and is written in python
 # DISTUTILS_OPTIONAL=true
 
+## EXPORT_FUNCTIONS: src_unpack
 inherit git-hosting
+## functions: python_setup
+inherit python-r1
+## EXPORT_FUNCTIONS src_prepare src_configure src_compile src_test src_install
 inherit distutils-r1
 inherit xdg
 
@@ -22,6 +29,8 @@ DESCRIPTION="Web browser that adheres to the unix philosophy"
 LICENSE="GPL-2"
 
 SLOT="0"
+
+IUSE_A=()
 
 CDEPEND_A=(
 	# gtk+-3.0
@@ -48,6 +57,7 @@ DEPEND_A=( "${CDEPEND_A[@]}"
 	'media-gfx/imagemagick'
 	'virtual/pkgconfig'
 	"dev-python/setuptools[${PYTHON_USEDEP}]"
+	"dev-python/pip[${PYTHON_USEDEP}]"
 )
 RDEPEND_A=( "${CDEPEND_A[@]}"
 	"dev-python/six[${PYTHON_USEDEP}]"
@@ -66,16 +76,27 @@ RDEPEND_A=( "${CDEPEND_A[@]}"
 
 inherit arrays
 
+pkg_setup() {
+	python_setup
+}
+
 src_prepare() {
+	eapply "${FILESDIR}/revert-19b35f0d68530b3f19e238f6534009bb8a359727.patch"
+	eapply_user
+
 	xdg_src_prepare
 
 	# respect user CFLAGS
-	sed -e '/^CFLAGS/ s| -g[^ \t]*||g' \
-		-i -- Makefile || die
+	esed -e '/^CFLAGS/ s| -g[^ \t]*||g' \
+		-i -- Makefile
 
 	# supply PVR instead of commit hash
-	sed -e "s|^COMMIT_HASH.*|COMMIT_HASH=${PVR}|" \
-		-i -- Makefile || die
+	esed -e "s|^COMMIT_HASH.*|COMMIT_HASH=${PVR}|" \
+		-i -- Makefile
+
+	    # we'll run setup.py manually
+	esed -r -e 's|^[ \t]*\$\(PYTHON\)|# disabled # $(PYTHON)|' \
+		-i -- Makefile
 
 	# NOTE: examples must be installed as they're used in startup scripts
 
@@ -84,13 +105,9 @@ src_prepare() {
 	# sed -e "s|\(cp -rv examples\) \$(SHAREDIR)/uzbl/|\1 \$(SHAREDIR)/${PF}/|" \
 	# 	-i -- Makefile || die
 
-	# we'll run setup.py manually
-	sed -e 's|$(PYTHON)|# disabled # $(PYTHON)|' \
-		-i -- Makefile || die
-
 	# fix default ca-cert path
-	sed -e "s|/etc/ssl/certs/ca-bundle.crt|${EPREFIX}/etc/ssl/certs/ca-certificates.crt|" \
-		-i -- examples/config/config || die
+# 	esed -e "s|/etc/ssl/certs/ca-bundle.crt|${EPREFIX}/etc/ssl/certs/ca-certificates.crt|" \
+# 		-i -- examples/config/config
 
 	distutils-r1_src_prepare
 }
@@ -103,6 +120,8 @@ src_configure() {
 		"LIBDIR		= \$(INSTALLDIR)/$(get_libdir)/${PN}"
 
 		"ENABLE_GTK3 = yes"
+
+		"PYTHON = ${PYTHON}"
 	)
 	printf '%s\n' "${localmk[@]}" > local.mk || die
 
