@@ -3,9 +3,10 @@ Rindeal's Ebuild Repository <img src="./assets/logo_96.png" title="Sir Benjamin 
 
 _Packages done right™_
 
-[![Build Status][ci-master-badge]][ci-master]
+<sup>Master:</sup> [![Master Build Status][ci-master-badge]][ci-master]
+<sup>Docker image:</sup> [![Docker Build Status][docker-badge]](https://hub.docker.com/r/rindeal/portage-amd64-base/)
 <br/>
-[![Last Commit][last-commit-badge]](https://github.com/rindeal/rindeal-ebuild-repo/commits/master)
+[![Last Commit Status][last-commit-badge]](https://github.com/rindeal/rindeal-ebuild-repo/commits/master)
 [![Commit Activity in 4 Weeks][commit-activity-4w-badge]](https://github.com/rindeal/rindeal-ebuild-repo/pulse/monthly)
 [![Commit Activity in a year][commit-activity-y-badge]](https://github.com/rindeal/rindeal-ebuild-repo/pulse/monthly)
 <br/>
@@ -153,7 +154,8 @@ to the main [Gentoo™] ebuild repository.
 [ci-master]: https://travis-ci.org/rindeal/rindeal-ebuild-repo
 [Gentoo™]: https://www.gentoo.org/ "main Gentoo project website"
 
-[ci-master-badge]:           https://img.shields.io/travis/rindeal/rindeal-ebuild-repo/master.svg?style=flat-square&label=master%20build&maxAge=3600
+[ci-master-badge]:           https://img.shields.io/travis/rindeal/rindeal-ebuild-repo/master.svg?style=flat-square&maxAge=3600
+[docker-badge]:              https://semaphoreci.com/api/v1/rindeal/portage-docker-images/branches/master/shields_badge.svg
 [last-commit-badge]:         https://img.shields.io/github/last-commit/rindeal/rindeal-ebuild-repo/master.svg?style=flat-square&maxAge=3600
 [commit-activity-4w-badge]:  https://img.shields.io/github/commit-activity/4w/rindeal/rindeal-ebuild-repo.svg?style=flat-square&maxAge=60
 [commit-activity-y-badge]:   https://img.shields.io/github/commit-activity/y/rindeal/rindeal-ebuild-repo.svg?style=flat-square&maxAge=60
