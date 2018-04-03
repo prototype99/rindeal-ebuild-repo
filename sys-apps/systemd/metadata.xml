@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>dev.rindeal+gentoo-overlay@gmail.com</email>
+    <name>Jan Chren (rindeal)</name>
+  </maintainer>
+  <use>
+    <flag name="split-usr">assume that /bin, /sbin aren't symlinks into /usr</flag>
+    <flag name="rootlibdir">[/usr]/lib/x86_64-linux-gnu or such</flag>
+    <flag name="rootprefix">override the root prefix</flag>
+    <flag name="link-udev-shared">link systemd-udev and its helpers to libsystemd-shared.so</flag>
+
+
+    <flag name="sysvinit-path">the directory where the SysV init scripts are located</flag>
+    <flag name="sysvrcnd-path">the base directory for SysV rcN.d directories</flag>
+    <flag name="telinit-path">path to telinit</flag>
+    <flag name="rc-local"></flag>
+    <flag name="halt-local"></flag>
+
+
+    <flag name="quotaon-path">path to quotaon</flag>
+    <flag name="quotacheck-path">path to quotacheck</flag>
+    <flag name="kill-path">path to kill</flag>
+    <flag name="kmod-path">path to kmod</flag>
+    <flag name="kexec-path">path to kexec</flag>
+    <flag name="sulogin-path">path to sulogin</flag>
+    <flag name="mount-path">path to mount</flag>
+    <flag name="umount-path">path to umount</flag>
+    <flag name="loadkeys-path">path to loadkeys</flag>
+    <flag name="setfont-path">path to setfont</flag>
+
+
+    <flag name="debug-shell">path to debug shell binary</flag>
+    <flag name="debug-tty">specify the tty device for debug shell</flag>
+    <flag name="debug">enable extra debugging (hashmap,mmap-cache)</flag>
+
+
+    <flag name="utmp">support for utmp/wtmp log handling</flag>
+    <flag name="hibernate">support for hibernation</flag>
+    <flag name="ldconfig">support for dynamic linker cache creation</flag>
+    <flag name="resolve">systemd-resolved stack</flag>
+    <flag name="efi">enable systemd-boot and bootctl</flag>
+    <flag name="tpm">TPM should be used to log events and extend the registers</flag>
+    <flag name="environment-d">support for environment.d</flag>
+    <flag name="binfmt">support for custom binary formats</flag>
+    <flag name="coredump">install the coredump handler</flag>
+    <flag name="logind">install the systemd-logind stack</flag>
+    <flag name="hostnamed">install the systemd-hostnamed stack</flag>
+    <flag name="localed">install the systemd-localed stack</flag>
+    <flag name="machined">install the systemd-machined stack</flag>
+    <flag name="networkd">install the systemd-networkd stack</flag>
+    <flag name="timedated">install the systemd-timedated daemon</flag>
+    <flag name="timesyncd">install the systemd-timesyncd daemon</flag>
+    <flag name="remote">support for "journal over the network"</flag>
+    <flag name="myhostname">nss-myhostname support</flag>
+    <flag name="firstboot">support for firstboot mechanism</flag>
+    <flag name="randomseed">support for restoring random seed</flag>
+    <flag name="backlight">support for restoring backlight state</flag>
+    <flag name="vconsole">support for vconsole configuration</flag>
+    <flag name="quotacheck">support for the quotacheck tools</flag>
+    <flag name="sysusers">support for the sysusers configuration</flag>
+    <flag name="tmpfiles">support for tmpfiles.d</flag>
+    <flag name="importd">install the systemd-importd daemon</flag>
+    <flag name="hwdb">support for the hardware database</flag>
+    <flag name="rfkill">support for the rfkill tools</flag>
+    <flag name="man">build and install man pages</flag>
+    <flag name="html">build and install html pages</flag>
+
+
+    <flag name="certificate-root">the prefix for TLS certificates</flag>
+    <flag name="dbuspolicydir">D-Bus policy directory</flag>
+    <flag name="dbussessionservicedir">D-Bus session service directory</flag>
+    <flag name="dbussystemservicedir">D-Bus system service directory</flag>
+    <flag name="pkgconfigdatadir">directory for </flag>
+    <flag name="pkgconfiglibdir">directory for </flag>
+    <flag name="rpmmacrosdir">directory for rpm macros ["no" disables]</flag>
+    <flag name="pamlibdir">directory for PAM modules</flag>
+    <flag name="pamconfdir">directory for PAM configuration ["no" disables]</flag>
+
+
+    <flag name="fallback-hostname">the hostname used if none configured</flag>
+    <flag name="compat-gateway-hostname">allow "gateway" as the symbolic name for default gateway</flag>
+    <flag name="default-hierarchy">default cgroup hierarchy</flag>
+    <flag name="time-epoch">time epoch for time clients</flag>
+    <flag name="system-uid-max">maximum system UID</flag>
+    <flag name="system-gid-max">maximum system GID</flag>
+    <flag name="tty-gid">the numeric GID of the "tty" group</flag>
+    <flag name="adm-group">the ACL for adm group should be added</flag>
+    <flag name="wheel-group">the ACL for wheel group should be added</flag>
+    <flag name="nobody-user">The name of the nobody user (the one with UID 65534)</flag>
+    <flag name="nobody-group">The name of the nobody group (the one with GID 65534)</flag>
+    <flag name="dev-kvm-mode">/dev/kvm access mode</flag>
+    <flag name="default-kill-user-processes">the default value for KillUserProcesses= setting</flag>
+    <flag name="gshadow">support for shadow group</flag>
+
+
+    <flag name="default-dnssec">default DNSSEC mode</flag>
+    <flag name="dns-servers">space-separated list of default DNS servers</flag>
+    <flag name="ntp-servers">space-separated list of default NTP servers</flag>
+    <flag name="support-url">the support URL to show in catalog entries included in systemd</flag>
+    <flag name="www-target">the address and dir to upload docs too</flag>
+
+
+    <flag name="seccomp">SECCOMP support</flag>
+    <flag name="selinux">SELinux support</flag>
+    <flag name="apparmor">AppArmor support</flag>
+    <flag name="smack">SMACK support</flag>
+    <flag name="smack-run-label">run systemd --system itself with a specific SMACK label</flag>
+    <flag name="polkit">PolicyKit support</flag>
+    <flag name="ima">IMA support</flag>
+
+
+    <flag name="acl">libacl support</flag>
+    <flag name="audit">libaudit support</flag>
+    <flag name="blkid">libblkid support</flag>
+    <flag name="kmod">support for loadable modules</flag>
+    <flag name="pam">PAM support</flag>
+    <flag name="microhttpd">libµhttpd support</flag>
+    <flag name="libcryptsetup">libcryptsetup support</flag>
+    <flag name="libcurl">libcurl support</flag>
+    <flag name="idn">use IDN when printing host names</flag>
+    <flag name="libidn2">libidn2 support</flag>
+    <flag name="libidn">libidn support</flag>
+    <flag name="nss-systemd">enable nss-systemd</flag>
+    <flag name="libiptc">libiptc support</flag>
+    <flag name="qrencode">libqrencode support</flag>
+    <flag name="gcrypt">gcrypt support</flag>
+    <flag name="gnutls">gnutls support</flag>
+    <flag name="elfutils">elfutils support</flag>
+    <flag name="zlib">zlib compression support</flag>
+    <flag name="bzip2">bzip2 compression support</flag>
+    <flag name="xz">xz compression support</flag>
+    <flag name="lz4">lz4 compression support</flag>
+    <flag name="xkbcommon">xkbcommon keymap support</flag>
+    <flag name="glib">libglib support (for tests only)</flag>
+    <flag name="dbus">libdbus support (for tests only)</flag>
+
+
+    <flag name="gnu-efi">gnu-efi support for sd-boot</flag>
+    <flag name="efi-cc">the compiler to use for EFI modules</flag>
+    <flag name="efi-ld">the linker to use for EFI modules</flag>
+    <flag name="efi-libdir">path to the EFI lib directory</flag>
+    <flag name="efi-ldsdir">path to the EFI lds directory</flag>
+    <flag name="efi-includedir">path to the EFI header directory</flag>
+    <flag name="tpm-pcrindex">TPM PCR register number to use</flag>
+
+
+    <flag name="bashcompletiondir">directory for bash completion scripts ["no" disables]</flag>
+    <flag name="zshcompletiondir">directory for zsh completion scripts ["no" disables]</flag>
+
+
+    <flag name="tests">enable extra tests with =unsafe</flag>
+    <flag name="slow-tests">run the slow tests by default</flag>
+    <flag name="install-tests">install test executables</flag>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <!-- ### Generic -->
+    <flag name="man">Build manpages</flag>
+    <flag name="python">Use python in build;
+                          This doesn't build python bindings, it's used to generate man page index</flag>
+    <flag name="sysv-utils">Install sysvinit compatibility symlinks and manpages for `init`,
+        `telinit`, `halt`, `poweroff`, `reboot`, `runlevel`, and `shutdown`</flag>
+    <flag name="vanilla">Disable Gentoo-specific behavior and compatibility quirks</flag>
+
+    <!-- ### Daemons -->
+    <flag name="d_hostnamed"> systemd-hostnamed - Host name bus mechanism [hostnamectl]</flag>
+    <flag name="d_importd">   systemd-importd   - VM and container image import and export service [machinectl pull-*/import-*/export-*]</flag>
+    <flag name="d_localed">   systemd-localed   - Locale bus mechanism [localectl]</flag>
+    <flag name="d_logind">    systemd-logind    - Login manager [loginctl]</flag>
+    <flag name="d_machined">  systemd-machined  - VM and container registration manager</flag>
+    <flag name="d_networkd">  systemd-networkd  - Network manager [networkctl]</flag>
+    <flag name="d_resolved">  systemd-resolved  - Network Name Resolution manager (DNS resolver)</flag>
+    <flag name="d_timedated"> systemd-timedated - Time and date bus mechanism [timedatectl]</flag>
+    <flag name="d_timesyncd"> systemd-timesyncd - Network Time Synchronization [systemd-timesyncd set-ntp]</flag>
+
+    <!-- ### Utils -->
+    <flag name="u_backlight"> systemd-backlight   - Load and save the display backlight brightness at boot and shutdown</flag>
+    <flag name="u_binfmt">    systemd-binfmt      - Configure additional binary formats for executables at boot (used by Wine, qemu, ...)</flag>
+    <flag name="u_coredump">  systemd-coredump    - Acquire, save and process core dumps</flag>
+    <flag name="u_cryptsetup">systemd-cryptsetup  - Full disk decryption logic;
+                                cryptsetup tools (includes unit generator for crypttab)</flag>
+    <flag name="u_firstboot"> systemd-firstboot   - Initialize basic system settings on or before the first boot-up of a system</flag>
+    <flag name="u_hwdb">      systemd-hwdb        - hardware database management tool (update/query hwdb)</flag>
+    <flag name="u_quotacheck">systemd-quotacheck  - File system quota checker logic</flag>
+    <flag name="u_randomseed">systemd-random-seed - Load and save the system random seed at boot and shutdown</flag>
+    <flag name="u_rfkill">    systemd-rfkill      - Load and save the RF kill switch state at boot and shutdown</flag>
+    <flag name="u_sysusers">  systemd-sysusers    - Allocate system users and groups</flag>
+    <flag name="u_tmpfiles">  systemd-tmpfiles    - Creates, deletes and cleans up volatile and temporary files and directories</flag>
+
+    <!-- ### Security modules (kernel-space) -->
+    <flag name="s1_apparmor"> AppArmor Linux kernel security module support</flag>
+    <flag name="s1_audit">    Linux Audit Linux kernel subsystem support</flag>
+    <flag name="s1_ima">      Integrity Measurement Architecture (IMA) Linux kernel subsystem support</flag>
+    <flag name="s1_seccomp">  seccomp (secure computing mode) to perform system call filtering at runtime to increase security of programs</flag>
+    <flag name="s1_selinux">  Security Enhanced Linux support</flag>
+    <flag name="s1_smack">    Simplified Mandatory Access Control Kernel (SMACK) Linux kernel security module support</flag>
+
+    <!-- ### Security modules (user-space) -->
+    <flag name="s2_acl">    Access Control Lists</flag>
+    <flag name="s2_pam">    Linux Pluggable Authentication Modules (PAM) support;
+                              systemd-user-sessions - Permit user logins after boot, prohibit user logins at shutdown</flag>
+    <flag name="s2_polkit"> Default description</flag>
+    <flag name="s2_tpm">    Trusted Platform Module (TPM) support</flag>
+
+    <!-- ### Compression -->
+    <flag name="c_bzip2"> bzip2 compression for systemd-journald; Required for systemd-importd</flag>
+    <flag name="c_lz4">   LZ4 compression for systemd-journald</flag>
+    <flag name="c_lzma">  LZMA compression for systemd-journald; Required for systemd-importd</flag>
+    <flag name="c_zlib">  zlib compression for systemd-journald; Required for systemd-importd</flag>
+
+    <!-- ### EFI -->
+    <flag name="e_efi">     bootctl - Control the firmware and boot manager settings</flag>
+    <flag name="e_gnuefi">  systemd-boot (gummiboot) - UEFI boot manager and stub loader (built using <pkg>sys-boot/gnu-efi</pkg>)</flag>
+
+    <!-- ### Gimmick -->
+    <flag name="g_qrcode">qrcode output support in journal;
+      "The QR code stuff is for showing a scannable QR code for the FSS sealing key. It's a gimmick." -- Lennart Poettering</flag>
+    <flag name="g_microhttpd">systemd-journal-gatewayd - HTTP server for journal events;
+      systemd-journal-remote - Receive journal messages over the network</flag>
+    <flag name="g_gnutls">SSL for the systemd's microhttpd</flag>
+
+    <!-- ### Misc -->
+    <flag name="m_blkid">     Add support for libblkid from <pkg>sys-apps/util-linux</pkg>;
+                                enables eg. systemd-gpt-auto-generator</flag>
+    <flag name="m_curl">      systemd-journal-upload - Send journal messages over the network; Required for systemd-importd</flag>
+    <flag name="m_elfutils">  coredump stacktraces in the journal</flag>
+    <flag name="m_gcrypt">    sealing of journal files using gcrypt;
+                                Required for systemd-importd;
+                                DNSSEC support for systemd-resolved</flag>
+    <flag name="m_hibernate"> hybernation (suspend to disk) and hybrid hybernation (suspend to disk and RAM) features of systemd-sleep</flag>
+    <flag name="m_idn">       Internationalized Domain Names support in systemd-resolved via <pkg>net-dns/libidn</pkg></flag>
+    <flag name="m_kmod">      systemd-modules-load - kernel module loading via <pkg>sys-apps/kmod</pkg></flag>
+    <flag name="m_libiptc">   netfilter Linux kernel framework support enabling eg. systemd's firewall feature in networkd/nspawn</flag>
+    <flag name="m_myhostname">  nss-myhostname - Provide hostname resolution for the locally configured system hostname (it's a plugin for GNU NSS)</flag>
+    <flag name="m_utmp">      systemd-update-utmp - Write audit and utmp updates at bootup, runlevel changes and shutdown</flag>
+    <flag name="m_vconsole">  systemd-vconsole-setup - Configure the virtual console at boot</flag>
+    <flag name="m_xkb">       Validate XKB keymap in systemd-localed</flag>
+  </use>
+</pkgmetadata>
