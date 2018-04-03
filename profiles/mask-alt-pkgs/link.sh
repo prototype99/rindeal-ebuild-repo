@@ -18,8 +18,10 @@ fi
 DST_DIR="${1}"
 
 if ! [[ -d "${DST_DIR}" ]] ; then
-	echo "DST_DIR is not a directory"
-	exit 1
+	if ! mkdir -v "${DST_DIR}" ; then
+		echo "DST_DIR is not a directory or it couldn't be created"
+		exit 1
+	fi
 fi
 
 for d in "${SCRIPT_DIR}"/* ; do
