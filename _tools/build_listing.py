@@ -4,14 +4,15 @@
 
 import os
 import glob
-import jinja2
 
-SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
+import jinja2
 
 from ebuild_repo_toolbox import EbuildRepoToolbox
 
 EbuildRepoToolbox.setup_working_environment()
-PORTAGE_DB = EbuildRepoToolbox.get_portage_dbapi()
+PORTAGE_DB = EbuildRepoToolbox.get_portagetree().dbapi
+
+SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
 
 #settings = portage.config()
 
@@ -31,28 +32,28 @@ PORTAGE_DB = EbuildRepoToolbox.get_portage_dbapi()
 cats = {}
 
 for f in glob.iglob('*/*/*.ebuild'):
-    cat, pn, pf = f.split('/')
-    if not cat in cats:
-        cats[cat] = {}
-    if pn in cats[cat]:
-        continue
+	cat, pn, pf = f.split('/')
+	if cat not in cats:
+		cats[cat] = {}
+	if pn in cats[cat]:
+		continue
 
-    db_pkg = PORTAGE_DB.xmatch("match-all", '{0}/{1}::rindeal'.format(cat, pn))[0]
-    desc, home = PORTAGE_DB.aux_get(db_pkg, ['DESCRIPTION', 'HOMEPAGE'])
-    home = home.split()[0] # get only the first_pkg homepage
+	db_pkg = PORTAGE_DB.xmatch("match-all", f'{cat}/{pn}::rindeal')[0]
+	desc, home = PORTAGE_DB.aux_get(db_pkg, ['DESCRIPTION', 'HOMEPAGE'])
+	home = home.split()[0]  # get only the first_pkg homepage
 
-    cats[cat][pn] = {
-        'desc': desc,
-        'home': home
-    }
+	cats[cat][pn] = {
+		'desc': desc,
+		'home': home
+	}
 
 
 fs_loader = jinja2.FileSystemLoader(SCRIPT_DIR)
 jinja_env = jinja2.Environment(
-        loader = fs_loader,
-        trim_blocks = True,
-        lstrip_blocks = True
-    )
+		loader=fs_loader,
+		trim_blocks=True,
+		lstrip_blocks=True
+	)
 
-template = jinja_env.get_template('listing.tmpl.md')
+template = jinja_env.get_template('listing.md.jinja2')
 print(template.render(categories=cats))
