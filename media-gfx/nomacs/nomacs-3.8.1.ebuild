@@ -24,9 +24,8 @@ DESCRIPTION="Qt-based image viewer"
 HOMEPAGE="https://www.nomacs.org/ ${GH_HOMEPAGE}"
 LICENSE="GPL-3+"
 
-plugins_commit="c11cfa6" # 2017-11-09
 SLOT="0"
-git-hosting_gen_snapshot_url "github:${PN}:${PN}-plugins" "${plugins_commit}" plugins_snap_url plugins_distfile
+git-hosting_gen_snapshot_url "github:${PN}:${PN}-plugins" "${GH_REF}" plugins_snap_url plugins_distfile
 SRC_URI+="
 	plugins? ( ${plugins_snap_url} -> ${plugins_distfile} )"
 
@@ -95,11 +94,6 @@ src_prepare-locales() {
 src_prepare() {
 	cd "${S_OLD}"
 	eapply_user
-
-	# `optional codecov tests in cmake - addresses issue #170`
-	eapply "${FILESDIR}/b8f64f5831325064fda1987ba5aca23652adc0ce.patch"
-	# `cmake: Stop calling QT5_WRAP_CPP() when building quazip and libqpsd.`
-	eapply "${FILESDIR}/92a95cd288dd64829e33aeb5d8c6e9725219e6bd.patch"
 	cd "${S}"
 
 	# prevent these from interfering with the build
