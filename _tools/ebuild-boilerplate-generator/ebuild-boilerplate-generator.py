@@ -29,7 +29,7 @@ jinja_env = jinja2.Environment(
     lstrip_blocks   = True
 )
 
-template = jinja_env.get_template('template.jinja2.ebuild')
+template = jinja_env.get_template('template.ebuild.jinja2')
 
 rendered_ebuild = template.render(**dict((mod, True) for mod in args.modules))
 
