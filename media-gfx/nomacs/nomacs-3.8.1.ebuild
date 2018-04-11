@@ -13,6 +13,8 @@ GH_RN="github"
 # which complains because of `$(CONFIGURATION)` not being expanded beforehand
 CMAKE_MAKEFILE_GENERATOR="emake"
 
+## functions: rindeal:dsf:prefix_flags
+inherit rindeal-utils
 ## EXPORT_FUNCTIONS: src_unpack
 inherit git-hosting
 ## EXPORT_FUNCTIONS: src_prepare src_configure src_compile src_test src_install
@@ -30,7 +32,26 @@ SRC_URI+="
 	plugins? ( ${plugins_snap_url} -> ${plugins_distfile} )"
 
 KEYWORDS="~amd64"
-IUSE_A=( debug opencv +plugins raw tiff zip nls )
+IUSE_A=( debug opencv +plugins raw tiff zip nls
+	$(rindeal:dsf:prefix_flags \
+		plugins_ \
+			+fake_miniatures \
+			nikon \
+			+affine_transformation \
+			+paint \
+			page_extraction \
+			ocr \
+			simple \
+			instagram_filter \
+			filter \
+			instagram_like_filter \
+			insta_like_filter \
+			mars \
+			patch_matching \
+			image_stitching \
+			ruler_detetection
+	)
+)
 
 CDEPEND_A=(
 	# qt deps specified in '${S}/cmake/Utils.cmake'
@@ -139,6 +160,25 @@ src_configure() {
 		# 	- test everything works as probably no one used nomacs with upnp before
 		#-D ENABLE_UPNP=$(usex upnp)
 		-D ENABLE_QUAZIP=$(usex zip)
+
+		### Plugins:
+		-D ENABLE_FAKE_MINIATURES=$(usex plugins_fake_miniatures)
+		-D ENABLE_NIKON=$(usex plugins_nikon)
+		-D ENABLE_TRANSFORM=$(usex plugins_affine_transformation)
+		-D ENABLE_PAINT=$(usex plugins_paint)
+		# windows only plugin
+# 		-D ENABLE_DOC=$(usex plugins_doc_analysis)
+		-D ENABLE_PAGE=$(usex plugins_page_extraction)
+		-D ENABLE_OCR=$(usex plugins_ocr)
+		-D ENABLE_SIMPLE=$(usex plugins_simple)
+		-D ENABLE_INSTAGRAM=$(usex plugins_instagram_filter)
+		-D ENABLE_FILTER=$(usex plugins_filter)
+		-D ENABLE_INSTAGRAM_FILTER=$(usex plugins_instagram_like_filter)
+		-D ENABLE_INSTA_LIKE_FILTER=$(usex plugins_insta_like_filter)
+		-D ENABLE_MARS=$(usex plugins_mars)
+		-D ENABLE_PATCHMATCHING=$(usex plugins_patch_matching)
+		-D ENABLE_IMAGESTITCHING=$(usex plugins_image_stitching)
+		-D ENABLE_RULERDETECTION=$(usex plugins_ruler_detetection)
 	)
 	cmake-utils_src_configure
 }

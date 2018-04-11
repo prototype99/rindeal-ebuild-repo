@@ -9,5 +9,21 @@
     <flag name="opencv">Add support for OpenCV (<pkg>media-libs/opencv</pkg>)</flag>
     <flag name="plugins">Add support for plugins + build some default ones</flag>
     <flag name="zip">Enable opening .zip archives</flag>
+
+    <flag name="plugins_affine_transformation">TODO</flag>
+    <flag name="plugins_fake_miniatures">TODO</flag>
+    <flag name="plugins_filter">TODO</flag>
+    <flag name="plugins_image_stitching">TODO</flag>
+    <flag name="plugins_insta_like_filter">TODO</flag>
+    <flag name="plugins_instagram_filter">TODO</flag>
+    <flag name="plugins_instagram_like_filter">TODO</flag>
+    <flag name="plugins_mars">TODO</flag>
+    <flag name="plugins_nikon">TODO</flag>
+    <flag name="plugins_ocr">TODO</flag>
+    <flag name="plugins_page_extraction">TODO</flag>
+    <flag name="plugins_paint">TODO</flag>
+    <flag name="plugins_patch_matching">TODO</flag>
+    <flag name="plugins_ruler_detetection">TODO</flag>
+    <flag name="plugins_simple">TODO</flag>
   </use>
 </pkgmetadata>
