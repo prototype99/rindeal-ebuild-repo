@@ -6,15 +6,19 @@ inherit rindeal
 
 ## EXPORT_FUNCTIONS: src_unpack
 inherit unpacker
+## functions: get_version_component_range
+inherit versionator
 
 DESCRIPTION="Extra ffmpeg codecs for the Chromium Browser"
 HOMEPAGE="https://packages.ubuntu.com/xenial/chromium-codecs-ffmpeg-extra"
 LICENSE="GPL-2"
 
+MY_PV_1="$(get_version_component_range 1-4)"
+MY_PV_2="$(get_version_component_range 5-)"
 SLOT="0"
 SRC_URI_A=(
 	"amd64? ("
-		"mirror://ubuntu/pool/universe/c/chromium-browser/${PN}_${PV}-0ubuntu1_amd64.deb"
+		"mirror://ubuntu/pool/universe/c/chromium-browser/chromium-codecs-ffmpeg-extra_${MY_PV_1}-0ubuntu${MY_PV_2}_amd64.deb"
 	")"
 )
 
