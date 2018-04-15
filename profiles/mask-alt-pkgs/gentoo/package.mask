@@ -5,6 +5,7 @@ app-admin/syslog-ng::gentoo
 app-dicts/sword-czecep::gentoo
 app-dicts/sword-czekms::gentoo
 app-doc/zeal::gentoo
+app-emulation/sen::gentoo
 app-misc/icdiff::gentoo
 app-misc/nnn::gentoo
 app-misc/tmux::gentoo
@@ -19,6 +20,7 @@ dev-libs/capnproto::gentoo
 dev-libs/glib::gentoo
 dev-libs/gnulib::gentoo
 dev-libs/libgit2::gentoo
+dev-libs/libgit2-glib::gentoo
 dev-libs/libxml2::gentoo
 dev-libs/uthash::gentoo
 dev-python/PyGithub::gentoo
