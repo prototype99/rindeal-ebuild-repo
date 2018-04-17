@@ -1,9 +1,10 @@
-# Copyright 2016-2017 Jan Chren (rindeal)
+# Copyright 2016-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 inherit rindeal
 
+## git-hosting.eclass:
 GH_RN="github:qbittorrent:qBittorrent"
 GH_REF="release-${PV}"
 
@@ -78,7 +79,7 @@ src_prepare-locales() {
 	l10n_get_locales locales app $(usex nls off all)
 	for l in ${locales} ; do
 		erm "${loc_dir}/${loc_pre}${l}${loc_post}"
-		sed -e "/qbittorrent_${l}.qm/d" -i -- src/lang.qrc || die
+		esed -e "/qbittorrent_${l}.qm/d" -i -- src/lang.qrc
 	done
 }
 
@@ -90,13 +91,14 @@ src_prepare() {
 	src_prepare-locales
 
 	# make build verbose
-	sed -r -e '/^CONFIG[ \+]*=/ s|silent||' -i -- src/src.pro || die
+	esed -r -e '/^CONFIG[ \+]*=/ s|silent||' -i -- src/src.pro
 
 	# disable AUTOMAKE as no Makefile.am is present
-	sed '/^AM_INIT_AUTOMAKE/d' -i -- configure.ac || die
+	esed -e '/^AM_INIT_AUTOMAKE/d' -i -- configure.ac
 
-	# disable qmake call inside ./configure script
-	sed '/^$QT_QMAKE/ s|^|echo |' -i -- configure.ac || die
+	# disable qmake call inside ./configure script,
+	# we'll call it ourselves from eqmake wrapper
+	esed -e '/^$QT_QMAKE/ s|^|echo |' -i -- configure.ac
 
 	eautoreconf
 
