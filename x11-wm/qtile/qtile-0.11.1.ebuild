@@ -1,5 +1,5 @@
 # Copyright 1999-2016 Gentoo Foundation
-# Copyright 2017 Jan Chren (rindeal)
+# Copyright 2017-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -12,8 +12,11 @@ GH_REF="v${PV}"
 ## distutils-r1.eclass:
 PYTHON_COMPAT=( python3_{4,5,6} )
 
+## EXPORT_FUNCTIONS: src_unpack
 inherit git-hosting
+## EXPORT_FUNCTIONS: src_prepare src_configure src_compile src_test src_install
 inherit distutils-r1
+## functions: virtualmake
 inherit virtualx
 
 DESCRIPTION="A full-featured, hackable tiling window manager written in Python"
@@ -33,8 +36,6 @@ CDEPEND_A=(
 	"x11-libs/pango"
 	"x11-libs/cairo[xcb]"
 
-	"dev-python/setuptools[${PYTHON_USEDEP}]"
-
 	## not mentioned in docs, but specified in setup.py:
 	">=dev-python/cffi-1.1.0[${PYTHON_USEDEP}]"
 	">=dev-python/six-1.4.1[${PYTHON_USEDEP}]"
@@ -44,6 +45,8 @@ CDEPEND_A=(
 	"dev-python/pygobject:3[${PYTHON_USEDEP}]"
 )
 DEPEND_A=( "${CDEPEND_A[@]}"
+	"dev-python/setuptools[${PYTHON_USEDEP}]"
+
 	"test? ("
 		"dev-python/nose[${PYTHON_USEDEP}]"
 		"x11-base/xorg-server[kdrive]"
