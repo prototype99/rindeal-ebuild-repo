@@ -1,12 +1,13 @@
-# Copyright 2017 Jan Chren (rindeal)
+# Copyright 2017-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 inherit rindeal
 
+## git-hosting.eclass:
 GH_RN="github:andlabs"
 
-# EXPORT_FUNCTIONS: src_unpack
+## EXPORT_FUNCTIONS: src_unpack
 inherit git-hosting
 inherit cmake-utils
 
@@ -21,12 +22,12 @@ SLOT="0/0"
 CDEPEND_A=(
 	">=x11-libs/gtk+-3.10:3"
 )
-DEPEND_A=()
-RDEPEND_A=()
+DEPEND_A=( "${CDEPEND_A[@]}" )
+RDEPEND_A=( "${CDEPEND_A[@]}" )
 
 src_configure() {
 	local mycmakeargs=(
-		-DBUILD_SHARED_LIBS=YES
+		-D BUILD_SHARED_LIBS=YES
 	)
 
 	cmake-utils_src_configure
