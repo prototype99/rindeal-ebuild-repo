@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>dev.rindeal+gentoo-overlay@gmail.com</email>
+    <name>Jan Chren (rindeal)</name>
+  </maintainer>
+  <use>
+    <flag name="ruby">Install the Ruby-based dbtoepub script; requires an interpreter compatible with <pkg>app-eselect/eselect-ruby</pkg>.</flag>
+    <flag name="fo">fo</flag>
+    <flag name="images">images</flag>
+    <flag name="params">params</flag>
+    <flag name="slides">slides</flag>
+    <flag name="webhelp">webhelp</flag>
+  </use>
+</pkgmetadata>
