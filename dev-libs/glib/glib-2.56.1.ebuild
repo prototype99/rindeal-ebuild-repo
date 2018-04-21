@@ -21,6 +21,8 @@ inherit xdg
 inherit gnome2-utils
 ## EXPORT_FUNCTIONS: src_configure src_compile src_test src_install
 inherit meson
+## functions: append-cxxflags
+inherit flag-o-matic
 
 DESCRIPTION="The GLib library of C routines"
 HOMEPAGE="${GH_HOMEPAGE} https://developer.gnome.org/glib"
@@ -57,9 +59,11 @@ CDEPEND_A=(
 	"libmount? ( sys-apps/util-linux[libmount] )"
 )
 DEPEND_A=( "${CDEPEND_A[@]}"
-	"app-text/docbook-xml-dtd:4.1.2"
-	"dev-libs/libxslt"
-	"sys-devel/gettext"
+	"doc? ("
+		"app-text/docbook-xml-dtd:4.1.2"
+		"dev-libs/libxslt"
+	")"
+	"nls? ( sys-devel/gettext )"
 	"systemtap? ( dev-util/systemtap )"
 	"${PYTHON_DEPS}"
 )
@@ -130,7 +134,11 @@ src_prepare() {
 }
 
 src_configure() {
-	local myconf
+	# ```
+	# * ../glib-2.56.1/glib/gmain.h:593:24: warning: the comparison will always evaluate as 'true' for the address of 'g_source_remove' will never be NULL [-Waddress]
+	# ```
+	append-cflags "-Wno-address"
+	append-cxxflags "-Wno-address"
 
 	local emesonargs=(
 		# -D runtime_libdir
@@ -151,11 +159,6 @@ src_configure() {
 	)
 
 	meson_src_configure
-
-	local d
-	for d in glib gio gobject; do
-		eln -s "${S}"/docs/reference/${d}/html docs/reference/${d}/html
-	done
 }
 
 src_install() {
