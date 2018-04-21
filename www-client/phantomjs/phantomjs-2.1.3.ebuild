@@ -1,4 +1,4 @@
-# Copyright 2016-2017 Jan Chren (rindeal)
+# Copyright 2016-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -6,13 +6,18 @@ inherit rindeal
 
 PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
 
+## git-hosting.eclass:
 GH_RN='github:ariya'
 
 inherit git-hosting
 inherit python-any-r1
+## functions: qt5_get_bindir
 inherit qmake-utils
+## functions: makeopts_jobs
 inherit multiprocessing
+## functions: pax-mark
 inherit pax-utils
+## functions: virtx
 inherit virtualx
 
 DESCRIPTION='Headless WebKit scriptable with a JavaScript API'
@@ -22,7 +27,7 @@ LICENSE='BSD'
 SLOT='0'
 
 KEYWORDS='amd64 ~arm ~arm64'
-IUSE='examples test'
+IUSE_A=( examples test )
 
 ## http://phantomjs.org/build.html - says pretty much nothing
 ## https://anonscm.debian.org/cgit/collab-maint/phantomjs.git/tree/debian
@@ -93,20 +98,12 @@ src_prepare() {
 		QMAKE_LFLAGS_DEBUG=
 	)
 
-	local sed_args
+	## make sure correct qmake is used
+	esed -r -e "s|qmake = qmakePath.*|qmake = \"$(qt5_get_bindir)/qmake\"|" -i -- 'build.py'
+	esed -r -e "s|command = \[qmake\].*|command = [qmake, $( printf '"%s",' "${qmake_args[@]}" )\"\"]|" -i -- 'build.py'
 
-	# make sure correct qmake is used
-	sed_args=(
-		-e "s|qmake = qmakePath.*|qmake = \"$(qt5_get_bindir)/qmake\"|"
-		-e "s|command = \[qmake\].*|command = [qmake, $( printf '"%s",' "${qmake_args[@]}" )\"\"]|"
-	)
-	sed -r "${sed_args[@]}" -i -- 'build.py' || die
-
-	sed_args=(
-		# delete check for Qt version as Portage has already taken care of it
-		-e '/^if\(!equals\(QT_MAJOR_VERSION/ , /}/d'
-	)
-	sed -r "${sed_args[@]}" -i -- 'src/phantomjs.pro' || die
+	# delete check for Qt version as Portage has already taken care of it
+	esed -r -e '/^if\(!equals\(QT_MAJOR_VERSION/ , /}/d' -i -- 'src/phantomjs.pro'
 }
 
 src_compile() {
