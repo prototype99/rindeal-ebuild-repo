@@ -11,6 +11,7 @@ app-misc/nnn::gentoo
 app-misc/tmux::gentoo
 app-portage/repoman::gentoo
 app-shells/dash::gentoo
+app-text/docbook-xsl-stylesheets::gentoo
 dev-cpp/catch::gentoo
 dev-db/sqlitestudio::gentoo
 dev-java/commons-codec::gentoo
