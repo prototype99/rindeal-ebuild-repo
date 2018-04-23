@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 
-import requests
-import portage
 import os
 import traceback
 import glob
-from terminaltables import AsciiTable
 from multiprocessing import Pool, Process, Lock
 import subprocess
+
+import requests
+import portage
+from terminaltables import AsciiTable
 
 
 DEBUG=0
@@ -71,11 +72,11 @@ for pn, code in sorted(codes.items()):
     new_updates = [dict() for x in range(0)]
 
     # find category by globbing in this repo
-    cat = glob.glob("*/{0}/{0}*.ebuild".format(pn))[0].split("/")[0]
+    cat = glob.glob(f"*/{pn}/{pn}*.ebuild")[0].split("/")[0]
 
     # find the newest version for each slot
     loc_slots = {}
-    local_versions = pdb.xmatch('match-visible', '{}/{}::rindeal'.format(cat, pn))
+    local_versions = pdb.xmatch('match-visible', f"{cat}/{pn}::rindeal")
     for v in local_versions:
         slot = pdb.aux_get(v, ["SLOT"])[0]
         # add if not yet present
@@ -104,7 +105,7 @@ for pn, code in sorted(codes.items()):
                 })
 
     # now look for the newest version outside of any known slots
-    latest_loc_pkg = pdb.xmatch('bestmatch-visible', '{}/{}::rindeal'.format(cat, pn))
+    latest_loc_pkg = pdb.xmatch('bestmatch-visible', f"{cat}/{pn}::rindeal")
     latest_loc_ver = portage.pkgsplit(latest_loc_pkg)[1]
     latest_loc_slot = pdb.aux_get(latest_loc_pkg, ["SLOT"])[0]
     latest_rem_slot = remote_versions[code]['latest_slot']
@@ -143,38 +144,38 @@ print(AsciiTable(pretty_table).table)
 # and prompt the user for an action
 y = input("Press 'y' to proceed with the update\n")
 if y != "y":
-    print("You pressed '{}', bailing...".format(y))
+    print(f"You pressed '{y}', bailing...")
     exit(0)
 
 
 def run_cmd(cmd):
     pn = os.path.basename(os.getcwd())
-    print("> \033[94m{}\033[0m: `\033[93m{}\033[0m`".format(pn, cmd))
+    print(f"> \033[94m{pn}\033[0m: `\033[93m{cmd}\033[0m`")
     err = os.system(cmd)
     if err:
-        print("{}: command '{}' failed with code {}".format(pn, cmd, err))
+        print(f"{pn}: command '{cmd}' failed with code {err}")
     return err
 
 
 def update_pkg(cat, pn, loc_slot, loc_ver, rem_slot, rem_ver):
-    global GIT_LOCK
+    global GIT_LOCK, PKG_LOCKS, PORTDIR_OVERLAY
 
-    cat_pn = "{}/{}".format(cat, pn)
+    cat_pn = f"{cat}/{pn}"
 
-    os.chdir("{}/{}".format(PORTDIR_OVERLAY, cat_pn))
+    os.chdir(f"{PORTDIR_OVERLAY}/{cat_pn}")
 
     PKG_LOCKS[cat_pn].acquire()
 
-    new_slot = 0 if loc_slot == rem_slot else 1
+    new_slot = False if loc_slot == rem_slot else True
 
-    GIT_LOCK.acquire()
     if new_slot: # bump into a new slot
-        run_cmd('cp -v {0}-{1}*.ebuild {0}-{2}.ebuild'.format(pn, loc_slot, rem_ver))
+        run_cmd(f"cp -v {pn}-{loc_slot}*.ebuild {pn}-{rem_ver}.ebuild")
     else: # bump inside a slot
-        run_cmd('git mv -v {0}-{1}*.ebuild {0}-{2}.ebuild'.format(pn, loc_ver, rem_ver))
-    GIT_LOCK.release()
+        GIT_LOCK.acquire()
+        run_cmd(f"git mv -v {pn}-{loc_ver}*.ebuild {pn}-{rem_ver}.ebuild")
+        GIT_LOCK.release()
 
-    if run_cmd('repoman manifest') != 0:
+    if run_cmd(f"repoman manifest {pn}-{rem_ver}.ebuild") != 0:
         GIT_LOCK.acquire()
         run_cmd('git reset -- .')
         run_cmd('git checkout -- .')
@@ -185,11 +186,11 @@ def update_pkg(cat, pn, loc_slot, loc_ver, rem_slot, rem_ver):
         return 1
 
     GIT_LOCK.acquire()
-    run_cmd('git add {0}-{1}.ebuild'.format(pn, rem_ver))
+    run_cmd(f"git add {pn}-{rem_ver}.ebuild")
     if new_slot:
-        run_cmd("git commit -m '{0}/{1}: new version v{2}' .".format(cat, pn, rem_ver))
+        run_cmd(f"git commit -m '{cat}/{pn}: new version v{rem_ver}' .")
     else: # bump inside a slot
-        run_cmd("git commit -m '{0}/{1}: bump to v{2}' .".format(cat, pn, rem_ver))
+        run_cmd(f"git commit -m '{cat}/{pn}: bump to v{rem_ver}' .")
     GIT_LOCK.release()
 
     PKG_LOCKS[cat_pn].release()
@@ -198,18 +199,18 @@ def update_pkg(cat, pn, loc_slot, loc_ver, rem_slot, rem_ver):
 GIT_LOCK = Lock()
 PKG_LOCKS = {}
 
-# https://stackoverflow.com/a/25558333/2566213
-def pool_init(l):
-    global PKG_LOCKS
-    PKG_LOCKS = l
-
 for update in update_table:
-    cat_pn = "{}/{}".format(update['cat'], update['pn'])
+    cat_pn = update['cat'] + "/" + update['pn']
     if not cat_pn in PKG_LOCKS:
         PKG_LOCKS[cat_pn] = Lock()
 
 # DEBUG
 #update_pkg(update_table[0])
+
+# https://stackoverflow.com/a/25558333/2566213
+def pool_init(l):
+    global PKG_LOCKS
+    PKG_LOCKS = l
 
 pool = Pool(processes=8, initializer=pool_init, initargs=(PKG_LOCKS, ))
 
