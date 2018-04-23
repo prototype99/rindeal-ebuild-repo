@@ -101,7 +101,7 @@ REQUIRED_USE_A=(
 	# `dnl turn off pthreads if no threaded resolver	`
 	"threads? ( dns_threaded )"
 	"ssl? ("
-		"^^ ("
+		"|| ("
 			$(rindeal:dsf:prefix_flags \
 				"ssl_" \
 				axtls gnutls libressl mbedtls nss openssl)
