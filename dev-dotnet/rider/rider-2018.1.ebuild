@@ -4,7 +4,7 @@
 EAPI=6
 
 JBIJ_PN_PRETTY="Rider"
-JBIJ_URI="resharper/JetBrains.Rider-${PV}"
+JBIJ_URI="rider/JetBrains.Rider-${PV}"
 
 inherit jetbrains-intellij
 
