@@ -38,6 +38,8 @@ dev-python/typing::gentoo
 dev-util/clinfo::gentoo
 dev-util/gdbus-codegen::gentoo
 dev-util/premake::gentoo
+dev-util/spirv-headers::gentoo
+dev-util/spirv-tools::gentoo
 dev-util/strace::gentoo
 dev-util/webstorm::gentoo
 media-gfx/cairosvg::gentoo
