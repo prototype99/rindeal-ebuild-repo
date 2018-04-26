@@ -39,7 +39,11 @@ CDEPEND_A=(
 DEPEND_A=( "${CDEPEND_A[@]}" )
 RDEPEND_A=( "${CDEPEND_A[@]}" )
 
-REQUIRED_USE_A=(  )
+REQUIRED_USE_A=(
+	"?? ("
+		demos-target-{xcb,xlib,wayland,mir,display}
+	")"
+)
 RESTRICT+=""
 
 inherit arrays
