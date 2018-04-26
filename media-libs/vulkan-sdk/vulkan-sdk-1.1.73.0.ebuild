@@ -9,7 +9,7 @@ GH_RN="github:KhronosGroup:Vulkan-LoaderAndValidationLayers"
 GH_REF="sdk-${PV}"
 
 ## python-any-r1.eclass:
-PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
+PYTHON_COMPAT=( python3_{4,5,6} )
 
 ## EXPORT_FUNCTIONS: src_unpack
 inherit git-hosting
@@ -46,6 +46,7 @@ inherit arrays
 
 src_configure() {
 	local mycmakeargs=(
+		-D USE_CCACHE=OFF
 		-D BUILD_WSI_XCB_SUPPORT=$(usex xcb)
 		-D BUILD_WSI_XLIB_SUPPORT=$(usex xlib)
 		-D BUILD_WSI_WAYLAND_SUPPORT=$(usex wayland)
@@ -57,9 +58,9 @@ src_configure() {
 	elif use demos-target-xlib ; then
 		mycmakeargs+=( -D DEMOS_WSI_SELECTION=XLIB )
 	elif use demos-target-wayland ; then
-		mycmakeargs+=( -D DEMOS_WSI_SELECTION=XLIB )
+		mycmakeargs+=( -D DEMOS_WSI_SELECTION=WAYLAND )
 	elif use demos-target-mir ; then
-		mycmakeargs+=( -D DEMOS_WSI_SELECTION=XLIB )
+		mycmakeargs+=( -D DEMOS_WSI_SELECTION=MIR )
 	elif use demos-target-display ; then
 		mycmakeargs+=( -D DEMOS_WSI_SELECTION=DISPLAY )
 	fi
