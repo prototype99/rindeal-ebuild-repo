@@ -1,18 +1,20 @@
 #!/usr/bin/env python3
-# Copyright 2016-2017 Jan Chren (rindeal) <dev.rindeal@gmail.com>
+# Copyright 2016-2018 Jan Chren (rindeal) <dev.rindeal@gmail.com>
 # Distributed under the terms of the GNU General Public License v2
 
 import os
 import glob
+import sys
 
 import jinja2
 
+SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
+
+sys.path.insert(0, os.path.join(SCRIPT_DIR, ".."))
 from ebuild_repo_toolbox import EbuildRepoToolbox
 
 EbuildRepoToolbox.setup_working_environment()
 PORTAGE_DB = EbuildRepoToolbox.get_portagetree().dbapi
-
-SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
 
 #settings = portage.config()
 
