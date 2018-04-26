@@ -35,6 +35,8 @@ CDEPEND_A=(
 	"xlib? ( x11-libs/libX11 )"
 	"wayland? ( dev-libs/wayland )"
 	"mir? ( dev-libs/mir )"
+
+	"demos? ( dev-util/glslang )"
 )
 DEPEND_A=( "${CDEPEND_A[@]}" )
 RDEPEND_A=( "${CDEPEND_A[@]}" )
@@ -47,6 +49,14 @@ REQUIRED_USE_A=(
 RESTRICT+=""
 
 inherit arrays
+
+src_prepare() {
+	eapply_user
+
+	esed -r -e '/install\(.*\$\{CMAKE_INSTALL_BINDIR\}\)/ '"s|\\\$\{CMAKE_INSTALL_BINDIR\}\)|/usr/libexec/${PN})|" -i -- demos/CMakeLists.txt demos/*/CMakeLists.txt
+
+	cmake-utils_src_prepare
+}
 
 src_configure() {
 	local mycmakeargs=(
