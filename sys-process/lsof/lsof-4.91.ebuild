@@ -14,11 +14,10 @@ DESCRIPTION="Lists open files for running Unix processes"
 HOMEPAGE="https://people.freebsd.org/~abe/"
 LICENSE="lsof"
 
-MY_P=${P/-/_}
+MY_P="${P/-/_}_src"
 SLOT="0"
 SRC_URI_A=(
-	"https://www.mirrorservice.org/sites/lsof.itap.purdue.edu/pub/tools/unix/lsof/${MY_P}.tar.bz2"
-	"ftp://lsof.itap.purdue.edu/pub/tools/unix/lsof/${MY_P}.tar.bz2"
+	"https://fossies.org/linux/misc/${MY_P}.tar.bz2"
 )
 
 KEYWORDS="~amd64 ~arm ~arm64"
@@ -33,16 +32,11 @@ DEPEND_A=( "${CDEPEND_A[@]}"
 )
 RDEPEND_A=( "${CDEPEND_A[@]}" )
 
+RESTRICT+=" mirror"
+
 inherit arrays
 
-S="${WORKDIR}/${MY_P}/${MY_P}_src"
-
-src_unpack() {
-	default
-
-	cd "${MY_P}" || die
-	unpack "./${MY_P}_src.tar"
-}
+S="${WORKDIR}/${MY_P}"
 
 src_prepare() {
 	eapply "${FILESDIR}"/${PN}-4.85-cross.patch #432120
