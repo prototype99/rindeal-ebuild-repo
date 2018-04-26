@@ -37,6 +37,7 @@ CDEPEND_A=(
 	"mir? ( dev-libs/mir )"
 
 	"demos? ( dev-util/glslang )"
+	"layers? ( dev-util/spirv-tools )"
 )
 DEPEND_A=( "${CDEPEND_A[@]}" )
 RDEPEND_A=( "${CDEPEND_A[@]}" )
@@ -53,7 +54,13 @@ inherit arrays
 src_prepare() {
 	eapply_user
 
-	esed -r -e '/install\(.*\$\{CMAKE_INSTALL_BINDIR\}\)/ '"s|\\\$\{CMAKE_INSTALL_BINDIR\}\)|/usr/libexec/${PN})|" -i -- demos/CMakeLists.txt demos/*/CMakeLists.txt
+	esed -r -e '/install\(.*\$\{CMAKE_INSTALL_BINDIR\}\)/ '"s|\\\$\{CMAKE_INSTALL_BINDIR\}\)|\${LIBEXECDIR}/${PN})|" -i -- demos/CMakeLists.txt demos/*/CMakeLists.txt
+
+	## nasty hackery to workaround hard dependencies on submodules
+	esed -e '/run_external_revision_generate.*SPIRV_TOOLS_COMMIT_ID/d' -i -- CMakeLists.txt
+	echmod +x ./scripts/external_revision_generator.py
+	./scripts/external_revision_generator.py --rev_file <(echo deadbeef ) -s SPIRV_TOOLS_COMMIT_ID -o spirv_tools_commit_id.h || die
+	eln -s "${S}/spirv_tools_commit_id.h" layers/spirv_tools_commit_id.h
 
 	cmake-utils_src_prepare
 }
@@ -86,6 +93,10 @@ src_configure() {
 		-D BUILD_DEMOS=$(usex demos)
 		-D BUILD_VKJSON=$(usex vkjson)
 		-D BUILD_ICD=$(usex icd)
+
+		-D SPIRV_TOOLS_LIB=""  # workaround for undefined var error
+		-D SPIRV_TOOLS_OPT_LIB=""  # workaround for undefined var error
+		-D SPIRV_TOOLS_INCLUDE_DIR="${EROOT}usr/include/spirv-tools"
 	)
 
 	cmake-utils_src_configure
