@@ -5,4 +5,9 @@
     <email>dev.rindeal+gentoo-overlay@gmail.com</email>
     <name>Jan Chren (rindeal)</name>
   </maintainer>
+  <use>
+    <flag name="color-terminal">color-terminal</flag>
+    <flag name="compressing-codec">compressing-codec</flag>
+    <flag name="executables">executables</flag>
+  </use>
 </pkgmetadata>
