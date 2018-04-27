@@ -54,7 +54,7 @@ inherit arrays
 src_prepare() {
 	eapply_user
 
-	esed -r -e '/install\(.*\$\{CMAKE_INSTALL_BINDIR\}\)/ '"s|\\\$\{CMAKE_INSTALL_BINDIR\}\)|\${LIBEXECDIR}/${PN})|" -i -- demos/CMakeLists.txt demos/*/CMakeLists.txt
+	esed -r -e '/install\(.*\$\{CMAKE_INSTALL_BINDIR\}\)/ s|\$\{CMAKE_INSTALL_BINDIR\}|${CMAKE_INSTALL_LIBEXECDIR}/'"${PN}"'|' -i -- demos/CMakeLists.txt demos/*/CMakeLists.txt
 
 	## nasty hackery to workaround hard dependencies on submodules
 	esed -e '/run_external_revision_generate.*SPIRV_TOOLS_COMMIT_ID/d' -i -- CMakeLists.txt
