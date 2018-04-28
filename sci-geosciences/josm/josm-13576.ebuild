@@ -38,9 +38,9 @@ SLOT="0"
 MY_P="${PN}_0.0.svn${PV}"
 # Upstream doesn't provide versioned tarballs
 SRC_URI_A=(
-	## josm 0.0.svn13367+dfsg-1~bpo9+1
-	"http://snapshot.debian.org/archive/debian/20180318T163348Z/pool/main/j/josm/josm_0.0.svn13500%2Bdfsg-2.debian.tar.xz"
-	"http://snapshot.debian.org/archive/debian/20180304T215030Z/pool/main/j/josm/josm_0.0.svn13500%2Bdfsg.orig.tar.gz"
+	## josm 0.0.svn13576+dfsg-3
+	"http://snapshot.debian.org/archive/debian/20180404T054230Z/pool/main/j/josm/josm_0.0.svn13576%2Bdfsg-3.debian.tar.xz"
+	"http://snapshot.debian.org/archive/debian/20180327T100316Z/pool/main/j/josm/josm_0.0.svn13576%2Bdfsg.orig.tar.gz"
 )
 
 KEYWORDS="~amd64"
@@ -60,6 +60,8 @@ DEPEND_A=( "${CDEPEND_A[@]}"
 	"dev-java/javacc:0"
 	"dev-java/ant-contrib:0"
 	"app-text/xmlstarlet" # required for build files patching
+	"dev-lang/perl"
+	"dev-perl/TermReadKey"
 )
 RDEPEND_A=( "${CDEPEND_A[@]}"
 	">=virtual/jre-1.8"
