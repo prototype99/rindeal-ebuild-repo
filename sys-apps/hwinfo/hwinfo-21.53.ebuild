@@ -1,11 +1,13 @@
-# Copyright 2016 Jan Chren (rindeal)
+# Copyright 2016-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
+inherit rindeal
 
+## git-hosting,eclass:
 GH_RN='github:openSUSE'
 
-inherit git-hosting multilib toolchain-funcs
+inherit git-hosting
 
 DESCRIPTION='Hardware detection tool used in SuSE Linux'
 LICENSE='GPL-2'
@@ -25,22 +27,24 @@ RDEPEND="${CDEPEND}
 	dev-perl/XML-Parser
 	virtual/udev"
 
+inherit arrays
+
 src_prepare() {
 	default
 
 	local sed_args
 
 	# Respect AR variable
-	sed -e 's:ar r:$(AR) r:' \
-		-i -- src/{,isdn,ids,smp,hd}/Makefile || die
+	esed -e 's:ar r:$(AR) r:' \
+		-i -- src/{,isdn,ids,smp,hd}/Makefile
 
 	# Respect LDFLAGS
-	sed -e 's:$(CC) $(CFLAGS):$(CC) $(LDFLAGS) $(CFLAGS):' \
-		-i -- src/ids/Makefile || die
+	esed -e 's:$(CC) $(CFLAGS):$(CC) $(LDFLAGS) $(CFLAGS):' \
+		-i -- src/ids/Makefile
 
 	# Respect MAKE variable
-	sed -e 's:make:$(MAKE):' \
-		-i -- Makefile{,.common} || die
+	esed -e 's:make:$(MAKE):' \
+		-i -- Makefile{,.common}
 
 	sed_args=(
 		# Skip forced -pipe and -g
@@ -50,8 +54,8 @@ src_prepare() {
 		# respect LD
 		-e 's|LD[ \t]*=|LD ?=|'
 	)
-	sed "${sed_args[@]}" \
-		-i -- Makefile.common || die
+	esed "${sed_args[@]}" \
+		-i -- Makefile.common
 }
 
 src_configure() {
