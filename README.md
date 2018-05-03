@@ -156,10 +156,10 @@ to the main [Gentoo™] ebuild repository.
 [Gentoo™]: https://www.gentoo.org/ "main Gentoo project website"
 
 [ci-master-badge]:           https://badge-proxy.janchren.eu/ttl=60/https://img.shields.io/travis/rindeal/rindeal-ebuild-repo/master.svg?style=flat-square&label=CI@master
-[docker-label-badge]:        https://badge-proxy.janchren.eu/ttl=60/https://img.shields.io/badge/docker-image-gray.svg?style=flat-square&longCache=true
-[docker-badge]:              https://semaphoreci.com/api/v1/rindeal/portage-docker-images/branches/master/shields_badge.svg
-[last-commit-badge]:         https://badge-proxy.janchren.eu/ttl=60/https://img.shields.io/github/last-commit/rindeal/rindeal-ebuild-repo/master.svg?style=flat-square
-[commit-activity-4w-badge]:  https://badge-proxy.janchren.eu/ttl=60/https://img.shields.io/github/commit-activity/4w/rindeal/rindeal-ebuild-repo.svg?style=flat-square
-[commit-activity-y-badge]:   https://badge-proxy.janchren.eu/ttl=60/https://img.shields.io/github/commit-activity/y/rindeal/rindeal-ebuild-repo.svg?style=flat-square
-[issue-closure-stats-badge]: https://badge-proxy.janchren.eu/ttl=60/https://img.shields.io/issuestats/i/long/github/rindeal/rindeal-ebuild-repo.svg?style=flat-square
-[pr-closure-stats-badge]:    https://badge-proxy.janchren.eu/ttl=60/https://img.shields.io/issuestats/p/long/github/rindeal/rindeal-ebuild-repo.svg?style=flat-square
+[docker-label-badge]:        https://badge-proxy.janchren.eu/ttl=86400/https://img.shields.io/badge/docker-image-gray.svg?style=flat-square&longCache=true
+[docker-badge]:              https://badge-proxy.janchren.eu/ttl=60/https://semaphoreci.com/api/v1/rindeal/portage-docker-images/branches/master/shields_badge.svg
+[last-commit-badge]:         https://badge-proxy.janchren.eu/ttl=600/https://img.shields.io/github/last-commit/rindeal/rindeal-ebuild-repo/master.svg?style=flat-square
+[commit-activity-4w-badge]:  https://badge-proxy.janchren.eu/ttl=600/https://img.shields.io/github/commit-activity/4w/rindeal/rindeal-ebuild-repo.svg?style=flat-square
+[commit-activity-y-badge]:   https://badge-proxy.janchren.eu/ttl=600/https://img.shields.io/github/commit-activity/y/rindeal/rindeal-ebuild-repo.svg?style=flat-square
+[issue-closure-stats-badge]: https://badge-proxy.janchren.eu/ttl=3600/https://img.shields.io/issuestats/i/long/github/rindeal/rindeal-ebuild-repo.svg?style=flat-square
+[pr-closure-stats-badge]:    https://badge-proxy.janchren.eu/ttl=3600/https://img.shields.io/issuestats/p/long/github/rindeal/rindeal-ebuild-repo.svg?style=flat-square
