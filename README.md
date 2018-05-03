@@ -155,11 +155,11 @@ to the main [Gentoo™] ebuild repository.
 [docker-hub-project]: https://hub.docker.com/r/rindeal/portage-amd64-base/
 [Gentoo™]: https://www.gentoo.org/ "main Gentoo project website"
 
-[ci-master-badge]:           https://img.shields.io/travis/rindeal/rindeal-ebuild-repo/master.svg?style=flat-square&label=CI@master&maxAge=60
-[docker-label-badge]:        https://img.shields.io/badge/docker-image-gray.svg?style=flat-square&longCache=true
+[ci-master-badge]:           https://badge-proxy.janchren.eu/ttl=60/https://img.shields.io/travis/rindeal/rindeal-ebuild-repo/master.svg?style=flat-square&label=CI@master&maxAge=60
+[docker-label-badge]:        https://badge-proxy.janchren.eu/ttl=60/https://img.shields.io/badge/docker-image-gray.svg?style=flat-square&longCache=true
 [docker-badge]:              https://semaphoreci.com/api/v1/rindeal/portage-docker-images/branches/master/shields_badge.svg
-[last-commit-badge]:         https://img.shields.io/github/last-commit/rindeal/rindeal-ebuild-repo/master.svg?style=flat-square&maxAge=3600
-[commit-activity-4w-badge]:  https://img.shields.io/github/commit-activity/4w/rindeal/rindeal-ebuild-repo.svg?style=flat-square&maxAge=30
-[commit-activity-y-badge]:   https://img.shields.io/github/commit-activity/y/rindeal/rindeal-ebuild-repo.svg?style=flat-square&maxAge=30
-[issue-closure-stats-badge]: https://img.shields.io/issuestats/i/long/github/rindeal/rindeal-ebuild-repo.svg?style=flat-square&maxAge=86400
-[pr-closure-stats-badge]:    https://img.shields.io/issuestats/p/long/github/rindeal/rindeal-ebuild-repo.svg?style=flat-square&maxAge=86400
+[last-commit-badge]:         https://badge-proxy.janchren.eu/ttl=60/https://img.shields.io/github/last-commit/rindeal/rindeal-ebuild-repo/master.svg?style=flat-square&maxAge=3600
+[commit-activity-4w-badge]:  https://badge-proxy.janchren.eu/ttl=60/https://img.shields.io/github/commit-activity/4w/rindeal/rindeal-ebuild-repo.svg?style=flat-square&maxAge=30
+[commit-activity-y-badge]:   https://badge-proxy.janchren.eu/ttl=60/https://img.shields.io/github/commit-activity/y/rindeal/rindeal-ebuild-repo.svg?style=flat-square&maxAge=30
+[issue-closure-stats-badge]: https://badge-proxy.janchren.eu/ttl=60/https://img.shields.io/issuestats/i/long/github/rindeal/rindeal-ebuild-repo.svg?style=flat-square&maxAge=86400
+[pr-closure-stats-badge]:    https://badge-proxy.janchren.eu/ttl=60/https://img.shields.io/issuestats/p/long/github/rindeal/rindeal-ebuild-repo.svg?style=flat-square&maxAge=86400
