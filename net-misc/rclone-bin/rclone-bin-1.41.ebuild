@@ -7,20 +7,20 @@ inherit rindeal
 ## functions: systemd_douserunit
 inherit systemd
 
-DESCRIPTION='Sync files to and from Google Drive, S3, Swift, Cloudfiles, Dropbox, ...'
-HOMEPAGE='http://rclone.org/ https://github.com/ncw/rclone'
-LICENSE='MIT'
+DESCRIPTION="rsync for cloud storage"
+HOMEPAGE="https://rclone.org/ https://github.com/ncw/rclone"
+LICENSE="MIT"
 
 PN_NB="${PN%-bin}"
 SLOT="0"
-src_uri_base="https://github.com/ncw/${PN_NB}/releases/download/v${PV}/${PN_NB}-v${PV}-linux"
-SRC_URI="
-	amd64?	( ${src_uri_base}-amd64.zip )
-	arm?	( ${src_uri_base}-arm.zip )
-	arm64?	( ${src_uri_base}-arm64.zip )
-"
 
-KEYWORDS="-* ~amd64 ~arm ~arm64"
+SRC_URI=""
+KEYWORDS="-*"
+for _a in amd64 arm arm64 ; do
+	SRC_URI+=" ${_a}? ( https://github.com/ncw/${PN_NB}/releases/download/v${PV}/${PN_NB}-v${PV}-linux-${_a}.zip )"
+	KEYWORDS+=" ~${_a}"
+done
+unset _a
 
 RDEPEND="!!${CATEGORY}/${PN_NB}"
 
@@ -34,7 +34,6 @@ src_unpack() {
 }
 
 inst_d="/opt/${PN_NB}"
-QA_PRESTRIPPED="${inst_d#/}/bin/${PN_NB}"
 
 src_install() {
 	into "${inst_d}"
@@ -46,3 +45,5 @@ src_install() {
 
 	systemd_douserunit "${FILESDIR}/rclone-mount@.service"
 }
+
+QA_PRESTRIPPED="${inst_d#/}/bin/${PN_NB}"
