@@ -6,7 +6,7 @@ EAPI=6
 inherit rindeal
 
 GH_RN="github:GNOME"
-inherit git-hosting
+GH_REF="3c76114e73fb98a01403b2349a600161d362e5fe"
 
 PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
 
@@ -15,6 +15,8 @@ inherit linux-info
 ## variables: PYTHON_REQUIRED_USE, PYTHON_DEPS
 ## functions: python_setup
 inherit python-r1
+## EXPORT_FUNCTIONS: src_unpack
+inherit git-hosting
 ## EXPORT_FUNCTIONS: src_prepare pkg_preinst pkg_postinst pkg_postrm
 inherit xdg
 ## functions: gnome2_environment_reset, gnome2_giomodule_cache_update, gnome2_schemas_update
