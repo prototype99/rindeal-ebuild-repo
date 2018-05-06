@@ -21,7 +21,7 @@ LICENSE="GPL-2"
 SLOT="0"
 SRC_URI="https://gitweb.gentoo.org/proj/${PN}.git/snapshot/${P}.tar.bz2"
 
-KEYWORDS="~amd64 ~arm ~arm64"
+KEYWORDS="amd64 arm arm64"
 IUSE_A=( +ptrace )
 
 CDEPEND_A=()
