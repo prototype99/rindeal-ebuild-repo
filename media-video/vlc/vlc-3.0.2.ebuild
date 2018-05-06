@@ -326,6 +326,7 @@ CDEPEND_A=(
 	"vcd? ( >=dev-libs/libcdio-0.78.2:0 )"
 	"avahi? ( >=net-dns/avahi-0.6:0[dbus] )"
 	"libplacebo? ( media-libs/libplacebo )"
+	"shine? ( media-sound/shine )"
 )
 DEPEND_A=( "${CDEPEND_A[@]}"
 	"xcb? ( x11-proto/xproto:0 )"
@@ -384,31 +385,24 @@ pkg_setup() {
 }
 
 src_prepare() {
+	# Fix build system mistake.
+	eapply "${FILESDIR}"/${PN}-2.1.0-fix-libtremor-libs.patch
+	# Fix up broken audio when skipping using a fixed reversed bisected commit.
+	eapply "${FILESDIR}"/${PN}-2.1.0-TomWij-bisected-PA-broken-underflow.patch
+
 	eapply_user
-
-	# we call autoreconf manually in eautoreconf()
-	esed -e '/^autoreconf/ s|^|# |' -i -- ./bootstrap
-	# Bootstrap when we are on a git checkout.
-	if [[ "${PV}" == *9999* ]] ; then
-		./bootstrap || die
-	fi
-
-	# Make it build with libtool 1.5
-# 	erm m4/lt* m4/libtool.m4
 
 	# We are not in a real git checkout due to the absence of a .git directory.
 	touch src/revision.txt || die
 
-	# Fix build system mistake.
-	eapply "${FILESDIR}"/${PN}-2.1.0-fix-libtremor-libs.patch
-
-	# Fix up broken audio when skipping using a fixed reversed bisected commit.
-	eapply "${FILESDIR}"/${PN}-2.1.0-TomWij-bisected-PA-broken-underflow.patch
-
 	# Don't use --started-from-file when not using dbus.
 	if ! use dbus ; then
-		esed 's, --started-from-file,,' -i -- share/vlc.desktop.in
+		esed -e 's, --started-from-file,,' -i -- share/vlc.desktop.in
 	fi
+
+	# Disable running of vlc-cache-gen, we do that in pkg_postinst
+	esed -e "/test.*build.*host/s/\$(host)/nothanks/" \
+		-i -- Makefile.am bin/Makefile.am
 
 	eautoreconf
 
