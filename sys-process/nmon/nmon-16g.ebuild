@@ -1,34 +1,43 @@
 # Copyright 1999-2016 Gentoo Foundation
-# Copyright 2016-2017 Jan Chren (rindeal)
+# Copyright 2016-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 inherit rindeal
 
-inherit flag-o-matic toolchain-funcs
-
-MY_P="lmon${PV}"
+## functions: append-cflags
+inherit flag-o-matic
+## functions: tc-getPKG_CONFIG
+inherit toolchain-funcs
+## functions: dohelp2man
+inherit help2man
 
 DESCRIPTION="Nigel's performance MONitor for CPU, memory, network, disks, etc..."
-HOMEPAGE="http://nmon.sourceforge.net/"
+HOMEPAGE="https://nmon.sourceforge.net/"
 LICENSE="GPL-3"
 
+MY_DISTFILE="lmon${PV}.c"
+
 SLOT="0"
-SRC_URI="mirror://sourceforge/${PN}/${MY_P}.c"
+SRC_URI="mirror://sourceforge/${PN}/${MY_DISTFILE}"
 
 KEYWORDS="amd64 arm ~arm64"
 
-CDEPEND="sys-libs/ncurses:0="
-DEPEND="${CDEPEND}
-	sys-apps/help2man
-	virtual/pkgconfig
-"
-RDEPEND="${CDEPEND}"
+CDEPEND_A=(
+	"sys-libs/ncurses:0="
+)
+DEPEND_A=( "${CDEPEND_A[@]}"
+	"virtual/pkgconfig"
+)
+RDEPEND_A=( "${CDEPEND_A[@]}"
+)
+
+inherit arrays
 
 S="${WORKDIR}"
 
 src_unpack() {
-	cp -v -f "${DISTDIR}"/${MY_P}.c "${S}"/${PN}.c || die
+	ecp -f "${DISTDIR}/${MY_DISTFILE}" "${S}/${PN}.c"
 }
 
 src_configure() {
@@ -40,8 +49,8 @@ src_configure() {
 		-DLARGEMEM
 
 		## archs
-		$(usex amd64 -DX86 '')
-		$(usex arm -DARM '')
+		$(usex amd64 "-DX86" "")
+		$(usex arm "-DARM" "")
 	)
 	append-cflags "${cflags[@]}"
 	export LDLIBS="$( $(tc-getPKG_CONFIG) --libs ncurses ) -lm"
@@ -49,26 +58,15 @@ src_configure() {
 
 src_compile() {
 	emake ${PN}
-
-	local help2man=(
-		help2man
-
-		--help-option=-h
-		--no-info
-		--no-discard-stderr
-		--name="Performance Monitor"
-		--version-string=${PV}
-
-		./${PN}
-	)
-	echo "${help2man[@]}"
-	"${help2man[@]}" > ${PN}.1 || die
 }
 
 src_install() {
 	dobin ${PN}
 
-	doman ${PN}.1
+	HELP2MAN_OPTS=(
+		--name="Performance Monitor"
+	)
+	dohelp2man "${PN}"
 
 	newenvd "${FILESDIR}"/${PN}.envd 70${PN}
 }
