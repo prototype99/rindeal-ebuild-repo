@@ -9,7 +9,7 @@ GH_RN="github:redacted:XKCD-password-generator"
 GH_REF="${PN}-${PV}"
 
 ## python-*.eclass:
-PYTHON_COMPAT=( python{2_7,3_3,3_4,3_5} )
+PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
 
 ## EXPORT_FUNCTIONS: src_unpack
 inherit git-hosting
