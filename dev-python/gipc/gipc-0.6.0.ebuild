@@ -1,18 +1,20 @@
-# Copyright 2016-2017 Jan Chren (rindeal)
+# Copyright 2016-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 inherit rindeal
 
+## git-hosting.eclass:
 GH_RN="bitbucket:jgehrcke"
 
-PYTHON_COMPAT=( python2_7 python3_{3,4,5} )
+## python-*.eclass:
+PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
 
 inherit git-hosting
 inherit distutils-r1
 
 DESCRIPTION="Child process management and IPC in the context of gevent"
-HOMEPAGE="http://gehrcke.de/gipc ${GH_HOMEPAGE}"
+HOMEPAGE="https://gehrcke.de/gipc ${GH_HOMEPAGE}"
 LICENSE="MIT"
 
 SLOT="0"
