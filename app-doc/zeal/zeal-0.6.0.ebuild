@@ -1,4 +1,4 @@
-# Copyright 2017 Jan Chren (rindeal)
+# Copyright 2017-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -74,6 +74,8 @@ RDEPEND_A=( "${CDEPEND_A[@]}"
 )
 
 src_prepare() {
+	eapply_user
+
 	xdg_src_prepare
 	cmake-utils_src_prepare
 }
