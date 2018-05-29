@@ -64,7 +64,6 @@ src_install() {
 	insinto "${PATH_AUDIO##"${EPREFIX}"}"
 	doins -r wav/*
 
-
 	rindeal:expand_vars "${FILESDIR}/${BIN_NAME}.service.in" "${BIN_NAME}.service"
 	rindeal:expand_vars "${FILESDIR}/${BIN_NAME}.service.conf.in" "${BIN_NAME}.service.conf"
 
