@@ -18,6 +18,8 @@ inherit cmake-utils
 inherit xdg
 ## functions: make_desktop_entry
 inherit desktop
+## functions: dohelp2man
+inherit help2man
 
 DESCRIPTION="Software implementation of the OpenAL 3D audio API"
 HOMEPAGE="http://kcat.strangesoft.net/openal.html ${GH_HOMEPAGE}"
@@ -71,60 +73,57 @@ src_prepare() {
 	eapply "${FILESDIR}"/1.17.2-disable_pulseaudio_auto_spawn.patch
 	eapply_user
 
-	# TODO: when some dependency is not found for examples/utils/tests, build doesn't die
-
 	xdg_src_prepare
 	cmake-utils_src_prepare
 }
 
 src_configure() {
 		local mycmakeargs=(
-			-D "ALSOFT_BACKEND_ALSA=$(usex alsa)"
-			-D "ALSOFT_BACKEND_COREAUDIO=$(usex coreaudio)"
-			-D "ALSOFT_BACKEND_JACK=$(usex jack)"
-			-D "ALSOFT_BACKEND_OSS=$(usex oss)"
-			-D "ALSOFT_BACKEND_PORTAUDIO=$(usex portaudio)"
-			-D "ALSOFT_BACKEND_PULSEAUDIO=$(usex pulseaudio)"
-			-D "ALSOFT_BACKEND_WAVE=ON" # Wave File Writer
+			-D "ALSOFT_DLOPEN=ON"
+			-D "ALSOFT_WERROR=OFF"
+			# for dynamicly loading backend libs
+			-D "ALSOFT_DLOPEN=ON"
 
-			-D "ALSOFT_CPUEXT_SSE=$(usex cpu_flags_x86_sse)"
-			-D "ALSOFT_CPUEXT_SSE2=$(usex cpu_flags_x86_sse2)"
-			-D "ALSOFT_CPUEXT_SSE3=$(usex cpu_flags_x86_sse3)"
-			-D "ALSOFT_CPUEXT_SSE4_1=$(usex cpu_flags_x86_sse4_1)"
-			-D "ALSOFT_CPUEXT_NEON=$(usex cpu_flags_arm_neon)"
+			-D ALSOFT_{REQUIRE,BACKEND}_ALSA=$(usex alsa)
+			-D ALSOFT_{REQUIRE,BACKEND}_OSS=$(usex oss)
+			# SOLARIS # skipped
+			# SNDIO # skipped
+			# QSA # skipped
+			# Windows-only # skipped
+			-D ALSOFT_{REQUIRE,BACKEND}_PORTAUDIO=$(usex portaudio)
+			-D ALSOFT_{REQUIRE,BACKEND}_PULSEAUDIO=$(usex pulseaudio)
+			-D ALSOFT_{REQUIRE,BACKEND}_JACK=$(usex jack)
+			-D ALSOFT_{REQUIRE,BACKEND}_COREAUDIO=$(usex coreaudio)
+			# OpenSL (Android) # skipped
+			# SDL2 # skipped
+			-D ALSOFT_BACKEND_WAVE=ON # Wave File Writer
 
-			-D "ALSOFT_EXAMPLES=$(usex examples)"
-			-D "ALSOFT_INSTALL=ON"
-			# Disable building the alsoft-config utility
-			-D "ALSOFT_NO_CONFIG_UTIL=$(usex '!gui')"
-			-D "ALSOFT_TESTS=$(usex tests)"
+			-D ALSOFT_{REQUIRE,CPUEXT}_SSE=$(usex cpu_flags_x86_sse)
+			-D ALSOFT_{REQUIRE,CPUEXT}_SSE2=$(usex cpu_flags_x86_sse2)
+			# broken upstream, https://github.com/kcat/openal-soft/issues/195
+			-D ALSOFT_{REQUIRE,CPUEXT}_SSE3=$(usex cpu_flags_x86_sse3)
+			-D ALSOFT_{REQUIRE,CPUEXT}_SSE4_1=$(usex cpu_flags_x86_sse4_1)
+			-D ALSOFT_{REQUIRE,CPUEXT}_NEON=$(usex cpu_flags_arm_neon)
+
 			# Build and install utility programs
 			-D "ALSOFT_UTILS=$(usex utils)"
+			# Disable building the alsoft-config utility
+			-D "ALSOFT_NO_CONFIG_UTIL=$(usex '!gui')"
+			-D "ALSOFT_EXAMPLES=$(usex examples)"
+			-D "ALSOFT_TESTS=$(usex tests)"
+
+			# alsoft.conf sample configuration file
+			-D "ALSOFT_CONFIG=ON"
+			# HRTF definition files
+			-D "ALSOFT_HRTF_DEFS=ON"
+			# AmbDec preset files
+			-D "ALSOFT_AMBDEC_PRESETS=ON"
+			# install headers and libs, executables only otherwise
+			-D "ALSOFT_INSTALL=ON"
+			-D "ALSOFT_EMBED_HRTF_DATA=OFF"
 		)
 
 		cmake-utils_src_configure
-}
-
-H2M_BINS=( )
-
-src_compile() {
-	cmake-utils_src_compile
-
-	use tests && H2M_BINS+=( altonegen )
-	use utils && H2M_BINS+=( makehrtf openal-info )
-
-	local h2m_opts=(
-		--no-discard-stderr
-		--no-info
-		--version-string=${PV}
-	)
-
-	local b
-	for b in "${H2M_BINS[@]}" ; do
-		set -- help2man "${h2m_opts[@]}" --output=${b}.1 build/${b}
-		echo "$@"
-		"$@" || die
-	done
 }
 
 src_install() {
@@ -132,7 +131,13 @@ src_install() {
 
 	cmake-utils_src_install
 
-	(( ${#H2M_BINS[*]} )) && doman "${H2M_BINS[@]/%/.1}"
+	local b h2m_bins=()
+	use tests && h2m_bins+=( altonegen )
+	use utils && h2m_bins+=( makehrtf openal-info )
+	for b in "${h2m_bins[@]}" ; do
+		local H2M_NO_DEFAULT_HELP_OPTION=1
+		dohelp2man "build/${b}"
+	done
 
 	# NOTE: alsoft.conf doesn't support PREFIX, needs patching in ${S}/Alc/alcConfig.c
 	insinto /etc/openal
