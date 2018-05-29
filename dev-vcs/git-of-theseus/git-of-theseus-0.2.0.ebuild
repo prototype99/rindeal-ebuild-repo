@@ -6,9 +6,9 @@ inherit rindeal
 
 ## git-hosting.eclass:
 GH_RN="github:erikbern"
+GH_REF="v${PV}"
 
-# TODO: fork seaborn pkg from gentoo repos and add python3.6
-PYTHON_COMPAT=( python3_{4,5} )
+PYTHON_COMPAT=( python3_{4,5,6} )
 DISTUTILS_SINGLE_IMPL=1
 
 ## EXPORT_FUNCTIONS: src_unpack
