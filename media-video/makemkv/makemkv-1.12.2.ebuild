@@ -13,7 +13,7 @@ inherit toolchain-funcs
 inherit xdg
 
 DESCRIPTION="Tool for ripping and streaming Blu-ray, HD-DVD and DVD discs"
-HOMEPAGE="http://www.makemkv.com/" # https version is broken
+HOMEPAGE="https://www.makemkv.com/"
 LICENSE="LGPL-2.1 MPL-1.1 MakeMKV-EULA openssl"
 
 MY_P_OSS="${PN}-oss-${PV}"
@@ -79,7 +79,6 @@ pkg_setup() {
 
 src_prepare() {
 	eapply "${FILESDIR}"/path.patch
-	eapply "${FILESDIR}"/1.10.5-wget.patch
 
 	xdg_src_prepare
 
@@ -126,7 +125,7 @@ my_install_key_updater() {
 	newexe <(cat <<-_EOF_
 		#!/bin/sh
 		echo "Retrieving new key..."
-		new_key="\$( wget -q -O - 'http://www.makemkv.com/forum2/viewtopic.php?f=5&t=1053' | \
+		new_key="\$( wget -q -O - 'https://www.makemkv.com/forum2/viewtopic.php?f=5&t=1053' | \
 			grep -Po '(?<=<div class="codecontent">)T[^<>]+'
 		)"
 		echo "The newest beta key is: '\${new_key}'"
@@ -212,8 +211,6 @@ src_install-bin() {
 	# this directory is hardcoded in the binaries
 	insinto /usr/share/MakeMKV
 
-	# install profiles
-	doins src/share/*.xml
 	# install bluray support
 	doins src/share/*.jar
 
@@ -241,7 +238,7 @@ pkg_postinst() {
 	elog "While MakeMKV is in beta mode, upstream has provided a license"
 	elog "to use if you do not want to purchase one."
 	elog "See this forum thread for more information, including the key:"
-	elog "  http://www.makemkv.com/forum2/viewtopic.php?f=5&t=1053"
+	elog "  https://www.makemkv.com/forum2/viewtopic.php?f=5&t=1053"
 	elog "Note that beta license has an expiration date and you will"
 	elog "need to check for newer licenses/releases. But you can do so"
 	elog "automatically by using '/usr/libexec/makemkv/update-beta-key.sh'"
