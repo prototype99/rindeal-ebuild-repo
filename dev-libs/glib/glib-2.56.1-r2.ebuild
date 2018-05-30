@@ -123,7 +123,7 @@ src_prepare() {
 	# Don't build tests, also prevents extra deps, bug gentoo#512022
 	esed -e "s/subdir('tests')//" -i -- meson.build
 	if ! use nls ; then
-		esed -e "s/subdir('po')//" -i -- meson.build
+		esed -e "/i18n.gettext/d" -i -- po/meson.build
 	fi
 
 	# Leave python shebang alone - handled by python_replicate_script
