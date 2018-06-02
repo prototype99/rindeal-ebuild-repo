@@ -23,9 +23,9 @@ inherit ltprune
 DESCRIPTION="standard informational utilities and process-handling tools"
 LICENSE="GPL-2"
 
-SLOT="0/6"  # libprocps.so
+SLOT="0/7"  # libprocps.so
 
-KEYWORDS="~amd64 ~arm ~arm64"
+KEYWORDS="amd64 arm arm64"
 IUSE_A=(
 	test
 
@@ -56,7 +56,6 @@ RDEPEND_A=( "${CDEPEND_A[@]}"
 inherit arrays
 
 src_prepare() {
-	eapply "${FILESDIR}"/${PN}-3.3.8-kill-neg-pid.patch # http://crbug.com/255209
 	eapply "${FILESDIR}"/${PN}-3.3.11-sysctl-manpage.patch # 565304
 	eapply "${FILESDIR}"/${PN}-3.3.12-proc-tests.patch # 583036
 
