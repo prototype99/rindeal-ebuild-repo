@@ -105,7 +105,6 @@ src_configure() {
 		--disable-wingdi # Windows
 		--disable-quartz # OSX
 		--disable-ubuntu # Ubuntu icons
-		--disable-geoclue # soon to be deprecated
 
 		$(use_enable nls)
 
