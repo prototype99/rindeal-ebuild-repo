@@ -23,7 +23,7 @@ inherit ltprune
 DESCRIPTION="standard informational utilities and process-handling tools"
 LICENSE="GPL-2"
 
-SLOT="0/7"  # libprocps.so
+SLOT="0/8"  # libprocps.so
 
 KEYWORDS="amd64 arm arm64"
 IUSE_A=(
