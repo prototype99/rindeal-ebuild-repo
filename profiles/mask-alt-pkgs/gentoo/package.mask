@@ -69,6 +69,7 @@ net-vpn/miredo::gentoo
 net-wireless/wpa_supplicant::gentoo
 sci-calculators/speedcrunch::gentoo
 sci-geosciences/josm::gentoo
+sci-libs/proj::gentoo
 sys-apps/hdparm::gentoo
 sys-apps/hwinfo::gentoo
 sys-apps/hwloc::gentoo
