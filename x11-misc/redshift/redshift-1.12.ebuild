@@ -1,13 +1,15 @@
 # Copyright 1999-2017 Gentoo Foundation
-# Copyright 2017 Jan Chren (rindeal)
+# Copyright 2017-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 inherit rindeal
 
+## git-hosting.eclass:
 GH_RN="github:jonls"
 GH_REF="v${PV}"
 
+## python-*.eclass:
 PYTHON_COMPAT=( python3_{4,5,6} )
 
 # functions: rindeal:dsf:prefix_flags
@@ -30,7 +32,7 @@ LICENSE="GPL-3"
 
 SLOT="0"
 
-KEYWORDS="amd64"
+KEYWORDS="~amd64"
 IUSE_A=(
 	gui nls
 
@@ -129,7 +131,7 @@ src_install() {
 		dosym redshift-gtk /usr/bin/gtk-redshift
 	fi
 
-	for s in "${PN}.service" $(usex gui "${PN}-gtk.service" ''); do
+	for s in "${PN}.service" $(usex gui "${PN}-gtk.service" '') ; do
 		rindeal:expand_vars "${FILESDIR}/${s}.in" "${T}/${s}"
 		systemd_douserunit "${T}/${s}"
 	done
