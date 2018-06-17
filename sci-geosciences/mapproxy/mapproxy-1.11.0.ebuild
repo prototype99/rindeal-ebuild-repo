@@ -50,5 +50,5 @@ python_prepare_all() {
 python_install_all() {
 	distutils-r1_python_install_all
 
-	find "${ED}" -name '*.pth' -delete || die
+	find "${ED}" -name '*.pth' -print -delete || die
 }
