@@ -1,12 +1,13 @@
-# Copyright 2016-2017 Jan Chren (rindeal)
+# Copyright 2016-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 inherit rindeal
 
 GH_RN='github:ssvb'
-[[ "${PV}" == *9999* ]] || \
-	GH_REF="v${PV}"
+[[ "${PV}" != *9999* ]] && \
+	GH_REF="a2cf6d7"  # Feb 14, 2017
+# 	GH_REF="v${PV}"
 
 ## EXPORT_FUNCTIONS: src_unpack
 inherit git-hosting
