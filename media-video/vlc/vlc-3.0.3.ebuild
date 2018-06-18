@@ -329,7 +329,7 @@ CDEPEND_A=(
 	"shine? ( media-sound/shine )"
 )
 DEPEND_A=( "${CDEPEND_A[@]}"
-	"xcb? ( x11-proto/xproto:0 )"
+	"xcb? ( x11-base/xorg-proto:0 )"
 	"app-arch/xz-utils:0"
 	"dev-lang/yasm:*"
 	">=sys-devel/gettext-0.19.6:*"
