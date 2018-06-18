@@ -19,7 +19,7 @@ inherit libtool
 inherit pam
 
 DESCRIPTION="Utilities to deal with user accounts"
-HOMEPAGE="${GH_HOMEPAGE} http://pkg-shadow.alioth.debian.org/"
+HOMEPAGE="${GH_HOMEPAGE}"
 LICENSE="BSD GPL-2"
 
 SLOT="0"
@@ -93,6 +93,7 @@ src_prepare-locales() {
 
 src_prepare() {
 	eapply "${FILESDIR}"/4.1.3-dots-in-usernames.patch
+	eapply "${FILESDIR}"/4.6-fix_unguarded_ENABLE_SUBIDS_code.patch
 	eapply_user
 
 	src_prepare-locales
