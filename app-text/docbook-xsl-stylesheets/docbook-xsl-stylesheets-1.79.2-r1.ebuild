@@ -40,6 +40,7 @@ RESTRICT=test
 inherit arrays
 
 src_prepare() {
+	eapply "${FILESDIR}"/nonrecursive-string-subst.patch
 	eapply_user
 
 	# Delete the unnecessary Java-related stuff and other tools as they
