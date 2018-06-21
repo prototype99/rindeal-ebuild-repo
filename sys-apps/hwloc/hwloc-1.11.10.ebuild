@@ -1,26 +1,30 @@
 # Copyright 1999-2017 Gentoo Foundation
-# Copyright 2017 Jan Chren (rindeal)
+# Copyright 2017-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 inherit rindeal
 
+## git-hosting.eclass:
+GH_RN="github:open-mpi"
+GH_REF="${P}"
+
+## EXPORT_FUNCTIONS: src_unpack
+## variables: GH_HOMEPAGE
+inherit git-hosting
 inherit flag-o-matic
 inherit cuda
 inherit autotools
-inherit versionator
 inherit toolchain-funcs
 
 DESCRIPTION="displays the hardware topology in convenient formats"
-HOMEPAGE="https://www.open-mpi.org/projects/hwloc/"
+HOMEPAGE="https://www.open-mpi.org/projects/hwloc/ ${GH_HOMEPAGE}"
 LICENSE="BSD"
 
 SLOT="0/5"
-MY_PV="v$(get_version_component_range 1-2)"
-SRC_URI="https://www.open-mpi.org/software/${PN}/${MY_PV}/downloads/${P}.tar.bz2"
 
 KEYWORDS="~amd64 ~arm ~arm64"
-IUSE="cairo debug gl +numa opencl +pci plugins svg static-libs xml X"
+IUSE_A=( cairo debug gl +numa opencl +pci plugins svg static-libs xml X )
 
 # TODO opencl only works with AMD so no virtual
 # dev-util/nvidia-cuda-toolkit is always multilib
