@@ -23,7 +23,7 @@ LICENSE="PSF-2"
 
 SLOT="0"
 
-KEYWORDS="~amd64 ~arm ~arm64"
+KEYWORDS="amd64 arm arm64"
 
 python_test() {
 	cd "${BUILD_DIR}" || die
