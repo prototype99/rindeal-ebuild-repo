@@ -21,9 +21,9 @@ KEYWORDS="~amd64 ~arm ~arm64"
 IUSE_A=( )
 
 CP_DEPEND="
-    dev-java/xz-java:0
-    dev-java/zstd-jni:0
-    app-arch/brotli:0[java]
+	dev-java/xz-java:0
+	dev-java/zstd-jni:0
+	app-arch/brotli:0[java]
 "
 
 CDEPEND_A=(
