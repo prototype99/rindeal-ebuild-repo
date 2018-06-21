@@ -38,9 +38,9 @@ SLOT="0"
 MY_P="${PN}_0.0.svn${PV}"
 # Upstream doesn't provide versioned tarballs
 SRC_URI_A=(
-	## josm 0.0.svn13576+dfsg-3
-	"http://snapshot.debian.org/archive/debian/20180404T054230Z/pool/main/j/josm/josm_0.0.svn13576%2Bdfsg-3.debian.tar.xz"
-	"http://snapshot.debian.org/archive/debian/20180327T100316Z/pool/main/j/josm/josm_0.0.svn13576%2Bdfsg.orig.tar.gz"
+	## josm 0.0.svn13878+dfsg-1
+	"http://snapshot.debian.org/archive/debian/20180531T100916Z/pool/main/j/josm/josm_0.0.svn13878%2Bdfsg-1.debian.tar.xz"
+	"http://snapshot.debian.org/archive/debian/20180531T100916Z/pool/main/j/josm/josm_0.0.svn13878%2Bdfsg.orig.tar.gz"
 )
 
 KEYWORDS="~amd64"
@@ -132,7 +132,7 @@ src_prepare() {
 	esed -e "s,/usr/share/java/ant-contrib.jar,$(java-pkg_getjars --build-only ant-contrib),g" \
 		-i -- build.xml i18n/build.xml || die
 	esed -e "s,/usr/share/java/gettext-ant-tasks.jar,$(java-pkg_getjars --build-only gettext-ant-tasks),g" \
-		-i -- build.xml i18n/build.xml || die
+		-i -- i18n/build.xml || die
 
 	## print stats for EPSG compilation
 	esed -e "s|printStats *= *false|printStats = true|" \
