@@ -1,5 +1,5 @@
 # Copyright 1999-2015 Gentoo Foundation
-# Copyright 2017 Jan Chren (rindeal)
+# Copyright 2017-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -7,7 +7,7 @@ inherit rindeal
 
 GH_RN="github:Kozea:CairoSVG"
 
-PYTHON_COMPAT=( python3_{4,5} )
+PYTHON_COMPAT=( python3_{5,6} )
 
 inherit git-hosting
 inherit distutils-r1
