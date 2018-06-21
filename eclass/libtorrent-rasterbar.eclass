@@ -43,7 +43,7 @@ inherit rindeal-python-utils
 
 
 DESCRIPTION='C++ BitTorrent implementation focusing on efficiency and scalability'
-HOMEPAGE="http://libtorrent.org ${GH_HOMEPAGE}"
+HOMEPAGE="https://libtorrent.org/ ${GH_HOMEPAGE}"
 LICENSE='BSD'
 
 
