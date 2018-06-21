@@ -51,8 +51,6 @@ LICENSE='BSD'
 SLOT="0/${LT_SONAME}"
 
 
-[[ "${PV}" != *9999* ]] && [[ -z "${KEYWORDS}" ]] && \
-	KEYWORDS='~amd64 ~arm ~arm64'
 IUSE_A=( +crypt debug +dht doc examples python static-libs test )
 
 
