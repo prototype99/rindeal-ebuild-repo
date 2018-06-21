@@ -226,6 +226,7 @@ src_configure() {
 		$(use_with $(my_use_ssl mbedtls)	mbedtls)
 		$(use_with $(my_use_ssl nss)		nss)
 		$(use_with $(my_use_ssl openssl)	ssl)
+		# TODO: --with-wolfssl as an alias for --with-cyassl
 	)
 	if use ssl_openssl || use ssl_libressl || use ssl_gnutls ; then
 		my_econf_args+=( --with-ca-path="${EPREFIX}"/etc/ssl/certs )
