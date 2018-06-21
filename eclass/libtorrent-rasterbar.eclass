@@ -87,12 +87,12 @@ libtorrent-rasterbar_src_prepare() {
 
 	# https://github.com/rindeal/gentoo-overlay/issues/28
 	# make sure lib search dir points to the main `S` dir and not to python copies
-	sed -e "s|-L[^ ]*/src/\.libs|-L${S}/src/.libs|" \
-		-i -- bindings/python/link_flags.in || die
+	esed -e "s|-L[^ ]*/src/\.libs|-L${S}/src/.libs|" \
+		-i -- bindings/python/link_flags.in
 
 	# respect optimization flags
-	sed -e '/DEBUGFLAGS *=/ s|-O[a-z0-9]||' \
-		-i -- configure.ac || die
+	esed -e '/DEBUGFLAGS *=/ s|-O[a-z0-9]||' \
+		-i -- configure.ac
 
 	make_setup.py_extension_compilation_parallel bindings/python/setup.py
 
