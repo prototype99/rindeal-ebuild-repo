@@ -15,22 +15,28 @@ PYTHON_COMPAT=( python2_7 )
 
 ## variables: EPYTHON
 inherit python-utils-r1
+
 ## EXPORT_FUNCTIONS: pkg_setup
 inherit python-single-r1
+
 ## EXPORT_FUNCTIONS: src_unpack
 ## variables: GH_HOMEPAGE
 inherit git-hosting
+
 ## functions: eautoreconf
 inherit autotools
+
 ## functions: systemd_get_systemunitdir
 inherit systemd
+
 ## functions: prune_libtool_files
 inherit ltprune
+
 ## functions: rindeal:expand_vars
 inherit rindeal-utils
 
 DESCRIPTION="syslog replacement with advanced filtering features"
-HOMEPAGE="http://www.balabit.com/network-security/syslog-ng ${GH_HOMEPAGE}"
+HOMEPAGE="https://syslog-ng.com/ ${GH_HOMEPAGE}"
 LICENSE="GPL-2+ LGPL-2.1+"
 
 SLOT="0"
@@ -84,26 +90,18 @@ inherit arrays
 src_prepare() {
 	eapply_user
 
-	# TODO: drop on post 3.13.2 release
-	# https://github.com/balabit/syslog-ng/commit/ba1e35a48aed9ecc3e9c9210ead267235319de2f
-	eapply "${FILESDIR}"/${PN}-3.12.1-json-c-0.13+.patch
-
 	# remove bundled libs
 	local autogen_sh_submodules=(
 		lib/ivykis
-# 		modules/afmongodb/mongo-c-driver/src/libbson
+		modules/afmongodb/mongo-c-driver/src/libbson
 		modules/afmongodb/mongo-c-driver
-		modules/afamqp/rabbitmq-c
 		lib/jsonc
 	)
 	local d
 	for d in "${autogen_sh_submodules[@]}" ; do
-		erm -r "${d}"
+		erm -rf "${d}"
 		esed -r -e "/^SUBMODULES/ s,( |\")${d}(/[^ ]*)?,\1,g"  -i -- autogen.sh
 	done
-
-	# obsolete dependency
-	esed -r -e 's|\beventlog\b||' -i -- syslog-ng.pc.in
 
 	if ! use doc ; then
 		esed -e '/^include doc/d' -i -- Makefile.am
@@ -156,23 +154,21 @@ src_configure() {
 		$(use_enable tcpd tcp-wrapper)
 		$(use_enable spoof-source)
 		--disable-sun-streams # collect syslog messages from Solaris systems
+		--disable-openbsd-system-source
 		$(use_enable sql) # support for storing messages in SQL DBs through libdbi
 		$(use_enable pacct) # process accounting logs
 		$(use_enable caps linux-caps)
 		--disable-gcov
 		$(use_enable mongodb)
-		$(use_with mongodb mongoc system)
-		--disable-legacy-mongodb-options
+		--disable-legacy-mongodb-options  # Support libmongo-client non-URI MongoDB options.
 		$(use_enable json) # JSON processing support
 		$(use_enable amqp) # AMQP (Advanced Message Queuing Protocol)
-		$(use_with amqp librabbitmq-client system)
 		$(use_enable stomp) #  Simple (or Streaming) Text Oriented Message Protocol (STOMP)
 		$(use_enable smtp)
 		$(use_enable http)
 		$(use_enable redis)
 		$(use_enable systemd)
-		# deprecated
-		--disable-geoip
+		--disable-geoip  # NOTE: deprecated in gentoo
 		$(use_enable geoip2)
 		--disable-riemann # no support and no support forever
 		$(use_enable python)
@@ -184,13 +180,14 @@ src_configure() {
 		--disable-java-modules
 		$(use_enable native)
 		--disable-all-modules
+		# TODO: enable optional static
 		--disable-static
 		--enable-shared
 		$(use_enable largefile)
 		$(use_enable valgrind)
 
 		### Optional Packages:
-# 		--with-libnet=path # no without
+# 		--with-libnet=path
 		--with-pidfile-dir=/var/run
 		--with-module-dir=/usr/$(get_libdir)/syslog-ng
 # 		--with-module-path=path
@@ -198,12 +195,8 @@ src_configure() {
 # 		--with-ld-library-path=path
 		--with-systemdsystemunitdir="$(systemd_get_systemunitdir)"
 		# --with-package-name=package
-		# already set above
-		# --with-mongoc=system/internal/auto/no
+		$(use_with mongodb mongoc system)
 		$(use_with json jsonc system)
-		# already set above
-		# --use-without-librabbitmq-client
-		# not optional
 		--with-ivykis=system
 # 		--with-libesmtp=DIR
 # 		--with-libcurl=DIR
