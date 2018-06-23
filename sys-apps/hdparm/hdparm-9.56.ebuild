@@ -16,19 +16,19 @@ SLOT="0"
 SRC_URI="mirror://sourceforge/${PN}/${P}.tar.gz"
 
 KEYWORDS="~amd64 ~arm ~arm64"
-IUSE="static"
+IUSE_A=( static )
+
+inherit arrays
 
 src_prepare() {
-	PATCHES=(
-		"${FILESDIR}"/9.28-wiper_sh_max_ranges.patch
-		"${FILESDIR}"/9.43-fallocate_close_fd.patch
-		"${FILESDIR}"/9.43-fix_zero_div_in_get_geom.patch
-		"${FILESDIR}"/9.43-fix-bashisms.patch
-		"${FILESDIR}"/9.48-fix_memleak_strdup.patch
-		"${FILESDIR}"/9.48-sysmacros_header.patch
-		"${FILESDIR}"/9.48-wiper_warn.patch
-	)
-	default
+	eapply "${FILESDIR}"/9.28-wiper_sh_max_ranges.patch
+	eapply "${FILESDIR}"/9.43-fallocate_close_fd.patch
+	eapply "${FILESDIR}"/9.43-fix_zero_div_in_get_geom.patch
+	eapply "${FILESDIR}"/9.43-fix-bashisms.patch
+	eapply "${FILESDIR}"/9.48-fix_memleak_strdup.patch
+	eapply "${FILESDIR}"/9.48-wiper_warn.patch
+	eapply "${FILESDIR}"/9.56-quiet_security_freeze.patch
+	eapply_user
 
 	local sed_args=(
 		# no strip
@@ -45,8 +45,6 @@ src_prepare() {
 
 src_configure() {
 	use static && append-ldflags -static
-
-	default
 }
 
 src_install() {
