@@ -7,9 +7,11 @@ inherit rindeal
 GH_RN="github:mttkay"
 GH_REF="550c876167fe69671155138e3140fd1ee6419f16"
 
+## EXPORT_FUNCTIONS: src_unpack
 inherit git-hosting
-# EXPORT_FUNCTIONS: pkg_setup src_prepare src_compile pkg_preinst
+## EXPORT_FUNCTIONS: pkg_setup src_prepare src_compile pkg_preinst
 inherit java-pkg-2
+## EXPORT_FUNCTIONS: src_compile src_install
 inherit java-pkg-simple
 
 DESCRIPTION="Light-weight client-side OAuth library for Java"
