@@ -1,1 +1,0 @@
-- gathered patches from Gentoo, Debian, Fedora, OpenSuse, ArchLinux
