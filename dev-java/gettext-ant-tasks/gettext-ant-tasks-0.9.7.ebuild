@@ -1,18 +1,19 @@
-# Copyright 2017 Jan Chren (rindeal)
+# Copyright 2017-2018 Jan Chren (rindeal)
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 inherit rindeal
 
-# java-pkg-2.eclass
+## java-pkg-2.eclass:
 EANT_BUILD_TARGET="compile jar"
 EANT_GENTOO_CLASSPATH="
 	ant-core
 "
 
-# EXPORT_FUNCTIONS: pkg_setup src_prepare src_compile pkg_preinst
+## EXPORT_FUNCTIONS: pkg_setup src_prepare src_compile pkg_preinst
 inherit java-pkg-2
-# EXPORT_FUNCTIONS: src_configure
+
+## EXPORT_FUNCTIONS: src_configure
 inherit java-ant-2
 
 DESCRIPTION="Java classes for internationalization (i18n) - Ant tasks"
@@ -35,14 +36,12 @@ RDEPEND_A=( "${CDEPEND_A[@]}"
 	">=virtual/jre-1.7"
 )
 
-RESTRICT+=" mirror"
-
 inherit arrays
 
 S="${WORKDIR}/${PN}"
 
 src_prepare() {
-	default
+	eapply_user
 
 	java-pkg-2_src_prepare
 	java-ant_rewrite-classpath
