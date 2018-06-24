@@ -23,7 +23,7 @@ LICENSE="Apache-2.0"
 SLOT="0"
 SRC_URI="mirror://debian/pool/main/${PN:0:1}/${PN}/${PN}_0.9.7+svn206.orig.tar.xz"
 
-KEYWORDS="~amd64 ~arm ~arm64"
+KEYWORDS="amd64 arm arm64"
 IUSE_A=( )
 
 CDEPEND_A=(
