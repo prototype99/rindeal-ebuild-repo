@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>dev.rindeal+gentoo-overlay@gmail.com</email>
+    <name>Jan Chren (rindeal)</name>
+  </maintainer>
+  <use>
+    <flag name="archive">Build rpm2archive</flag>
+    <flag name="beecrypt">Use beecrypt as a crypto backend</flag>
+    <flag name="dmalloc">Build with dmalloc debugging support</flag>
+    <flag name="elf">Pull in virtual/libelf automagic dependency</flag>
+    <flag name="imaevm">Build with imaevm support</flag>
+    <flag name="libdw">Pull in virtual/libelf automagic dependency</flag>
+    <flag name="lmdb">Build with LMDB rpm database format support</flag>
+    <flag name="ndb">Enable the new rpm database format (experimental)</flag>
+    <flag name="nss">Use NSS as a crypto backend</flag>
+    <flag name="openssl">Use OpenSSL as a crypto backend</flag>
+    <flag name="plugins">Build without plugin support</flag>
+    <flag name="zstd">Build without zstd support</flag>
+  </use>
+</pkgmetadata>
