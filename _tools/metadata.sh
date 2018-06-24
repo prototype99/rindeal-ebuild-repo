@@ -1,7 +1,7 @@
 #!/bin/bash -
 
 DEFAULT_NAME="Jan Chren (rindeal)"
-DEFAULT_EMAIL="dev.rindeal+gentoo-overlay@gmail.com"
+DEFAULT_EMAIL="dev.rindeal+ebuild-repo@gmail.com"
 
 
 format() {
