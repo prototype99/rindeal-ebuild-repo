@@ -29,6 +29,9 @@ SLOT="0"
 KEYWORDS="amd64 arm arm64"
 IUSE_A=(
 	curldebug +largefile libgcc +rt +symbol-hiding versioned-symbols static-libs test threads
+	
+	#improve compatibility with external packages referencing these official use flags
+	curl_ssl_axtls curl_ssl_gnutls curl_ssl_libressl curl_ssl_mbedtls curl_ssl_nss curl_ssl_openssl
 
 	libcurl-option manual +verbose
 
@@ -124,6 +127,13 @@ REQUIRED_USE_A=(
 	"protocol_smtps?	( protocol_smtp ssl )"
 	"protocol_scp?		( || ( libssh2 libssh ) )"
 	"protocol_sftp?		( || ( libssh2 libssh ) )"
+	#ensure these use flags have the intended effect
+	"curl_ssl_axtls? 	( ssl_axtls ) !curl_ssl_axtls? ( !ssl_axtls )"
+	"curl_ssl_gnutls? 	( ssl_gnutls ) !curl_ssl_gnutls? ( !ssl_gnutls )"
+	"curl_ssl_libressl? 	( ssl_libressl ) !curl_ssl_libressl? ( !ssl_libressl )"
+	"curl_ssl_mbedtls? 	( ssl_mbedtls ) !curl_ssl_mbedtls? ( !ssl_mbedtls )"
+	"curl_ssl_nss? 		( ssl_nss ) !curl_ssl_nss? ( !ssl_nss )"
+	"curl_ssl_openssl? 	( ssl_openssl ) !curl_ssl_openssl? ( !ssl_openssl )"
 )
 
 inherit arrays
