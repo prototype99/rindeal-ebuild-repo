@@ -31,7 +31,7 @@ LICENSE="GPL-3"
 
 SLOT="0"
 
-KEYWORDS="~amd64"
+[[ "${PV}" != *9999* ]] && KEYWORDS="~amd64"
 IUSE_A=( cli cups nls tcl test )
 
 CDEPEND_A=(
