@@ -29,7 +29,7 @@ SLOT="0"
 KEYWORDS="amd64 arm arm64"
 IUSE_A=(
 	curldebug +largefile libgcc +rt +symbol-hiding versioned-symbols static-libs test threads
-	
+
 	#improve compatibility with external packages referencing these official use flags
 	curl_ssl_axtls curl_ssl_gnutls curl_ssl_libressl curl_ssl_mbedtls curl_ssl_nss curl_ssl_openssl
 
