@@ -128,12 +128,12 @@ REQUIRED_USE_A=(
 	"protocol_scp?		( || ( libssh2 libssh ) )"
 	"protocol_sftp?		( || ( libssh2 libssh ) )"
 	#ensure these use flags have the intended effect
-	"curl_ssl_axtls? 	( ssl_axtls ) !curl_ssl_axtls? ( !ssl_axtls )"
-	"curl_ssl_gnutls? 	( ssl_gnutls ) !curl_ssl_gnutls? ( !ssl_gnutls )"
-	"curl_ssl_libressl? 	( ssl_libressl ) !curl_ssl_libressl? ( !ssl_libressl )"
-	"curl_ssl_mbedtls? 	( ssl_mbedtls ) !curl_ssl_mbedtls? ( !ssl_mbedtls )"
-	"curl_ssl_nss? 		( ssl_nss ) !curl_ssl_nss? ( !ssl_nss )"
-	"curl_ssl_openssl? 	( ssl_openssl ) !curl_ssl_openssl? ( !ssl_openssl )"
+	"curl_ssl_axtls? 	( ssl_axtls )"
+	"curl_ssl_gnutls? 	( ssl_gnutls )"
+	"curl_ssl_libressl? 	( ssl_libressl )"
+	"curl_ssl_mbedtls? 	( ssl_mbedtls )"
+	"curl_ssl_nss? 		( ssl_nss )"
+	"curl_ssl_openssl? 	( ssl_openssl )"
 )
 
 inherit arrays
